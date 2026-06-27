@@ -3,9 +3,16 @@ const ERP_BASE_URL = process.env.NEXT_PUBLIC_ERP_API_URL || 'https://erp.artzyss
 // Fallback helper with Exponential Backoff Retry Logic
 async function fetchFromERP<T>(endpoint: string, fallback: T, retries = 3, delay = 1000): Promise<T> {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3-second timeout to prevent Edge 522
+
     const response = await fetch(`${ERP_BASE_URL}${endpoint}`, {
       next: { revalidate: 60 },
+      signal: controller.signal
     });
+    
+    clearTimeout(timeoutId);
+
     if (!response.ok) throw new Error(`ERP fetch failed with status ${response.status}`);
     return await response.json();
   } catch (error) {
