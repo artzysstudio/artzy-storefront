@@ -1,10 +1,10 @@
 const ERP_BASE_URL = process.env.NEXT_PUBLIC_ERP_API_URL || 'https://erp.artzysstudio.in/api';
 
 // Fallback helper with Exponential Backoff Retry Logic
-async function fetchFromERP<T>(endpoint: string, fallback: T, retries = 3, delay = 1000): Promise<T> {
+async function fetchFromERP<T>(endpoint: string, fallback: T, retries = 0, delay = 500): Promise<T> {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000); // 3-second timeout to prevent Edge 522
+    const timeoutId = setTimeout(() => controller.abort(), 2000); // Strict 2-second timeout
 
     const response = await fetch(`${ERP_BASE_URL}${endpoint}`, {
       next: { revalidate: 60 },
