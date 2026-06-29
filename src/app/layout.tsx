@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 
+export const runtime = 'edge';
+
 const cormorant = Cormorant_Garamond({
   weight: ['300', '400', '500', '600'],
   style: ['normal', 'italic'],
