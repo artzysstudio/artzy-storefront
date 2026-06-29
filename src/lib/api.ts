@@ -1,4 +1,7 @@
-const ERP_BASE_URL = process.env.NEXT_PUBLIC_ERP_API_URL || 'https://erp.artzysstudio.in/api';
+const getEnv = (key: string) => {
+  try { return typeof process !== 'undefined' && process.env ? process.env[key] : undefined; } catch (e) { return undefined; }
+};
+const ERP_BASE_URL = getEnv('NEXT_PUBLIC_ERP_API_URL') || 'https://erp.artzysstudio.in/api';
 
 // Fallback helper with Exponential Backoff Retry Logic
 async function fetchFromERP<T>(endpoint: string, fallback: T, retries = 0, delay = 500): Promise<T> {
