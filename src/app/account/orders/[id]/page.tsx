@@ -1,6 +1,19 @@
 import { api } from '@/lib/api';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  return {
+    title: `Order #${id} | Artzy's Studio`,
+    description: 'Track your order status and details.',
+  };
+}
+
+export function generateStaticParams() {
+  return [{ id: 'ARTZY-0000' }];
+}
 
 export default async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -39,7 +52,7 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
           <div style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
             Total: ₹{order.total.toLocaleString('en-IN')}
           </div>
-          <button className="btn" style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)', padding: '0.5rem 1rem', fontSize: '0.9rem' }} onClick={() => {}}>
+          <button className="btn" style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
             Download GST Invoice
           </button>
         </div>
