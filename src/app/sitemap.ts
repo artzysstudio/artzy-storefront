@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next';
 import { api } from '@/lib/api';
 
+export const dynamic = 'force-static';
+
 const BASE_URL = 'https://artzysstudio.in';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
