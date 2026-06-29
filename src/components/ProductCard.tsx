@@ -21,9 +21,7 @@ export default function ProductCard({ product, className }: { product: Product, 
             unoptimized
           />
         ) : (
-          <div className="image-placeholder">
-            [ Product Image:<br/>{product.name} ]
-          </div>
+          <img src="/images/deepti_painting.png" alt="Product Placeholder" style={{ width: '100%', height: '100%', objectFit: 'cover' }} className="product-image" />
         )}
         
         {!product.isSoldOut ? (

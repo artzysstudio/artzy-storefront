@@ -84,9 +84,7 @@ export default function SmartSearch({ isOpen, onClose }: SmartSearchProps) {
             {results.map(product => (
               <div key={product.id} className="search-result-card" onClick={onClose}>
                 <Link href={`/shop/product/${product.id}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
-                  <div className="image-placeholder" style={{ aspectRatio: '1', marginBottom: '1rem' }}>
-                    [ {product.name} ]
-                  </div>
+                  <img src="/images/deepti_painting.png" alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', aspectRatio: '1', marginBottom: '1rem' }} />
                   <h4 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-light)' }}>{product.category}</h4>
                   <h3 style={{ margin: '0.2rem 0', fontSize: '1.1rem' }}>{product.name}</h3>
                   <p style={{ margin: 0, fontWeight: 'bold' }}>₹{product.price.toLocaleString('en-IN')}</p>

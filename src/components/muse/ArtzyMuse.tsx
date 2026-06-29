@@ -54,8 +54,8 @@ export default function ArtzyMuse({ content }: { content?: SectionContent }) {
             <button className="btn">Corporate Advisor</button>
           </div>
           
-          <div className="image-placeholder" style={{ maxWidth: '600px', margin: '0 auto', aspectRatio: '16/9' }}>
-            [ Muse AI Visualizer / Introduction Graphic ]
+          <div style={{ maxWidth: '600px', margin: '0 auto', aspectRatio: '16/9' }}>
+            <img src="/images/deepti_painting.png" alt="Muse AI Visualizer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </div>
         </>
       )}

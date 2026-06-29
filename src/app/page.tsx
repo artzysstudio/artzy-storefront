@@ -37,9 +37,7 @@ export default async function Home() {
                 {giftCollections.map((collection) => (
                   <div key={collection.id} style={{ textAlign: 'center' }}>
                     <div style={{ aspectRatio: '4/5', marginBottom: 'var(--spacing-sm)' }}>
-                      <div className="image-placeholder">
-                        [ Gift Collection Image:<br/>{collection.name} ]
-                      </div>
+                      <img src="/images/deepti_gifting.png" alt={collection.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                     <h3>{collection.name}</h3>
                     <Link href={`/shop/${collection.id}`} style={{ borderBottom: '1px solid var(--text-main)' }}>Shop Now</Link>
@@ -76,9 +74,7 @@ export default async function Home() {
             <section key={section.id} className={`section container ${bgClass}`}>
               <div className="artisan-section">
                 <div>
-                  <div className="image-placeholder" style={{ aspectRatio: '4/5' }}>
-                    [ Artist Portrait:<br/>{content.title} ]
-                  </div>
+                  <img src="/images/deepti_portrait.png" alt="Artist Portrait" style={{ width: '100%', height: '100%', objectFit: 'cover', aspectRatio: '4/5' }} />
                 </div>
                 <div className="artisan-text">
                   <h4>{content.subtitle}</h4>
@@ -100,9 +96,9 @@ export default async function Home() {
                 <h2 style={{ marginBottom: 'var(--spacing-md)' }}>{content.title}</h2>
                 <p style={{ margin: '0 auto var(--spacing-lg)' }}>{content.body}</p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--spacing-md)' }}>
-                  <div className="image-placeholder" style={{ aspectRatio: '1' }}>[ Process Shot 1 ]</div>
-                  <div className="image-placeholder" style={{ aspectRatio: '1' }}>[ Process Shot 2 ]</div>
-                  <div className="image-placeholder" style={{ aspectRatio: '1' }}>[ Process Shot 3 ]</div>
+                  <img src="/images/deepti_painting.png" alt="Process Shot 1" style={{ width: '100%', height: '100%', objectFit: 'cover', aspectRatio: '1' }} />
+                  <img src="/images/deepti_painting.png" alt="Process Shot 2" style={{ width: '100%', height: '100%', objectFit: 'cover', aspectRatio: '1' }} />
+                  <img src="/images/deepti_painting.png" alt="Process Shot 3" style={{ width: '100%', height: '100%', objectFit: 'cover', aspectRatio: '1' }} />
                 </div>
               </div>
             </section>
@@ -151,9 +147,7 @@ export default async function Home() {
                   )}
                 </div>
                 <div>
-                  <div className="image-placeholder" style={{ aspectRatio: '4/5' }}>
-                    [ Corporate Gifting Image ]
-                  </div>
+                  <img src="/images/deepti_gifting.png" alt="Corporate Gifting" style={{ width: '100%', height: '100%', objectFit: 'cover', aspectRatio: '4/5' }} />
                 </div>
               </div>
             </section>
@@ -175,9 +169,9 @@ export default async function Home() {
                 <div style={{ marginTop: 'var(--spacing-xl)', textAlign: 'center', borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: 'var(--spacing-lg)' }}>
                   <p style={{ textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: '0.85rem', marginBottom: 'var(--spacing-md)' }}>Trusted By &amp; Featured In</p>
                   <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--spacing-lg)', flexWrap: 'wrap' }}>
-                    <div className="image-placeholder" style={{ width: '120px', minHeight: '60px', height: '60px' }}>[ Client Logo ]</div>
-                    <div className="image-placeholder" style={{ width: '120px', minHeight: '60px', height: '60px' }}>[ Press Logo ]</div>
-                    <div className="image-placeholder" style={{ width: '120px', minHeight: '60px', height: '60px' }}>[ Google Reviews ]</div>
+                    <img src="/images/deepti_portrait.png" alt="Client Logo" style={{ width: '120px', minHeight: '60px', height: '60px', objectFit: 'cover' }} />
+                    <img src="/images/deepti_gifting.png" alt="Press Logo" style={{ width: '120px', minHeight: '60px', height: '60px', objectFit: 'cover' }} />
+                    <img src="/images/deepti_painting.png" alt="Google Reviews" style={{ width: '120px', minHeight: '60px', height: '60px', objectFit: 'cover' }} />
                   </div>
                 </div>
               </div>
@@ -193,9 +187,7 @@ export default async function Home() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                 {instagramFeed.map((post) => (
-                  <div key={post.id} className="image-placeholder" style={{ aspectRatio: '1' }}>
-                    [ IG Post:<br/>{post.url} ]
-                  </div>
+                  <img key={post.id} src="/images/deepti_painting.png" alt="Instagram Post" style={{ width: '100%', height: '100%', objectFit: 'cover', aspectRatio: '1' }} />
                 ))}
               </div>
             </section>
