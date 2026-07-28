@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import Header from "@/components/layout/Header";
+import Header, { ARTZY_LOGO } from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
 export default function ContactPage() {
@@ -39,10 +39,14 @@ export default function ContactPage() {
               <a href="mailto:artzysstudio@gmail.com">Email the studio ↗</a>
             </div>
           </div>
-          <div className="contact-mark" aria-hidden="true">
-            <span>ARTZY’S</span>
-            <strong>Studio</strong>
-            <small>BY DEEPTI J. SHAH</small>
+          <div className="contact-mark" aria-label="Artzy's Studio by Deepti J. Shah">
+            <div className="contact-mark-orbit contact-mark-orbit-one" aria-hidden="true" />
+            <div className="contact-mark-orbit contact-mark-orbit-two" aria-hidden="true" />
+            <div className="contact-logo-stage">
+              <span className="contact-logo-glow" aria-hidden="true" />
+              <img src={ARTZY_LOGO} alt="Artzy's Studio" className="contact-animated-logo" />
+              <small>ORIGINAL ART · PERSONAL STORIES</small>
+            </div>
           </div>
         </section>
 
