@@ -15,6 +15,7 @@ export default async function Home() {
     // Fetching related entities for specific sections
     const products = await api.products.list();
     const giftCollections = await api.collections.listGifts();
+    const testimonials = await api.testimonials.list();
     const instagramFeed = await api.instagram.listFeed();
 
     // Section renderer now heavily relies on the PageSection payload from ERP
