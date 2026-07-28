@@ -54,7 +54,7 @@ export default function ContactPage() {
 
             <div className="contact-detail-card">
               <span>01</span>
-              <div><h3>Visit</h3><p>Ground Floor, Lane #3, Prashant Society, Preetishilp Bldg, Plot #22, Paud Road, Kothrud, Pune, Maharashtra 411038</p><a href="https://share.google/Hs1h9TOcr4ps5cB0p" target="_blank" rel="noreferrer">Open in Google Maps →</a></div>
+              <div><h3>Visit</h3><p>Prashant Society, Preetishilp Bldg, Ground Floor, Lane #3, Plot #22, Paud Road, Kothrud, Pune, Maharashtra 411038</p><a href="https://maps.app.goo.gl/WQ3CbkywNQCoNx6g9" target="_blank" rel="noreferrer">Open in Google Maps →</a></div>
             </div>
             <div className="contact-detail-card">
               <span>02</span>
