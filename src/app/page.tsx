@@ -1,4 +1,6 @@
-import CategoryExperience from '@/components/CategoryExperience';
+import PremiumHero from '@/components/PremiumHero';
+          <PremiumHero />
+<CategoryExperience />import CategoryExperience from '@/components/CategoryExperience';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/ProductCard';
