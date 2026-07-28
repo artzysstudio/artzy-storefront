@@ -11,7 +11,7 @@ export default function PremiumHero() {
         <p>Discover hand-painted originals, digital art and prints, expressive caricatures and meaningful gifts—created for the people and spaces you love.</p>
         <div className="premium-hero__actions">
           <Link className="premium-hero__primary" href="/shop">Explore all art <span>→</span></Link>
-          <Link className="premium-hero__secondary" href="/personalized">Create something personal</Link>
+          <Link className="premium-hero__secondary" href="/shop?category=personalised-gifts">Create something personal</Link>
         </div>
         <div className="premium-hero__proof" aria-label="Studio promises">
           <span><b>Artist-led</b><small>By Deepti</small></span><span><b>Physical & digital</b><small>More ways to create</small></span><span><b>Made for you</b><small>Personalisation available</small></span>
