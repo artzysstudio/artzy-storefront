@@ -1,4 +1,4 @@
-"use client";
+height: 420px;height: auto; aspect-ratio: 4 / 5;"use client";
 
 import Link from "next/link";
 import { useRef, useState } from "react";
