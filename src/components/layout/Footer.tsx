@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 const WHATSAPP_URL = 'https://wa.me/919158680722';
-const MAP_URL = 'https://share.google/Hs1h9TOcr4ps5cB0p';
+const MAP_URL = 'https://maps.app.goo.gl/WQ3CbkywNQCoNx6g9';
 
 export default function Footer() {
   return (
@@ -27,9 +27,9 @@ export default function Footer() {
           <div className="footer-col">
             <h4>Visit the Studio</h4>
             <address className="footer-address">
-              Ground Floor, Lane #3, Prashant Society,<br />
-              Preetishilp Bldg, Plot #22, Paud Rd,<br />
-              Kothrud, Pune, Maharashtra 411038
+              Prashant Society, Preetishilp Bldg,<br />
+              Ground Floor, Lane #3, Plot #22,<br />
+              Paud Road, Kothrud, Pune, Maharashtra 411038
             </address>
             <a href={MAP_URL} target="_blank" rel="noreferrer">Open in Google Maps →</a>
           </div>
