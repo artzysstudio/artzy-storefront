@@ -1,8 +1,6 @@
 import CategoryExperience from '@/components/CategoryExperience';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-          <CategoryExperience />
-          <CategoryExperience />
 import ProductCard from '@/components/ProductCard';
 import ArtzyMuse from '@/components/muse/ArtzyMuse';
 import { api, PageSection } from '@/lib/api';
@@ -211,6 +209,7 @@ export default async function Home() {
       <>
         <Header />
         <main>
+          <CategoryExperience />
           {pageDef.sections
             .sort((a, b) => a.sortOrder - b.sortOrder)
             .map((section) => renderSection(section))}
