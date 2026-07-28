@@ -14,10 +14,11 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
 
-  const categories = useMemo(
+  const productCategories = useMemo(
     () => Array.from(new Set(initialProducts.map((product) => product.category))).filter(Boolean),
     [initialProducts],
   );
+  const [categories, setCategories] = useState<string[]>(productCategories);
   const occasions = useMemo(
     () => Array.from(new Set(initialProducts.flatMap((product) => product.occasion || []))).filter(Boolean),
     [initialProducts],
@@ -31,6 +32,38 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
     [initialProducts],
   );
   const [maxPrice, setMaxPrice] = useState(highestPrice);
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    fetch('/api/storefront/categories', {
+      headers: { Accept: 'application/json' },
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Category sync failed with ${response.status}`);
+        return response.json();
+      })
+      .then((response) => {
+        const records = response?.data?.data ?? response?.data ?? response?.categories ?? response;
+        if (!isCurrent || !Array.isArray(records)) return;
+
+        const erpCategories = records
+          .filter((category) => category && category.is_active !== false)
+          .map((category) => String(category.name || '').trim())
+          .filter(Boolean);
+
+        if (erpCategories.length > 0) {
+          setCategories(Array.from(new Set(erpCategories)));
+        }
+      })
+      .catch(() => {
+        if (isCurrent) setCategories(productCategories);
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [productCategories]);
 
   useEffect(() => {
     setMaxPrice(highestPrice);
