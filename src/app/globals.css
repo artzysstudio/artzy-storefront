@@ -119,9 +119,28 @@ em, i { font-style: italic; color: var(--accent-terracotta); }
 .header-left { display: flex; gap: var(--spacing-md); }
 .header-left a { font-size: 0.95rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
 
-.header-logo { text-align: center; }
-.header-logo h1 { font-size: 2.25rem; font-style: normal; margin-bottom: -0.2rem; }
-.header-logo span { font-family: var(--font-sans), sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent-terracotta); }
+.header-logo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+}
+.header-logo img {
+  display: block;
+  width: 108px;
+  height: auto;
+  object-fit: contain;
+}
+.header-logo span {
+  margin-top: 0.25rem;
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #A64E52;
+}
 
 .header-right { display: flex; justify-content: flex-end; gap: var(--spacing-md); align-items: center; }
 .header-icon { font-size: 1.25rem; background: none; border: none; cursor: pointer; color: var(--text-main); position: relative; }
@@ -260,7 +279,9 @@ em, i { font-style: italic; color: var(--accent-terracotta); }
 
 /* Responsiveness */
 @media (max-width: 768px) {
-  .header { grid-template-columns: auto 1fr auto; }
+  .header { grid-template-columns: auto 1fr auto; padding-block: 0.85rem; }
+  .header-logo img { width: 88px; }
+  .header-logo span { font-size: 0.58rem; letter-spacing: 0.1em; }
   .header-left { display: none; /* Hide links on mobile for now */ }
   .artisan-section { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: var(--spacing-md); }
