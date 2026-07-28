@@ -1247,3 +1247,17 @@ img, video, canvas { max-width: 100%; height: auto; }
     max-width: 24rem;
   }
 }
+
+/* Footer column balance for address clarity */
+@media (min-width: 1100px) {
+  .footer-grid {
+    grid-template-columns: minmax(250px, 1.3fr) minmax(145px, 0.72fr) minmax(255px, 1.22fr) minmax(180px, 0.86fr);
+    gap: clamp(2rem, 2.8vw, 2.75rem);
+  }
+
+  .footer-map-link {
+    width: 100%;
+    justify-content: center;
+    white-space: nowrap;
+  }
+}
