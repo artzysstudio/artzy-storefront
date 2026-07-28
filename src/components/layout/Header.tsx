@@ -14,6 +14,7 @@ const SmartSearch = dynamic(() => import('@/components/search/SmartSearch'), {
 export default function Header() {
   const { cartCount } = useCart();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <>
@@ -39,6 +40,16 @@ export default function Header() {
         </Link>
 
         <div className="header-right">
+          <button
+            className="mobile-menu-toggle"
+            type="button"
+            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-store-menu"
+            onClick={() => setIsMenuOpen((open) => !open)}
+          >
+            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+          </button>
           <a href="https://artzyai.artzysstudio.in/" className="artzy-ai-mobile-nav" target="_blank" rel="noreferrer" aria-label="Visualise with ArtzyAI">
             <span aria-hidden="true">✦</span> ArtzyAI
           </a>
@@ -64,6 +75,25 @@ export default function Header() {
           </Link>
         </div>
       </header>
+
+      <div id="mobile-store-menu" className={`mobile-store-menu${isMenuOpen ? ' open' : ''}`} aria-hidden={!isMenuOpen}>
+        <button className="mobile-menu-backdrop" type="button" aria-label="Close menu" onClick={() => setIsMenuOpen(false)}></button>
+        <nav className="mobile-menu-panel" aria-label="Mobile store navigation">
+          <div className="mobile-menu-heading"><span>Explore Artzy’s Studio</span><button type="button" aria-label="Close menu" onClick={() => setIsMenuOpen(false)}>×</button></div>
+          <div className="mobile-menu-primary">
+            <Link href="/shop" onClick={() => setIsMenuOpen(false)}><span>Shop all</span><small>Original and hand-painted work</small></Link>
+            <Link href="/digital-prints" onClick={() => setIsMenuOpen(false)}><span>Digital prints</span><small>Custom art for your space</small></Link>
+            <Link href="/caricatures" onClick={() => setIsMenuOpen(false)}><span>Caricatures</span><small>Portraits with personality</small></Link>
+            <Link href="/shop/?category=personalised-gifts" onClick={() => setIsMenuOpen(false)}><span>Personalised gifts</span><small>Made around their story</small></Link>
+            <Link href="/shop/?category=corporate-gifts" onClick={() => setIsMenuOpen(false)}><span>Corporate gifts</span><small>Thoughtful business gifting</small></Link>
+          </div>
+          <div className="mobile-menu-secondary">
+            <Link href="/about" onClick={() => setIsMenuOpen(false)}>Meet Deepti</Link>
+            <Link href="/contact" onClick={() => setIsMenuOpen(false)}>Contact & visit the studio</Link>
+          </div>
+          <a className="mobile-menu-artzyai" href="https://artzyai.artzysstudio.in/" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)}>✦ Visualise with ArtzyAI <span>→</span></a>
+        </nav>
+      </div>
 
       <SmartSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
