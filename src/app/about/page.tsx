@@ -121,6 +121,7 @@ export default function AboutPage() {
       <Footer />
 
       <style jsx>{`
+        :global(.header){position:relative;top:auto;max-width:none;width:100%;margin:0;padding-inline:clamp(20px,4vw,72px)}
         .about-page{background:#fdf8f1;color:#3c2e2a;overflow:hidden}
         .about-hero{display:grid;grid-template-columns:minmax(0,52%) minmax(0,48%);min-height:760px;background:#f4eadf}
         .about-hero__portrait{position:relative;min-width:0;overflow:hidden}
@@ -164,4 +165,3 @@ export default function AboutPage() {
     </>
   );
 }
-
