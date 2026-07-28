@@ -58,13 +58,15 @@ export default function ProductCard({ product, className }: { product: Product, 
       </div>
 
       <div className="product-card-actions">
-        <Link
-          href={`/shop?product=${encodeURIComponent(String(product.id))}&artzyAI=1`}
+        <a
+          href={`https://artzyai.artzysstudio.in/?source=storefront&productId=${encodeURIComponent(String(product.id))}&productName=${encodeURIComponent(product.name)}&image=${encodeURIComponent(product.images?.[0] || '')}`}
+          target="_blank"
+          rel="noopener noreferrer"
           className="visualize-card-button"
           aria-label={`Visualize ${product.name} with ArtzyAI`}
         >
           ✦ ArtzyAI
-        </Link>
+        </a>
         <button
           className={`quick-add-button${added ? ' added' : ''}`}
           disabled={product.isSoldOut}
