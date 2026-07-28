@@ -28,7 +28,7 @@ export default function Header() {
           <Link href="/shop/?category=personalised-gifts">Personalised gifts</Link>
           <Link href="/shop/?category=corporate-gifts">Corporate gifts</Link>
           <a href="https://artzyai.artzysstudio.in/" className="artzy-ai-nav" target="_blank" rel="noreferrer" aria-label="Visualise your space with ArtzyAI">
-            <span aria-hidden="true">✦</span> Visualise with ArtzyAI
+            <span aria-hidden="true">✦</span> Try ArtzyAI
           </a>
         </nav>
 
