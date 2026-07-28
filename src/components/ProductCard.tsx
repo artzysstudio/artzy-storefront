@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import { Product } from '@/lib/api';
 import Image from 'next/image';
@@ -7,51 +8,77 @@ import Link from 'next/link';
 
 export default function ProductCard({ product, className }: { product: Product, className?: string }) {
   const { addToCart } = useCart();
+  const [added, setAdded] = useState(false);
+  const isCorporate = product.collectionId === 'c-corporate-gifts';
+
+  const handlePrimaryAction = () => {
+    if (isCorporate) {
+      window.location.href = `/corporate?product=${encodeURIComponent(String(product.id))}`;
+      return;
+    }
+
+    addToCart(product.id);
+    setAdded(true);
+    window.setTimeout(() => setAdded(false), 1800);
+  };
 
   return (
-    <div className={`product-card ${className || ''}`}>
-      <Link href={`/shop/product/${product.id}`} className="product-image-wrapper">
+    <article className={`product-card ${className || ''}`}>
+      <Link
+        href={`/shop/product/${product.id}`}
+        className="product-image-wrapper"
+        aria-label={`View ${product.name}`}
+      >
         {product.images?.[0] ? (
-          <Image 
-            src={product.images[0]} 
+          <Image
+            src={product.images[0]}
             alt={product.name}
             fill
+            sizes="(max-width: 560px) 50vw, (max-width: 1024px) 33vw, 300px"
             className="product-image"
             style={{ objectFit: 'cover' }}
             unoptimized
           />
         ) : (
-          <img src="/images/deepti_painting.png" alt="Product Placeholder" style={{ width: '100%', height: '100%', objectFit: 'cover' }} className="product-image" />
+          <img
+            src="/images/deepti_painting.png"
+            alt={product.name}
+            className="product-image"
+          />
         )}
-        
-        {!product.isSoldOut ? (
-          <div className="add-to-cart-overlay" onClick={(e) => {
-            e.preventDefault();
-            if (product.collectionId === 'c-corporate-gifts') {
-              alert('Corporate Request Proposal Flow initiated.');
-            } else {
-              addToCart(product.id);
-            }
-          }}>
-            <button className="add-btn">
-              {product.collectionId === 'c-corporate-gifts' 
-                ? 'Request Proposal'
-                : `Add to Bag — ₹${product.price.toLocaleString('en-IN')}`
-              }
-            </button>
-          </div>
-        ) : (
-          <div className="add-to-cart-overlay" style={{background: 'rgba(255,255,255,0.7)'}}>
-            <span className="add-btn" style={{cursor: 'not-allowed', color: 'var(--text-muted)'}}>Sold Out</span>
-          </div>
-        )}
+        {product.isSoldOut && <span className="product-status">Sold out</span>}
       </Link>
-      
+
       <div className="product-meta">
         <span className="product-category">{product.category}</span>
-        <h3 className="product-name">{product.name}</h3>
+        <Link href={`/shop/product/${product.id}`} className="product-name-link">
+          <h3 className="product-name">{product.name}</h3>
+        </Link>
         <span className="product-price">₹{product.price.toLocaleString('en-IN')}</span>
       </div>
-    </div>
+
+      <div className="product-card-actions">
+        <Link
+          href={`/shop/product/${product.id}#artzy-ai`}
+          className="visualize-card-button"
+          aria-label={`Visualize ${product.name} with ArtzyAI`}
+        >
+          ✦ ArtzyAI
+        </Link>
+        <button
+          className={`quick-add-button${added ? ' added' : ''}`}
+          disabled={product.isSoldOut}
+          onClick={handlePrimaryAction}
+        >
+          {product.isSoldOut
+            ? 'Sold out'
+            : isCorporate
+              ? 'Enquire'
+              : added
+                ? 'Added ✓'
+                : 'Add to bag'}
+        </button>
+      </div>
+    </article>
   );
 }
