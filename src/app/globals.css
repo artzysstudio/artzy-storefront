@@ -1149,3 +1149,101 @@ img, video, canvas { max-width: 100%; height: auto; }
     box-shadow: 0 4px 12px rgba(145, 60, 68, 0.18);
   }
 }
+
+/* Professional studio address */
+.footer-location-card {
+  margin-top: 0.15rem;
+  padding: 1rem 1.05rem;
+  border: 1px solid rgba(170, 77, 81, 0.2);
+  border-left: 3px solid #aa4d51;
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.46);
+  box-shadow: 0 7px 20px rgba(74, 64, 54, 0.06);
+}
+
+.footer-location-title {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(74, 64, 54, 0.12);
+}
+
+.footer-location-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 2.1rem;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 999px;
+  color: #fff;
+  background: #aa4d51;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.footer-location-title strong,
+.footer-location-title > div > span {
+  display: block;
+}
+
+.footer-location-title strong {
+  color: var(--text-main);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.footer-location-title > div > span {
+  margin-top: 0.15rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.footer-location-card .footer-address {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0.8rem 0 0.9rem;
+  color: var(--text-main);
+  font-size: 0.88rem;
+  font-style: normal;
+  line-height: 1.48;
+}
+
+.footer-location-card .footer-address span:last-child {
+  margin-top: 0.15rem;
+  color: #8f3f45;
+  font-weight: 700;
+}
+
+.footer-map-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.35rem;
+  padding: 0.55rem 0.78rem;
+  border: 1px solid rgba(170, 77, 81, 0.34);
+  border-radius: 999px;
+  color: #8f3f45;
+  background: #fffaf6;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+}
+
+.footer-map-link:hover,
+.footer-map-link:focus-visible {
+  color: #fff;
+  background: #aa4d51;
+}
+
+@media (max-width: 768px) {
+  .footer-location-card {
+    max-width: 24rem;
+  }
+}
