@@ -809,3 +809,62 @@ img, video, canvas { max-width: 100%; height: auto; }
   .product-grid { grid-template-columns: 1fr; }
   .header-right { gap: .3rem; }
 }
+
+
+/* Compact premium navigation */
+@media (min-width: 769px) {
+  .header.container {
+    width: 100%;
+    max-width: none;
+    min-height: 82px;
+    padding: 0.55rem clamp(1.5rem, 4vw, 4.5rem);
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .header-logo img {
+    width: 62px;
+    max-height: 58px;
+  }
+
+  .header-logo span {
+    margin-top: 0.15rem;
+    font-size: 0.48rem;
+    letter-spacing: 0.1em;
+  }
+
+  .header-left {
+    gap: clamp(0.8rem, 1.6vw, 1.5rem);
+    padding-inline: clamp(1rem, 2.5vw, 2.25rem);
+  }
+
+  .header-left a {
+    font-size: clamp(0.68rem, 0.75vw, 0.78rem);
+    letter-spacing: 0.045em;
+    white-space: nowrap;
+  }
+
+  .header-right {
+    gap: 1.1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header.container {
+    min-height: 58px;
+    padding: 0.35rem 0.75rem;
+  }
+
+  .header-logo img {
+    width: 56px;
+    max-height: 50px;
+  }
+
+  .header-right {
+    gap: 0.35rem;
+  }
+
+  .header-icon {
+    min-width: 38px;
+    min-height: 38px;
+  }
+}
