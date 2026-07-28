@@ -1,7 +1,7 @@
 import CategoryExperience from '@/components/CategoryExperience';
 import Header from '@/components/layout/Header';
-          <CategoryExperience />
 import Footer from '@/components/layout/Footer';
+          <CategoryExperience />
 import ProductCard from '@/components/ProductCard';
 import ArtzyMuse from '@/components/muse/ArtzyMuse';
 import { api, PageSection } from '@/lib/api';
