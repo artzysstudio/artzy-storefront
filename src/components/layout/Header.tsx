@@ -21,12 +21,12 @@ export default function Header() {
         Complimentary shipping on orders above ₹1,499 &nbsp;|&nbsp; <em>Where intention meets canvas</em>
       </div>
       <header className="header container">
-        <div className="header-left">
-          <Link href="/shop">Artworks</Link>
-          <Link href="/projects">Projects</Link>
-          <Link href="/inspiration">Inspiration</Link>
-          <Link href="/personalized">Commissions</Link>
-        </div>
+        <nav className="header-left" aria-label="Store navigation">
+          <Link href="/shop">Shop all</Link>
+          <Link href="/shop/?category=personalised-gifts">Personalised gifts</Link>
+          <Link href="/shop/?category=corporate-gifts">Corporate gifts</Link>
+          <Link href="/personalized">Custom orders</Link>
+        </nav>
 
         <Link href="/" className="header-logo" aria-label="Artzy's Studio by Deepti J. Shah — home">
           <img src={ARTZY_LOGO} alt="Artzy's Studio" width="280" height="258" />
