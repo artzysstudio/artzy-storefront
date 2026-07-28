@@ -13,7 +13,7 @@ export default function ProductCard({ product, className }: { product: Product, 
 
   const handlePrimaryAction = () => {
     if (isCorporate) {
-      window.location.href = `/corporate?product=${encodeURIComponent(String(product.id))}`;
+      window.location.href = `/contact?type=corporate&product=${encodeURIComponent(String(product.id))}`;
       return;
     }
 
@@ -25,7 +25,7 @@ export default function ProductCard({ product, className }: { product: Product, 
   return (
     <article className={`product-card ${className || ''}`}>
       <Link
-        href={`/shop/product/${product.id}`}
+        href={`/shop?product=${encodeURIComponent(String(product.id))}`}
         className="product-image-wrapper"
         aria-label={`View ${product.name}`}
       >
@@ -51,7 +51,7 @@ export default function ProductCard({ product, className }: { product: Product, 
 
       <div className="product-meta">
         <span className="product-category">{product.category}</span>
-        <Link href={`/shop/product/${product.id}`} className="product-name-link">
+        <Link href={`/shop?product=${encodeURIComponent(String(product.id))}`} className="product-name-link">
           <h3 className="product-name">{product.name}</h3>
         </Link>
         <span className="product-price">₹{product.price.toLocaleString('en-IN')}</span>
@@ -59,7 +59,7 @@ export default function ProductCard({ product, className }: { product: Product, 
 
       <div className="product-card-actions">
         <Link
-          href={`/shop/product/${product.id}#artzy-ai`}
+          href={`/shop?product=${encodeURIComponent(String(product.id))}&artzyAI=1`}
           className="visualize-card-button"
           aria-label={`Visualize ${product.name} with ArtzyAI`}
         >
