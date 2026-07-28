@@ -5,32 +5,32 @@ import { useRef, useState } from "react";
 
 const categories = [
   {
-    name: "Art for Walls",
-    note: "Original canvases, wall frames & digital canvas prints",
+    name: "Hand-painted Art",
+    note: "Original canvases, wall art and artist-painted objects",
     image: "/assets/painting_1.png",
+    placement: "your wall or living space",
+    href: "/shop?category=hand-painted",
+  },
+  {
+    name: "Digital Art & Prints",
+    note: "Digital paintings and vivid canvas prints for modern spaces",
+    image: "/assets/hero_bg_authentic.png",
     placement: "your wall",
-    href: "/shop?category=wall-art",
+    href: "/shop?category=digital-prints",
   },
   {
-    name: "Arts on Table",
-    note: "Hand-painted trays, coasters & soulful desk accents",
-    image: "/assets/corporate_gift_1.png",
-    placement: "your table or desk",
-    href: "/shop?category=table-art",
-  },
-  {
-    name: "Personalised Gifts",
-    note: "Caricatures, portraits, keepsakes & meaningful combos",
+    name: "Caricatures & Portraits",
+    note: "Personalised, expressive art made from your photographs",
     image: "/images/deepti_gifting.png",
     placement: "your celebration space",
-    href: "/shop?category=personalised-gifts",
+    href: "/shop?category=caricatures",
   },
   {
-    name: "Corporate Gifting",
-    note: "Artist-led gifts for teams, milestones & relationships",
-    image: "/images/deepti_painting.png",
-    placement: "your office",
-    href: "/shop?category=corporate-gifts",
+    name: "Artful Gifts & Projects",
+    note: "Personal gifts, corporate gifting and custom creative work",
+    image: "/assets/corporate_gift_1.png",
+    placement: "your table, desk or office",
+    href: "/shop?category=artful-gifts",
   },
 ];
 
@@ -48,16 +48,16 @@ export default function CategoryExperience() {
 
   return (
     <>
-      <section className="artzy-shop" aria-labelledby="shop-by-space">
+      <section className="artzy-shop" aria-labelledby="shop-creative-world">
         <div className="artzy-shop__intro">
           <div>
-            <span>Shop by space</span>
-            <h1 id="shop-by-space">Art that belongs in your life.</h1>
+            <span>Explore our creative world</span>
+            <h1 id="shop-creative-world">Made with art. Made for you.</h1>
           </div>
           <p>
-            Discover Deepti J. Shah’s hand-painted pieces by where they will
-            live. Open ArtzyAI on any collection to preview the feeling before
-            you choose.
+            From hand-painted originals to digital art, caricatures and
+            thoughtful gifts—discover Deepti J. Shah&apos;s work by the way you
+            want to experience it.
           </p>
         </div>
 
@@ -87,8 +87,8 @@ export default function CategoryExperience() {
         </div>
 
         <div className="artzy-shop__benefits">
-          <span>Hand-painted by Deepti</span>
-          <span>Small batches & one-of-one pieces</span>
+          <span>Artist-led creations</span>
+          <span>Hand-painted & digital</span>
           <span>Personalisation available</span>
           <span>ERP-backed availability</span>
         </div>
@@ -196,11 +196,12 @@ export default function CategoryExperience() {
           max-width: 1440px;
           margin: 0 auto;
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(4, minmax(0, 1fr));
           border-left: 1px solid #dacbc0;
           border-top: 1px solid #dacbc0;
         }
         .artzy-category {
+          min-width: 0;
           padding: 14px;
           border-right: 1px solid #dacbc0;
           border-bottom: 1px solid #dacbc0;
@@ -218,6 +219,7 @@ export default function CategoryExperience() {
         .artzy-category__image img {
           width: 100%;
           height: 100%;
+          display: block;
           object-fit: cover;
           transition: transform 0.55s ease;
         }
@@ -241,11 +243,13 @@ export default function CategoryExperience() {
           flex-direction: column;
           justify-content: space-between;
           gap: 14px;
-          min-height: 124px;
+          min-height: 142px;
         }
         .artzy-category h2 {
-          font-size: 1.65rem;
-          margin: 0 0 6px;
+          font-size: 1.55rem;
+          line-height: 1.05;
+          margin: 0 0 8px;
+          overflow-wrap: anywhere;
         }
         .artzy-category p {
           font-size: 0.86rem;
@@ -397,12 +401,24 @@ export default function CategoryExperience() {
         @media (max-width: 600px) {
           .artzy-shop {
             padding: 52px 14px 32px;
+            overflow-x: clip;
+          }
+          .artzy-shop__intro {
+            gap: 18px;
+            margin-bottom: 28px;
+          }
+          .artzy-shop__intro h1 {
+            font-size: clamp(2.65rem, 14vw, 4rem);
+            overflow-wrap: anywhere;
           }
           .artzy-shop__grid {
             grid-template-columns: 1fr;
           }
           .artzy-category__image {
-            height: 420px;
+            height: min(112vw, 420px);
+          }
+          .artzy-category__copy {
+            min-height: auto;
           }
           .artzy-shop__benefits {
             grid-template-columns: 1fr;
@@ -415,4 +431,3 @@ export default function CategoryExperience() {
     </>
   );
 }
-
