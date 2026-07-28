@@ -1,4 +1,6 @@
+import CategoryExperience from '@/components/CategoryExperience';
 import Header from '@/components/layout/Header';
+          <CategoryExperience />
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/ProductCard';
 import ArtzyMuse from '@/components/muse/ArtzyMuse';
