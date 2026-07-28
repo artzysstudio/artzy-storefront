@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "node node_modules/next/dist/bin/next dev",
-    "build": "node node_modules/next/dist/bin/next build",
+    "build": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\" && node node_modules/next/dist/bin/next build",
     "postbuild": "node scripts/copy-output.js",
     "start": "node node_modules/next/dist/bin/next start",
     "lint": "node node_modules/next/dist/bin/next lint",
-    "pages:build": "node node_modules/next/dist/bin/next build"
+    "pages:build": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\" && node node_modules/next/dist/bin/next build"
   },
   "dependencies": {
     "next": "15.0.3",
