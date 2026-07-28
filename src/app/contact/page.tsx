@@ -1,94 +1,92 @@
 "use client";
 
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-
-const WHATSAPP_URL = 'https://wa.me/919158680722';
-const MAP_URL = 'https://share.google/Hs1h9TOcr4ps5cB0p';
+import { FormEvent, useState } from "react";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 export default function ContactPage() {
+  const [sent, setSent] = useState(false);
+
+  function sendEnquiry(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const message = [
+      "Hello Artzy's Studio,",
+      "",
+      "I would like to enquire about: " + form.get("interest"),
+      "Name: " + form.get("name"),
+      "Phone: " + form.get("phone"),
+      "Email: " + form.get("email"),
+      "Budget: " + form.get("budget"),
+      "Message: " + form.get("message")
+    ].join("\n");
+
+    setSent(true);
+    window.open("https://wa.me/919158680722?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
+  }
+
   return (
     <>
       <Header />
       <main className="contact-page">
         <section className="contact-hero">
-          <span>Contact Artzy&apos;s Studio</span>
-          <h1>Let&apos;s make something <em>meaningful.</em></h1>
-          <p>
-            Visit Deepti&apos;s Pune studio, ask about a piece, or share your
-            idea for a personalised, corporate or digital-art project.
-          </p>
+          <div className="contact-hero-copy">
+            <span className="contact-kicker">VISIT · COLLABORATE · CREATE</span>
+            <h1>Let’s make something <em>meaningful.</em></h1>
+            <p>Tell us about the artwork, personalised gift or corporate project you have in mind. Deepti and the studio will help shape it into something made especially for you.</p>
+            <div className="contact-quick-actions">
+              <a href="https://wa.me/919158680722" target="_blank" rel="noreferrer">WhatsApp us ↗</a>
+              <a href="mailto:artzysstudio@gmail.com">Email the studio ↗</a>
+            </div>
+          </div>
+          <div className="contact-mark" aria-hidden="true">
+            <span>ARTZY’S</span>
+            <strong>Studio</strong>
+            <small>BY DEEPTI J. SHAH</small>
+          </div>
         </section>
 
-        <section className="contact-grid" aria-label="Ways to contact Artzy's Studio">
-          <article>
-            <span>01</span>
-            <h2>WhatsApp</h2>
-            <p>Fastest for product questions, custom orders and photo references.</p>
-            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer">
-              Chat on +91 91586 80722 →
-            </a>
-          </article>
-          <article>
-            <span>02</span>
-            <h2>Email</h2>
-            <p>Ideal for corporate gifting, collaborations and detailed briefs.</p>
-            <a href="mailto:artzysstudio@gmail.com">artzysstudio@gmail.com →</a>
-          </article>
-          <article className="contact-location">
-            <span>03</span>
-            <h2>Visit the physical store</h2>
-            <address>
-              Ground Floor, Lane #3, Prashant Society, Preetishilp Bldg,
-              Plot #22, Paud Rd, Kothrud, Pune, Maharashtra 411038
-            </address>
-            <a href={MAP_URL} target="_blank" rel="noreferrer">
-              Get directions on Google Maps →
-            </a>
-          </article>
-        </section>
+        <section className="contact-main">
+          <div className="contact-details">
+            <span className="contact-kicker">THE STUDIO</span>
+            <h2>Come say hello.</h2>
+            <p className="contact-intro">See hand-painted pieces in person, discuss a commission, or find a gift with a personal story.</p>
 
-        <section className="contact-note">
-          <span>Before you visit</span>
-          <h2>Planning a custom piece?</h2>
-          <p>
-            Bring or WhatsApp your reference photos, preferred size, occasion
-            and required date. The studio will guide you through the best
-            handmade or digital format.
-          </p>
-          <a href={WHATSAPP_URL} target="_blank" rel="noreferrer">Start on WhatsApp →</a>
+            <div className="contact-detail-card">
+              <span>01</span>
+              <div><h3>Visit</h3><p>Ground Floor, Lane #3, Prashant Society, Preetishilp Bldg, Plot #22, Paud Road, Kothrud, Pune, Maharashtra 411038</p><a href="https://share.google/Hs1h9TOcr4ps5cB0p" target="_blank" rel="noreferrer">Open in Google Maps →</a></div>
+            </div>
+            <div className="contact-detail-card">
+              <span>02</span>
+              <div><h3>Talk to us</h3><p><a href="tel:+919158680722">+91 91586 80722</a><br/><a href="mailto:artzysstudio@gmail.com">artzysstudio@gmail.com</a></p></div>
+            </div>
+            <div className="contact-detail-card">
+              <span>03</span>
+              <div><h3>Studio enquiries</h3><p>Original art · Digital prints · Caricatures · Personalised gifts · Corporate gifting · Custom commissions</p></div>
+            </div>
+          </div>
+
+          <div className="contact-form-panel">
+            <span className="contact-kicker">START A CONVERSATION</span>
+            <h2>What can we create for you?</h2>
+            <form className="contact-form" onSubmit={sendEnquiry}>
+              <div className="contact-form-row">
+                <label>YOUR NAME<input name="name" type="text" autoComplete="name" required placeholder="How should we address you?" /></label>
+                <label>PHONE NUMBER<input name="phone" type="tel" autoComplete="tel" required placeholder="+91" /></label>
+              </div>
+              <label>EMAIL ADDRESS<input name="email" type="email" autoComplete="email" required placeholder="you@example.com" /></label>
+              <div className="contact-form-row">
+                <label>I’M INTERESTED IN<select name="interest" defaultValue="Personalised gift"><option>Original artwork</option><option>Hand-painted product</option><option>Digital canvas print</option><option>Caricature gift</option><option>Personalised gift</option><option>Corporate gifting</option><option>Custom commission</option></select></label>
+                <label>APPROX. BUDGET<select name="budget" defaultValue="Let’s discuss"><option>Under ₹2,500</option><option>₹2,500 – ₹5,000</option><option>₹5,000 – ₹15,000</option><option>₹15,000+</option><option>Let’s discuss</option></select></label>
+              </div>
+              <label>TELL US YOUR IDEA<textarea name="message" required rows={5} placeholder="Occasion, quantity, size, colours, timeline or anything that will help us understand your idea..." /></label>
+              <button type="submit">Send enquiry on WhatsApp <span>→</span></button>
+              <p className="contact-form-note">{sent ? "Your enquiry is ready in WhatsApp." : "We usually reply within one business day."}</p>
+            </form>
+          </div>
         </section>
       </main>
       <Footer />
-
-      <style jsx>{`
-        .contact-page { background:#fdf8f1; color:#3c2e2a; }
-        .contact-hero { padding:clamp(72px,10vw,150px) clamp(20px,7vw,100px); max-width:1200px; }
-        .contact-hero > span,.contact-note > span { color:#a64c57; font-size:.72rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; }
-        .contact-hero h1 { max-width:950px; margin:18px 0 24px; font-size:clamp(3.2rem,8vw,8rem); line-height:.9; letter-spacing:-.045em; }
-        .contact-hero h1 em { color:#a64c57; font-weight:400; }
-        .contact-hero p { max-width:700px; color:#75645d; font-size:clamp(1rem,1.6vw,1.25rem); line-height:1.7; }
-        .contact-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border-top:1px solid #dacbc0; border-left:1px solid #dacbc0; margin:0 clamp(20px,5vw,72px); }
-        .contact-grid article { min-width:0; min-height:330px; padding:clamp(28px,4vw,52px); border-right:1px solid #dacbc0; border-bottom:1px solid #dacbc0; background:#fffaf5; }
-        .contact-grid article > span { color:#a64c57; font-size:.72rem; }
-        .contact-grid h2 { margin:48px 0 14px; font-size:clamp(1.8rem,3vw,3rem); }
-        .contact-grid p,.contact-grid address { min-height:84px; margin:0 0 26px; color:#75645d; line-height:1.7; font-style:normal; }
-        .contact-grid a,.contact-note a { color:#a64c57; border-bottom:1px solid currentColor; font-weight:700; overflow-wrap:anywhere; }
-        .contact-note { margin-top:72px; padding:clamp(54px,8vw,110px) clamp(20px,7vw,100px); background:#3c2e2a; color:#fffaf5; }
-        .contact-note h2 { margin:14px 0; font-size:clamp(2.4rem,5vw,5rem); }
-        .contact-note p { max-width:720px; margin-bottom:28px; color:#dccdc4; line-height:1.75; }
-        .contact-note a { color:#f2b9b4; }
-        @media(max-width:850px) {
-          .contact-grid { grid-template-columns:1fr; margin-inline:14px; }
-          .contact-grid article { min-height:auto; }
-          .contact-grid h2 { margin-top:28px; }
-          .contact-grid p,.contact-grid address { min-height:0; }
-        }
-        @media(max-width:480px) {
-          .contact-hero { padding:56px 18px; overflow:hidden; }
-          .contact-hero h1 { font-size:clamp(3rem,16vw,4.4rem); overflow-wrap:anywhere; }
-        }
-      `}</style>
     </>
   );
 }
