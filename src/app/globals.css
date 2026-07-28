@@ -758,3 +758,22 @@ em, i { font-style: italic; color: var(--accent-terracotta); }
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
 }
+
+/* Ecommerce-only header navigation */
+@media (min-width: 769px) {
+  .header { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .header-logo { grid-column: 1; grid-row: 1; }
+  .header-left {
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: flex-end;
+    margin-left: auto;
+    padding-inline: 2rem;
+  }
+  .header-right { grid-column: 3; grid-row: 1; }
+}
+
+@media (max-width: 768px) {
+  .header-logo { grid-column: 2; grid-row: 1; }
+  .header-right { grid-column: 3; grid-row: 1; }
+}
