@@ -26,8 +26,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export function generateStaticParams() {
   return [
-    { slug: 'about' },
-    { slug: 'contact' },
     { slug: 'shipping-policy' },
     { slug: 'privacy-policy' },
     { slug: 'terms-and-conditions' }
