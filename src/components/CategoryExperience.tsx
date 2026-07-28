@@ -1,4 +1,4 @@
-height: 420px;height: auto; aspect-ratio: 4 / 5;"use client";
+"use client";
 
 import Link from "next/link";
 import { useRef, useState } from "react";
@@ -415,3 +415,4 @@ export default function CategoryExperience() {
     </>
   );
 }
+
