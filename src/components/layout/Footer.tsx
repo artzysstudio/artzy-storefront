@@ -24,14 +24,26 @@ export default function Footer() {
               <li><Link href="/shop?category=personalised-gifts">Personalised Gifts</Link></li>
             </ul>
           </div>
-          <div className="footer-col">
-            <h4>Visit the Studio</h4>
-            <address className="footer-address">
-              Prashant Society, Preetishilp Bldg,<br />
-              Ground Floor, Lane #3, Plot #22,<br />
-              Paud Road, Kothrud, Pune, Maharashtra 411038
-            </address>
-            <a href={MAP_URL} target="_blank" rel="noreferrer">Open in Google Maps →</a>
+          <div className="footer-col footer-location">
+            <h4>Studio Address</h4>
+            <div className="footer-location-card">
+              <div className="footer-location-title">
+                <span className="footer-location-icon" aria-hidden="true">⌖</span>
+                <div>
+                  <strong>Artzy&apos;s Studio</strong>
+                  <span>Physical Store · Pune</span>
+                </div>
+              </div>
+              <address className="footer-address">
+                <span>Ground Floor, Preetishilp Building</span>
+                <span>Lane No. 3, Plot No. 22, Prashant Society</span>
+                <span>Paud Road, Kothrud</span>
+                <span>Pune, Maharashtra – 411038</span>
+              </address>
+              <a className="footer-map-link" href={MAP_URL} target="_blank" rel="noreferrer">
+                View on Google Maps <span aria-hidden="true">↗</span>
+              </a>
+            </div>
           </div>
           <div className="footer-col">
             <h4>Contact</h4>
