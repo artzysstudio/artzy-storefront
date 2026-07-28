@@ -158,9 +158,10 @@ export default function AboutPage() {
         .about-closing>span{color:#a64e52;font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
         .about-closing h2{max-width:900px;margin:24px 0 34px;font-size:clamp(3rem,6vw,6.5rem);line-height:.95}
         .about-closing a{padding-bottom:5px;border-bottom:1px solid #a64e52;font-weight:700}
-        @media(max-width:850px){.about-hero{grid-template-columns:1fr;min-height:auto}.about-hero__portrait{height:min(68svh,640px)}.about-hero__copy{padding:56px 22px 70px}.about-manifesto,.about-story{grid-template-columns:1fr;gap:32px;padding:78px 22px}.about-manifesto{margin:0}.about-story{margin:0}.about-practice{padding:78px 22px}.about-practice__heading{display:block}.about-practice h2{margin-top:18px}.about-practice__grid{grid-template-columns:1fr 1fr}.about-closing{min-height:460px;padding:76px 22px}}
+        @media(max-width:850px){:global(.header){position:relative;top:auto}.about-page{overflow:visible}.about-hero{grid-template-columns:1fr;min-height:auto}.about-hero__portrait{height:min(68svh,640px)}.about-hero__copy{padding:56px 22px 70px}.about-manifesto,.about-story{grid-template-columns:1fr;gap:32px;padding:78px 22px}.about-manifesto{margin:0}.about-story{margin:0}.about-practice{padding:78px 22px}.about-practice__heading{display:block}.about-practice h2{margin-top:18px}.about-practice__grid{grid-template-columns:1fr 1fr}.about-closing{min-height:460px;padding:76px 22px}}
         @media(max-width:520px){.about-hero__portrait{height:520px}.about-hero__seal{right:14px;bottom:14px;width:92px;height:92px}h1{font-size:clamp(3.2rem,15vw,4.5rem)}.about-actions{align-items:stretch;flex-direction:column}.about-primary{width:100%;min-width:0}.about-secondary{width:max-content;max-width:100%}.about-practice__grid{grid-template-columns:1fr}.about-practice h3{margin-top:30px}.about-manifesto h2{font-size:3.1rem}}
       `}</style>
     </>
   );
 }
+
