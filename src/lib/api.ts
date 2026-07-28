@@ -5,15 +5,9 @@ const ERP_BASE_URL = getEnv('NEXT_PUBLIC_ERP_API_URL') || 'https://erp.artzysstu
 
 // Fallback helper with Exponential Backoff Retry Logic
 async function fetchFromERP<T>(endpoint: string, fallback: T, retries = 0, delay = 500): Promise<T> {
-  // Temporary bypass: The ERP is currently offline, causing Cloudflare Edge to hang and throw a 522.
-  // We instantly return the mock data to keep the site live.
-  if (ERP_BASE_URL.includes('erp.artzysstudio.in')) {
-    return fallback;
-  }
-
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000); // Strict 2-second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // Keep the storefront responsive if ERP is unavailable
 
     const response = await fetch(`${ERP_BASE_URL}${endpoint}`, {
       next: { revalidate: 60 },
