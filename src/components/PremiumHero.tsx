@@ -6,27 +6,27 @@ export default function PremiumHero() {
   return (
     <section className="premium-hero" aria-labelledby="premium-hero-title">
       <div className="premium-hero__copy">
-        <span className="premium-hero__eyebrow">By artist Deepti J. Shah</span>
-        <h1 id="premium-hero-title">Made by hand.<br /><em>Chosen by heart.</em></h1>
-        <p>Original paintings, hand-painted objects and meaningful gifts—made slowly for the people and spaces you love.</p>
+        <span className="premium-hero__eyebrow">The creative world of Deepti J. Shah</span>
+        <h1 id="premium-hero-title">Art in every form.<br /><em>Made personal.</em></h1>
+        <p>Discover hand-painted originals, digital art and prints, expressive caricatures and meaningful gifts—created for the people and spaces you love.</p>
         <div className="premium-hero__actions">
-          <Link className="premium-hero__primary" href="/shop">Shop the collection <span>→</span></Link>
-          <Link className="premium-hero__secondary" href="/personalized">Create a personal gift</Link>
+          <Link className="premium-hero__primary" href="/shop">Explore all art <span>→</span></Link>
+          <Link className="premium-hero__secondary" href="/personalized">Create something personal</Link>
         </div>
         <div className="premium-hero__proof" aria-label="Studio promises">
-          <span><b>Artist-made</b><small>By Deepti</small></span><span><b>Small-batch</b><small>Never mass produced</small></span><span><b>India-wide</b><small>Secure delivery</small></span>
+          <span><b>Artist-led</b><small>By Deepti</small></span><span><b>Physical & digital</b><small>More ways to create</small></span><span><b>Made for you</b><small>Personalisation available</small></span>
         </div>
       </div>
       <div className="premium-hero__visual">
         <img src="/assets/painting_1.png" alt="An original Artzy's Studio painting styled in a warm interior" />
-        <div className="premium-hero__stamp" aria-hidden="true"><span>✦</span> one of one</div>
-        <div className="premium-hero__card"><span>From Deepti’s studio</span><strong>Art with a personal story.</strong><Link href="/shop">Discover originals →</Link></div>
+        <div className="premium-hero__stamp" aria-hidden="true"><span>✦</span> artist made</div>
+        <div className="premium-hero__card"><span>From Deepti&apos;s studio</span><strong>One creative studio. Many forms of art.</strong><Link href="/shop">Discover the collections →</Link></div>
       </div>
-      <div className="premium-hero__ribbon" aria-hidden="true"><span>✦</span><i>HAND PAINTED</i><span>❋</span><i>MADE WITH INTENTION</i><span>✦</span><i>UNIQUELY YOURS</i></div>
+      <div className="premium-hero__ribbon" aria-hidden="true"><span>✦</span><i>HAND PAINTED</i><span>❋</span><i>DIGITAL ART</i><span>✦</span><i>CARICATURES</i><span>❋</span><i>MADE FOR YOU</i></div>
       <style jsx>{`
         .premium-hero{position:relative;display:grid;grid-template-columns:minmax(0,46%) minmax(0,54%);min-height:min(780px,calc(100svh - 120px));overflow:hidden;background:#f6eee4;color:#382c28}
         .premium-hero__copy{display:flex;flex-direction:column;justify-content:center;min-width:0;padding:clamp(54px,7vw,110px) clamp(24px,5vw,80px) 96px}.premium-hero__eyebrow{color:#a64e52;font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase}
-        h1{margin:20px 0 24px;font-size:clamp(3.2rem,6.2vw,6.7rem);line-height:.92;letter-spacing:-.045em}h1 em{font-weight:400;color:#a64e52}p{max-width:540px;font-size:clamp(.98rem,1.25vw,1.15rem);line-height:1.7;color:#6d5d56}
+        h1{margin:20px 0 24px;font-size:clamp(3.2rem,6.2vw,6.7rem);line-height:.92;letter-spacing:-.045em}h1 em{font-weight:400;color:#a64e52}p{max-width:560px;font-size:clamp(.98rem,1.25vw,1.15rem);line-height:1.7;color:#6d5d56}
         .premium-hero__actions{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:32px}.premium-hero__primary{display:flex;align-items:center;justify-content:space-between;gap:32px;min-width:230px;padding:16px 18px;background:#a64e52;color:white;font-size:.82rem;font-weight:700;box-shadow:5px 5px 0 #dcb8ae}.premium-hero__secondary{padding-bottom:4px;border-bottom:1px solid #a64e52;font-size:.82rem}
         .premium-hero__proof{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:48px;padding-top:18px;border-top:1px solid #d8c9bd}.premium-hero__proof b,.premium-hero__proof small{display:block}.premium-hero__proof b{font-family:var(--font-serif),serif;font-size:1rem;font-weight:400}.premium-hero__proof small{margin-top:3px;color:#897770;font-size:.64rem;text-transform:uppercase;letter-spacing:.08em}
         .premium-hero__visual{position:relative;min-width:0;overflow:hidden;background:#d9c8ba}.premium-hero__visual>img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform 1.2s ease}.premium-hero:hover .premium-hero__visual>img{transform:scale(1.018)}
@@ -39,4 +39,3 @@ export default function PremiumHero() {
     </section>
   );
 }
-
