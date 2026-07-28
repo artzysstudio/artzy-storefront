@@ -27,6 +27,9 @@ export default function Header() {
           <Link href="/shop/?category=caricatures">Caricatures</Link>
           <Link href="/shop/?category=personalised-gifts">Personalised gifts</Link>
           <Link href="/shop/?category=corporate-gifts">Corporate gifts</Link>
+          <a href="https://artzyai.artzysstudio.in/" className="artzy-ai-nav" target="_blank" rel="noreferrer" aria-label="Visualise your space with ArtzyAI">
+            <span aria-hidden="true">✦</span> Visualise with ArtzyAI
+          </a>
         </nav>
 
         <Link href="/" className="header-logo" aria-label="Artzy's Studio by Deepti J. Shah — home">
@@ -35,6 +38,9 @@ export default function Header() {
         </Link>
 
         <div className="header-right">
+          <a href="https://artzyai.artzysstudio.in/" className="artzy-ai-mobile-nav" target="_blank" rel="noreferrer" aria-label="Visualise with ArtzyAI">
+            <span aria-hidden="true">✦</span> ArtzyAI
+          </a>
           <button className="header-icon" aria-label="Search" onClick={() => setIsSearchOpen(true)}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <circle cx="11" cy="11" r="8"></circle>
