@@ -1,4 +1,5 @@
-import PremiumHero from '@/components/PremiumHero';
+<CategoryExperience />import CategoryExperience from '@/components/CategoryExperience';import CategoryExperience from '@/components/CategoryExperience';          <PremiumHero /        <main>import PremiumHero from '@/components/PremiumHero';
+                    <PremiumHero />
           <PremiumHero />
 <CategoryExperience />import CategoryExperience from '@/components/CategoryExperience';
 import Header from '@/components/layout/Header';
