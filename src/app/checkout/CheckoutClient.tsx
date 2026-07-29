@@ -2,13 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
-import { api, Product } from '@/lib/api';
+import { api, Product, ShippingOption } from '@/lib/api';
 import { useRouter } from 'next/navigation';
+import { useCustomer } from '@/context/CustomerContext';
 
 type CheckoutStep = 'auth' | 'address' | 'gifting' | 'shipping' | 'payment';
 
 export default function CheckoutClient() {
   const { items, clearCart } = useCart();
+  const { isAuthenticated, user, login, signup } = useCustomer();
   const router = useRouter();
   
   const [step, setStep] = useState<CheckoutStep>('auth');
@@ -17,12 +19,15 @@ export default function CheckoutClient() {
   const [isLoading, setIsLoading] = useState(true);
   
   // Auth State
-  const [authMode, setAuthMode] = useState<'guest' | 'login'>('guest');
+  const [authMode, setAuthMode] = useState<'guest' | 'login' | 'signup'>(isAuthenticated ? 'login' : 'guest');
   const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authName, setAuthName] = useState('');
 
   // Form State
   const [address, setAddress] = useState({ name: '', email: '', phone: '', address: '', city: '', state: '', pincode: '' });
-  const [shippingRate, setShippingRate] = useState<{rate: number, provider: string} | null>(null);
+  const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
+  const [shippingRate, setShippingRate] = useState<ShippingOption | null>(null);
   
   // Gifting State
   const [isGift, setIsGift] = useState(false);
@@ -32,10 +37,6 @@ export default function CheckoutClient() {
   const [hidePrice, setHidePrice] = useState(true);
   const [deliveryNotes, setDeliveryNotes] = useState('');
 
-  // Promo State
-  const [promoCode, setPromoCode] = useState('');
-  const [discount, setDiscount] = useState(0);
-  
   // Transaction State
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,8 +53,9 @@ export default function CheckoutClient() {
       for (const item of items) {
         const product = await api.products.get(item.productId);
         if (product) {
-          loadedProducts.push({ ...product, quantity: item.quantity });
-          total += product.price * item.quantity;
+          const effectivePrice = product.salePrice && product.salePrice > 0 ? product.salePrice : product.price;
+          loadedProducts.push({ ...product, price: effectivePrice, quantity: item.quantity });
+          total += effectivePrice * item.quantity;
         }
       }
       setCartProducts(loadedProducts);
@@ -64,12 +66,36 @@ export default function CheckoutClient() {
     loadCartDetails();
   }, [items]);
 
-  const handleAuthContinue = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (authMode === 'guest') {
-      setAddress(prev => ({ ...prev, email: authEmail }));
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      setAuthEmail(user.email);
+      setAddress((previous) => ({ ...previous, name: previous.name || user.name, email: user.email }));
     }
-    setStep('address');
+  }, [isAuthenticated, user]);
+
+  const handleAuthContinue = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsProcessing(true);
+    try {
+      if (authMode === 'login' && !isAuthenticated) {
+        await login(authEmail, authPassword);
+      }
+      if (authMode === 'signup') {
+        const result = await signup(authName, authEmail, authPassword);
+        if (result.emailConfirmationRequired) {
+          setError('Account created. Confirm the email sent to you, or continue as a guest.');
+          setAuthMode('guest');
+          return;
+        }
+      }
+      setAddress(prev => ({ ...prev, name: prev.name || authName, email: authEmail }));
+      setStep('address');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Sign in failed.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handleAddressContinue = (e: React.FormEvent) => {
@@ -82,28 +108,25 @@ export default function CheckoutClient() {
     setIsProcessing(true);
     try {
       const result = await api.commerce.calculateShipping(items, address.pincode);
-      setShippingRate(result);
+      setShippingOptions(result.options);
+      const economical = result.options.find((option) => option.service === result.defaultService) || result.options[0];
+      setShippingRate(economical || null);
+      if (!economical) throw new Error('No courier option is available.');
       setStep('shipping');
     } catch (err) {
-      setError('Failed to calculate shipping rates. Please check your pincode.');
+      setError(err instanceof Error ? err.message : 'Failed to calculate shipping rates. Please check your PIN code.');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const handleApplyPromo = async () => {
-    // Mock promo code validation
-    if (promoCode.toUpperCase() === 'ARTZY10') {
-      setDiscount(subtotal * 0.1);
-      setError(null);
-    } else {
-      setError('Invalid or expired promo code.');
-      setDiscount(0);
-    }
-  };
-
   const handleInitiatePayment = async () => {
+    if (!shippingRate) {
+      setError('Select a delivery method first.');
+      return;
+    }
     setIsProcessing(true);
+    setError(null);
     try {
       // 1. Load Razorpay script dynamically
       const res = await new Promise((resolve) => {
@@ -120,25 +143,38 @@ export default function CheckoutClient() {
         return;
       }
 
-      // 2. Get ERP Order ID
-      const finalAmount = subtotal + (shippingRate?.rate || 0) - discount + (giftWrapping ? 500 : 0);
-      const { orderId } = await api.commerce.initiatePayment(items, finalAmount);
+      // 2. ERP recalculates inventory, prices and the selected courier before
+      // creating the Razorpay order. Browser totals are display-only.
+      const paymentOrder = await api.commerce.initiatePayment({
+        items,
+        address,
+        shipping: { id: shippingRate.id, service: shippingRate.service },
+        isGift,
+        giftWrapping,
+        giftMessage,
+        occasion,
+        hidePrice,
+        deliveryNotes
+      });
       
       // 3. Initialize Razorpay
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_mock_123',
-        amount: finalAmount * 100, // in paise
-        currency: 'INR',
+        key: paymentOrder.keyId,
+        amount: paymentOrder.amount,
+        currency: paymentOrder.currency,
         name: "Artzy's Studio",
         description: "Premium Handcrafted Art",
-        order_id: orderId, // The ERP generated Razorpay order ID
+        order_id: paymentOrder.razorpayOrderId,
         handler: async function (response: any) {
           try {
-            // 4. Verify signature with ERP
-            const verify = await api.commerce.verifyPayment(
-              response.razorpay_order_id,
-              response.razorpay_signature
-            );
+            // 4. The ERP verifies all three Razorpay fields, fetches the live
+            // payment and updates stock only after that verification succeeds.
+            const verify = await api.commerce.verifyPayment({
+              erpOrderId: paymentOrder.erpOrderId,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            });
             if (verify.success) {
               clearCart();
               router.push(`/checkout/success?orderId=${verify.erpOrderId}&guest=${authMode === 'guest'}`);
@@ -169,7 +205,7 @@ export default function CheckoutClient() {
       rzp.open();
       
     } catch (err) {
-      setError('Payment gateway error. Please try again later.');
+      setError(err instanceof Error ? err.message : 'Payment gateway error. Please try again later.');
       setIsProcessing(false);
     }
   };
@@ -179,7 +215,7 @@ export default function CheckoutClient() {
     return <div style={{ textAlign: 'center' }}><h2>Your Cart is Empty</h2><button className="btn" onClick={() => router.push('/shop')}>Return to Shop</button></div>;
   }
 
-  const finalTotal = subtotal + (shippingRate?.rate || 0) - discount + (giftWrapping ? 500 : 0);
+  const finalTotal = subtotal + (shippingRate?.rate || 0) + (giftWrapping ? 500 : 0);
 
   return (
     <div className="checkout-layout" style={{ display: 'flex', gap: '4rem', flexWrap: 'wrap' }}>
@@ -206,16 +242,22 @@ export default function CheckoutClient() {
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                 <input type="radio" name="auth" checked={authMode === 'login'} onChange={() => setAuthMode('login')} /> Login
               </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                <input type="radio" name="auth" checked={authMode === 'signup'} onChange={() => setAuthMode('signup')} /> Create account
+              </label>
             </div>
-            
+
+            {authMode === 'signup' && (
+              <input required type="text" placeholder="Full Name" value={authName} onChange={e => setAuthName(e.target.value)} style={{ padding: '0.8rem' }} />
+            )}
             <input required type="email" placeholder="Email Address" value={authEmail} onChange={e => setAuthEmail(e.target.value)} style={{ padding: '0.8rem' }} />
             
-            {authMode === 'login' && (
-              <input required type="password" placeholder="Password" style={{ padding: '0.8rem' }} />
+            {authMode !== 'guest' && (
+              <input required minLength={8} type="password" placeholder="Password (8+ characters)" value={authPassword} onChange={e => setAuthPassword(e.target.value)} style={{ padding: '0.8rem' }} />
             )}
             
-            <button type="submit" className="btn" style={{ marginTop: '1rem' }}>
-              {authMode === 'guest' ? 'Continue as Guest' : 'Login & Continue'}
+            <button type="submit" className="btn" disabled={isProcessing} style={{ marginTop: '1rem' }}>
+              {isProcessing ? 'Please wait…' : authMode === 'guest' ? 'Continue as Guest' : authMode === 'login' ? 'Login & Continue' : 'Create Account & Continue'}
             </button>
           </form>
         )}
@@ -228,13 +270,13 @@ export default function CheckoutClient() {
             </div>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <input required type="email" placeholder="Email" value={address.email} onChange={e => setAddress({...address, email: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
-              <input required type="tel" placeholder="Phone" value={address.phone} onChange={e => setAddress({...address, phone: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
+              <input required type="tel" inputMode="numeric" pattern="[0-9 +()-]{10,16}" placeholder="10-digit Phone" value={address.phone} onChange={e => setAddress({...address, phone: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
             </div>
             <input required type="text" placeholder="Street Address" value={address.address} onChange={e => setAddress({...address, address: e.target.value})} style={{ padding: '0.8rem' }} />
             <div style={{ display: 'flex', gap: '1rem' }}>
               <input required type="text" placeholder="City" value={address.city} onChange={e => setAddress({...address, city: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
               <input required type="text" placeholder="State" value={address.state} onChange={e => setAddress({...address, state: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
-              <input required type="text" placeholder="Pincode" value={address.pincode} onChange={e => setAddress({...address, pincode: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
+              <input required type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} placeholder="6-digit PIN code" value={address.pincode} onChange={e => setAddress({...address, pincode: e.target.value.replace(/\D/g, '').slice(0, 6)})} style={{ flex: 1, padding: '0.8rem' }} />
             </div>
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
               <button type="button" className="btn" style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }} onClick={() => setStep('auth')}>Back</button>
@@ -294,10 +336,30 @@ export default function CheckoutClient() {
         {step === 'shipping' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <h2>Shipping Method</h2>
+            <p style={{ marginTop: 0, color: 'var(--text-muted)' }}>
+              Economical is selected by default. Express and urgent use available air services for PIN {address.pincode}.
+            </p>
+            {shippingOptions.map((option) => {
+              const selected = shippingRate?.id === option.id && shippingRate?.service === option.service;
+              return (
+                <label key={`${option.service}-${option.id}`} style={{ padding: '1.25rem', border: `2px solid ${selected ? 'var(--text-primary)' : 'var(--border-color)'}`, borderRadius: '8px', display: 'flex', justifyContent: 'space-between', gap: '1rem', cursor: 'pointer', background: selected ? 'var(--bg-secondary)' : 'transparent' }}>
+                  <span style={{ display: 'flex', gap: '0.75rem' }}>
+                    <input type="radio" name="shipping" checked={selected} onChange={() => setShippingRate(option)} />
+                    <span>
+                      <strong>{option.label} · {option.courier}</strong>
+                      <span style={{ display: 'block', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                        {option.mode === 'air' ? 'Air courier' : 'Surface courier'} · {option.etd || (option.estimatedDays ? `${option.estimatedDays} days` : 'ETA shown after booking')}
+                      </span>
+                    </span>
+                  </span>
+                  <strong>{option.rate === 0 ? 'FREE' : `₹${option.rate.toLocaleString('en-IN')}`}</strong>
+                </label>
+              );
+            })}
             <div style={{ padding: '1.5rem', border: '1px solid var(--border-color)', borderRadius: '4px', display: 'flex', justifyContent: 'space-between' }}>
               <div>
-                <strong>{shippingRate?.provider} Standard Delivery</strong>
-                <p style={{ margin: 0, color: 'var(--text-muted)' }}>Estimated delivery in 5-7 days</p>
+                <strong>{shippingRate?.label} · {shippingRate?.courier}</strong>
+                <p style={{ margin: 0, color: 'var(--text-muted)' }}>{shippingRate?.mode === 'air' ? 'Air courier' : 'Surface courier'} · {shippingRate?.etd || 'ETA shown after booking'}</p>
               </div>
               <div style={{ fontWeight: 'bold' }}>
                 {shippingRate?.rate === 0 ? 'FREE' : `₹${shippingRate?.rate}`}
@@ -353,23 +415,11 @@ export default function CheckoutClient() {
           ))}
         </div>
         
-        {/* Promo Code Input */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem' }}>
-          <input type="text" placeholder="Promo Code (Try ARTZY10)" value={promoCode} onChange={e => setPromoCode(e.target.value)} style={{ flex: 1, padding: '0.5rem' }} />
-          <button className="btn" onClick={handleApplyPromo} style={{ padding: '0.5rem 1rem' }}>Apply</button>
-        </div>
-        
         <div style={{ borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span>Subtotal</span>
             <span>₹{subtotal.toLocaleString('en-IN')}</span>
           </div>
-          {discount > 0 && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#008000' }}>
-              <span>Discount</span>
-              <span>-₹{discount.toLocaleString('en-IN')}</span>
-            </div>
-          )}
           {giftWrapping && (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Gift Wrapping</span>
