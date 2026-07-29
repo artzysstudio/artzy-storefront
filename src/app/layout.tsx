@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
+import LaunchGate from "@/components/LaunchGate";
 
 const cormorant = Cormorant_Garamond({
   weight: ['300', '400', '500', '600'],
@@ -30,8 +31,8 @@ export const metadata: Metadata = {
     type: "website",
   },
   robots: {
-    index: true,
-    follow: true,
+    index: false,
+    follow: false,
   }
 };
 
@@ -48,7 +49,7 @@ export default function RootLayout({
       <body>
         <CustomerProvider>
           <CartProvider>
-            {children}
+            <LaunchGate>{children}</LaunchGate>
           </CartProvider>
         </CustomerProvider>
       </body>
