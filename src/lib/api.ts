@@ -41,9 +41,12 @@ export interface ProductSEO {
 
 export interface Product {
   id: string;
+  sku?: string;
   name: string;
   category: string;
   price: number;
+  salePrice?: number | null;
+  quantity?: number;
   images: string[];
   videoUrl?: string;
   
@@ -139,6 +142,41 @@ export interface PageDefinition {
     keywords: string[];
   };
   sections: PageSection[];
+}
+
+export interface ShippingOption {
+  id: string;
+  service: 'economical' | 'express' | 'urgent';
+  label: string;
+  courier: string;
+  mode: 'surface' | 'air';
+  rate: number;
+  etd: string;
+  estimatedDays: number | null;
+}
+
+export interface ShippingQuote {
+  success: true;
+  subtotal: number;
+  pincode: string;
+  defaultService: 'economical';
+  options: ShippingOption[];
+}
+
+async function requestERP<T>(endpoint: string, init: RequestInit = {}): Promise<T> {
+  const response = await fetch(`${ERP_BASE_URL}${endpoint}`, {
+    ...init,
+    cache: 'no-store',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(init.headers || {})
+    }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data?.success === false) {
+    throw new Error(data?.error || `ERP request failed with status ${response.status}`);
+  }
+  return data as T;
 }
 
 // ------------------------------------------------------------------
@@ -340,17 +378,28 @@ export const api = {
     get: async () => ({ items: [], total: 0 })
   },
   commerce: {
-    calculateShipping: async (cart: any, pincode: string): Promise<{ rate: number, provider: string }> => {
-      // Simulate Shiprocket API call
-      return fetchFromERP('/shipping/calculate', { rate: pincode.startsWith('4') ? 0 : 250, provider: 'Delhivery' }, 1, 500);
+    calculateShipping: async (items: Array<{ productId: string; quantity: number }>, pincode: string): Promise<ShippingQuote> => {
+      return requestERP('/storefront/shipping/quote', {
+        method: 'POST',
+        body: JSON.stringify({ items, pincode })
+      });
     },
-    initiatePayment: async (cart: any, amount: number): Promise<{ orderId: string }> => {
-      // Simulate Razorpay Order Creation via ERP
-      return fetchFromERP('/payment/initiate', { orderId: `order_rc1_${Date.now()}` }, 1, 500);
+    initiatePayment: async (payload: any): Promise<any> => {
+      return requestERP('/storefront/payment/initiate', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
     },
-    verifyPayment: async (orderId: string, signature: string): Promise<{ success: boolean, erpOrderId: string }> => {
-      // Simulate ERP verifying Razorpay signature
-      return fetchFromERP('/payment/verify', { success: true, erpOrderId: `ARTZY-${Math.floor(Math.random() * 10000)}` }, 1, 500);
+    verifyPayment: async (payload: {
+      erpOrderId: string;
+      razorpay_order_id: string;
+      razorpay_payment_id: string;
+      razorpay_signature: string;
+    }): Promise<{ success: boolean; erpOrderId: string; orderNumber?: string }> => {
+      return requestERP('/storefront/payment/verify', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
     },
     getOrder: async (id: string) => {
       return fetchFromERP(`/orders/${id}`, {
@@ -361,6 +410,25 @@ export const api = {
         date: new Date().toISOString(),
         total: 24999
       }, 1, 200);
+    }
+  },
+  customerAuth: {
+    signup: async (name: string, email: string, password: string): Promise<any> => {
+      return requestERP('/storefront/auth/signup', {
+        method: 'POST',
+        body: JSON.stringify({ name, email, password })
+      });
+    },
+    login: async (email: string, password: string): Promise<any> => {
+      return requestERP('/storefront/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password })
+      });
+    },
+    me: async (accessToken: string): Promise<any> => {
+      return requestERP('/storefront/auth/me', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
     }
   }
 };
