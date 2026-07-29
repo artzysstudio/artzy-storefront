@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { api } from '@/lib/api';
 
 interface Collection {
   id: string;
@@ -20,9 +21,11 @@ interface CustomerContextType {
   createCollection: (name: string) => void;
   addToCollection: (collectionId: string, productId: string) => void;
   
-  // Basic Auth Shell
   isAuthenticated: boolean;
-  login: () => void;
+  user: { id?: string; name: string; email: string } | null;
+  isAuthLoading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (name: string, email: string, password: string) => Promise<{ emailConfirmationRequired: boolean }>;
   logout: () => void;
 }
 
@@ -33,6 +36,8 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
   const [recentlyViewed, setRecentlyViewed] = useState<string[]>([]);
   const [savedCollections, setSavedCollections] = useState<Collection[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<{ id?: string; name: string; email: string } | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   // Load from LocalStorage on mount (Fallback until ERP auth is live)
   useEffect(() => {
@@ -44,9 +49,24 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
       if (storedWishlist) setWishlist(JSON.parse(storedWishlist));
       if (storedRecent) setRecentlyViewed(JSON.parse(storedRecent));
       if (storedCollections) setSavedCollections(JSON.parse(storedCollections));
+      const accessToken = localStorage.getItem('artzy_customer_access_token');
+      if (accessToken) {
+        api.customerAuth.me(accessToken)
+          .then((result) => {
+            setUser(result.user);
+            setIsAuthenticated(true);
+          })
+          .catch(() => {
+            localStorage.removeItem('artzy_customer_access_token');
+            localStorage.removeItem('artzy_customer_refresh_token');
+          })
+          .finally(() => setIsAuthLoading(false));
+        return;
+      }
     } catch (e) {
       console.warn("Could not load customer state from localStorage", e);
     }
+    setIsAuthLoading(false);
   }, []);
 
   // Save to LocalStorage on change
@@ -85,15 +105,38 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
     }));
   };
 
-  const login = () => setIsAuthenticated(true);
-  const logout = () => setIsAuthenticated(false);
+  const saveSession = (result: any) => {
+    if (!result.accessToken) return;
+    localStorage.setItem('artzy_customer_access_token', result.accessToken);
+    if (result.refreshToken) localStorage.setItem('artzy_customer_refresh_token', result.refreshToken);
+    setUser(result.user);
+    setIsAuthenticated(true);
+  };
+
+  const login = async (email: string, password: string) => {
+    const result = await api.customerAuth.login(email, password);
+    saveSession(result);
+  };
+
+  const signup = async (name: string, email: string, password: string) => {
+    const result = await api.customerAuth.signup(name, email, password);
+    saveSession(result);
+    return { emailConfirmationRequired: Boolean(result.emailConfirmationRequired) };
+  };
+
+  const logout = () => {
+    localStorage.removeItem('artzy_customer_access_token');
+    localStorage.removeItem('artzy_customer_refresh_token');
+    setUser(null);
+    setIsAuthenticated(false);
+  };
 
   return (
     <CustomerContext.Provider value={{
       wishlist, addToWishlist, removeFromWishlist,
       recentlyViewed, addRecentlyViewed,
       savedCollections, createCollection, addToCollection,
-      isAuthenticated, login, logout
+      isAuthenticated, user, isAuthLoading, login, signup, logout
     }}>
       {children}
     </CustomerContext.Provider>
