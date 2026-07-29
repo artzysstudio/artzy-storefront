@@ -4,10 +4,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Product } from '@/lib/api';
 import ProductCard from '@/components/ProductCard';
 
+const ERP_PRODUCT_FEED =
+  process.env.NEXT_PUBLIC_ERP_API_URL || 'https://erp.artzysstudio.in/api';
+
 const slugify = (value: string) =>
   value.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
 export default function ShopClient({ initialProducts }: { initialProducts: Product[] }) {
+  const [products, setProducts] = useState<Product[]>(initialProducts);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedOccasion, setSelectedOccasion] = useState('');
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -15,23 +19,58 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
   const [sortBy, setSortBy] = useState('featured');
 
   const productCategories = useMemo(
-    () => Array.from(new Set(initialProducts.map((product) => product.category))).filter(Boolean),
-    [initialProducts],
+    () => Array.from(new Set(products.map((product) => product.category))).filter(Boolean),
+    [products],
   );
   const [categories, setCategories] = useState<string[]>(productCategories);
   const occasions = useMemo(
-    () => Array.from(new Set(initialProducts.flatMap((product) => product.occasion || []))).filter(Boolean),
-    [initialProducts],
+    () => Array.from(new Set(products.flatMap((product) => product.occasion || []))).filter(Boolean),
+    [products],
   );
   const rooms = useMemo(
-    () => Array.from(new Set(initialProducts.flatMap((product) => product.roomType || []))).filter(Boolean),
-    [initialProducts],
+    () => Array.from(new Set(products.flatMap((product) => product.roomType || []))).filter(Boolean),
+    [products],
   );
   const highestPrice = useMemo(
-    () => Math.max(0, ...initialProducts.map((product) => product.price)),
-    [initialProducts],
+    () => Math.max(0, ...products.map((product) => product.price)),
+    [products],
   );
   const [maxPrice, setMaxPrice] = useState(highestPrice);
+
+  useEffect(() => {
+    let isCurrent = true;
+    let controller: AbortController | null = null;
+
+    const refreshProducts = async () => {
+      controller?.abort();
+      controller = new AbortController();
+
+      try {
+        const response = await fetch(`${ERP_PRODUCT_FEED}/products/featured?ts=${Date.now()}`, {
+          cache: 'no-store',
+          headers: { Accept: 'application/json' },
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error(`Product sync failed with ${response.status}`);
+
+        const records = await response.json();
+        if (isCurrent && Array.isArray(records)) setProducts(records);
+      } catch (error) {
+        if (isCurrent && !(error instanceof DOMException && error.name === 'AbortError')) {
+          console.error('Unable to refresh products from Artzy ERP.', error);
+        }
+      }
+    };
+
+    void refreshProducts();
+    const refreshTimer = window.setInterval(refreshProducts, 60_000);
+
+    return () => {
+      isCurrent = false;
+      controller?.abort();
+      window.clearInterval(refreshTimer);
+    };
+  }, []);
 
   useEffect(() => {
     let isCurrent = true;
@@ -83,7 +122,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
   }, [mobileFiltersOpen]);
 
   const filteredProducts = useMemo(() => {
-    const filtered = initialProducts.filter((product) => {
+    const filtered = products.filter((product) => {
       if (selectedCategory && product.category !== selectedCategory) return false;
       if (selectedOccasion && (!product.occasion || !product.occasion.includes(selectedOccasion))) return false;
       if (selectedRoom && (!product.roomType || !product.roomType.includes(selectedRoom))) return false;
@@ -94,7 +133,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
     if (sortBy === 'price-high') return [...filtered].sort((a, b) => b.price - a.price);
     if (sortBy === 'name') return [...filtered].sort((a, b) => a.name.localeCompare(b.name));
     return filtered;
-  }, [initialProducts, maxPrice, selectedCategory, selectedOccasion, selectedRoom, sortBy]);
+  }, [products, maxPrice, selectedCategory, selectedOccasion, selectedRoom, sortBy]);
 
   const activeFilterCount =
     [selectedCategory, selectedOccasion, selectedRoom].filter(Boolean).length +
