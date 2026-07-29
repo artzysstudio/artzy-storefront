@@ -158,6 +158,15 @@ export default function CheckoutClient() {
       });
       
       // 3. Initialize Razorpay
+      let razorpayFinished = false;
+      let razorpayVisibilityTimer: ReturnType<typeof setTimeout> | null = null;
+      const finishRazorpayAttempt = (message: string) => {
+        if (razorpayFinished) return;
+        razorpayFinished = true;
+        if (razorpayVisibilityTimer) clearTimeout(razorpayVisibilityTimer);
+        setError(message);
+        setIsProcessing(false);
+      };
       const options = {
         key: paymentOrder.keyId,
         amount: paymentOrder.amount,
@@ -166,6 +175,7 @@ export default function CheckoutClient() {
         description: "Premium Handcrafted Art",
         order_id: paymentOrder.razorpayOrderId,
         handler: async function (response: any) {
+          if (razorpayVisibilityTimer) clearTimeout(razorpayVisibilityTimer);
           try {
             // 4. The ERP verifies all three Razorpay fields, fetches the live
             // payment and updates stock only after that verification succeeds.
@@ -176,15 +186,14 @@ export default function CheckoutClient() {
               razorpay_signature: response.razorpay_signature
             });
             if (verify.success) {
+              razorpayFinished = true;
               clearCart();
               router.push(`/checkout/success?orderId=${verify.erpOrderId}&guest=${authMode === 'guest'}`);
             } else {
-              setError('Payment verification failed.');
-              setIsProcessing(false);
+              finishRazorpayAttempt('Payment verification failed. No inventory was changed. Please contact Artzy’s Studio with your order number.');
             }
           } catch (err) {
-            setError('Error verifying payment.');
-            setIsProcessing(false);
+            finishRazorpayAttempt('Payment verification could not be completed. Please contact Artzy’s Studio before retrying.');
           }
         },
         prefill: {
@@ -194,15 +203,29 @@ export default function CheckoutClient() {
         },
         theme: {
           color: '#5C4033'
+        },
+        modal: {
+          ondismiss: function () {
+            finishRazorpayAttempt('Payment window closed. No payment was charged. You can safely try again.');
+          }
         }
       };
 
       const rzp = new (window as any).Razorpay(options);
       rzp.on('payment.failed', function (response: any){
-        setError(`Payment Failed: ${response.error.description}`);
-        setIsProcessing(false);
+        finishRazorpayAttempt(`Payment failed: ${response.error.description || 'Razorpay declined the payment attempt.'}`);
       });
       rzp.open();
+      razorpayVisibilityTimer = setTimeout(() => {
+        const checkoutVisible = Array.from(document.querySelectorAll<HTMLIFrameElement>('iframe[src*="razorpay.com"]'))
+          .some((frame) => {
+            const rect = frame.getBoundingClientRect();
+            return rect.width > 0 && rect.height > 0;
+          });
+        if (!checkoutVisible) {
+          finishRazorpayAttempt('Razorpay could not open payment options. No payment was charged. Please try again later.');
+        }
+      }, 10000);
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Payment gateway error. Please try again later.');
