@@ -270,7 +270,7 @@ export default function CheckoutClient() {
             </div>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <input required type="email" placeholder="Email" value={address.email} onChange={e => setAddress({...address, email: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
-              <input required type="tel" inputMode="numeric" pattern="[0-9 +()-]{10,16}" placeholder="10-digit Phone" value={address.phone} onChange={e => setAddress({...address, phone: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
+              <input required type="tel" inputMode="numeric" autoComplete="tel-national" pattern="[0-9]{10}" maxLength={10} placeholder="10-digit Phone" value={address.phone} onChange={e => setAddress({...address, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})} style={{ flex: 1, padding: '0.8rem' }} />
             </div>
             <input required type="text" placeholder="Street Address" value={address.address} onChange={e => setAddress({...address, address: e.target.value})} style={{ padding: '0.8rem' }} />
             <div style={{ display: 'flex', gap: '1rem' }}>
