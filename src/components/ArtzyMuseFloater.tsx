@@ -50,10 +50,19 @@ const answerQuestion = (question: string) => {
 
 function MuseMark() {
   return (
-    <svg viewBox="0 0 64 64" role="img" aria-label="Artzy Muse flower and sparkle">
-      <path d="M32 17c3-7 10-9 14-4 4 5 1 11-5 14 7-1 12 3 11 9-1 7-8 8-14 5 4 6 2 13-4 14-6 1-10-5-9-12-3 7-10 9-14 4-5-4-3-12 3-16-7 1-12-4-11-10 1-6 8-8 14-5-4-6-1-13 5-14 6-1 10 5 9 12Z" />
-      <circle cx="32" cy="34" r="7" />
-      <path className="muse-spark" d="M50 7l2.2 5.8L58 15l-5.8 2.2L50 23l-2.2-5.8L42 15l5.8-2.2L50 7Z" />
+    <svg viewBox="0 0 64 64" role="img" aria-label="Artzy Muse floral motif">
+      <g className="muse-flower-petals">
+        <ellipse cx="32" cy="17.5" rx="5.4" ry="10" />
+        <ellipse cx="32" cy="17.5" rx="5.4" ry="10" transform="rotate(45 32 32)" />
+        <ellipse cx="32" cy="17.5" rx="5.4" ry="10" transform="rotate(90 32 32)" />
+        <ellipse cx="32" cy="17.5" rx="5.4" ry="10" transform="rotate(135 32 32)" />
+        <ellipse cx="32" cy="17.5" rx="5.4" ry="10" transform="rotate(180 32 32)" />
+        <ellipse cx="32" cy="17.5" rx="5.4" ry="10" transform="rotate(225 32 32)" />
+        <ellipse cx="32" cy="17.5" rx="5.4" ry="10" transform="rotate(270 32 32)" />
+        <ellipse cx="32" cy="17.5" rx="5.4" ry="10" transform="rotate(315 32 32)" />
+      </g>
+      <circle className="muse-flower-centre" cx="32" cy="32" r="6.2" />
+      <circle className="muse-flower-dot" cx="32" cy="32" r="2.2" />
     </svg>
   );
 }
