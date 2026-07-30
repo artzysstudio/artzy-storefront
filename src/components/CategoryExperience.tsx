@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 
+const ARTZY_AI_ENABLED = false;
+
 const categories = [
   {
     name: "Hand-painted Art",
@@ -75,13 +77,13 @@ export default function CategoryExperience() {
                 </div>
                 <Link href={category.href}>Shop now →</Link>
               </div>
-              <button
+              {ARTZY_AI_ENABLED && <button
                 className="artzy-ai"
                 onClick={() => setVisualize(category)}
                 aria-label={`Visualize ${category.name} with ArtzyAI`}
               >
                 <span>✦</span> Visualize with ArtzyAI
-              </button>
+              </button>}
             </article>
           ))}
         </div>
@@ -94,7 +96,7 @@ export default function CategoryExperience() {
         </div>
       </section>
 
-      {visualize && (
+      {ARTZY_AI_ENABLED && visualize && (
         <div className="artzy-visualizer" role="dialog" aria-modal="true">
           <button
             className="artzy-visualizer__backdrop"

@@ -6,6 +6,8 @@ import { Product } from '@/lib/api';
 import Image from 'next/image';
 import Link from 'next/link';
 
+const ARTZY_AI_ENABLED = false;
+
 export default function ProductCard({ product, className }: { product: Product, className?: string }) {
   const { addToCart } = useCart();
   const [added, setAdded] = useState(false);
@@ -58,7 +60,7 @@ export default function ProductCard({ product, className }: { product: Product, 
       </div>
 
       <div className="product-card-actions">
-        <a
+        {ARTZY_AI_ENABLED && <a
           href={`https://artzyai.artzysstudio.in/?source=storefront&productId=${encodeURIComponent(String(product.id))}&productName=${encodeURIComponent(product.name)}&image=${encodeURIComponent(product.images?.[0] || '')}`}
           target="_blank"
           rel="noopener noreferrer"
@@ -66,7 +68,7 @@ export default function ProductCard({ product, className }: { product: Product, 
           aria-label={`Visualize ${product.name} with ArtzyAI`}
         >
           ✦ ArtzyAI
-        </a>
+        </a>}
         <button
           className={`quick-add-button${added ? ' added' : ''}`}
           disabled={product.isSoldOut}
