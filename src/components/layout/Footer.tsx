@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import SocialLinks from '@/components/SocialLinks';
 
 const WHATSAPP_URL = 'https://wa.me/919158680722';
 const MAP_URL = 'https://maps.app.goo.gl/WQ3CbkywNQCoNx6g9';
@@ -14,6 +15,7 @@ export default function Footer() {
               The creative world of artist Deepti J. Shah—hand-painted art,
               digital prints, caricatures and meaningful gifts.
             </p>
+            <SocialLinks location="footer" />
           </div>
           <div className="footer-col">
             <h4>Shop Artzy</h4>
