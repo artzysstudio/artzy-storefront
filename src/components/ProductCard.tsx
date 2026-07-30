@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 const ARTZY_AI_ENABLED = false;
 
-export default function ProductCard({ product, className }: { product: Product, className?: string }) {
+export default function ProductCard({ product, className, onView }: { product: Product, className?: string, onView?: () => void }) {
   const { addToCart } = useCart();
   const [added, setAdded] = useState(false);
   const isCorporate = product.collectionId === 'c-corporate-gifts';
@@ -24,38 +24,46 @@ export default function ProductCard({ product, className }: { product: Product, 
     window.setTimeout(() => setAdded(false), 1800);
   };
 
+  const productImage = (
+    <>
+      {product.images?.[0] ? (
+        <Image
+          src={product.images[0]}
+          alt={product.name}
+          fill
+          sizes="(max-width: 560px) 50vw, (max-width: 1024px) 33vw, 300px"
+          className="product-image"
+          style={{ objectFit: 'cover' }}
+          unoptimized
+        />
+      ) : (
+        <img
+          src="/images/deepti_painting.png"
+          alt={product.name}
+          className="product-image"
+        />
+      )}
+      {product.isSoldOut && <span className="product-status">Sold out</span>}
+    </>
+  );
+
   return (
     <article className={`product-card ${className || ''}`}>
-      <Link
-        href={`/shop?product=${encodeURIComponent(String(product.id))}`}
-        className="product-image-wrapper"
-        aria-label={`View ${product.name}`}
-      >
-        {product.images?.[0] ? (
-          <Image
-            src={product.images[0]}
-            alt={product.name}
-            fill
-            sizes="(max-width: 560px) 50vw, (max-width: 1024px) 33vw, 300px"
-            className="product-image"
-            style={{ objectFit: 'cover' }}
-            unoptimized
-          />
-        ) : (
-          <img
-            src="/images/deepti_painting.png"
-            alt={product.name}
-            className="product-image"
-          />
-        )}
-        {product.isSoldOut && <span className="product-status">Sold out</span>}
-      </Link>
+      {onView ? (
+        <button type="button" className="product-image-wrapper product-view-trigger" aria-label={`View ${product.name}`} onClick={onView}>
+          {productImage}
+        </button>
+      ) : (
+        <Link href={`/shop?product=${encodeURIComponent(String(product.id))}`} className="product-image-wrapper" aria-label={`View ${product.name}`}>
+          {productImage}
+        </Link>
+      )}
 
       <div className="product-meta">
         <span className="product-category">{product.category}</span>
-        <Link href={`/shop?product=${encodeURIComponent(String(product.id))}`} className="product-name-link">
+        {onView ? <button type="button" className="product-name-link product-name-trigger" onClick={onView}>
           <h3 className="product-name">{product.name}</h3>
-        </Link>
+        </button> : <Link href={`/shop?product=${encodeURIComponent(String(product.id))}`} className="product-name-link"><h3 className="product-name">{product.name}</h3></Link>}
         <span className="product-price">₹{product.price.toLocaleString('en-IN')}</span>
       </div>
 
