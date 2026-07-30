@@ -7,6 +7,7 @@ import ProductDetailModal from '@/components/ProductDetailModal';
 
 const ERP_PRODUCT_FEED =
   process.env.NEXT_PUBLIC_ERP_API_URL || 'https://erp.artzysstudio.in/api';
+const PRODUCT_BATCH_SIZE = 12;
 
 const slugify = (value: string) =>
   value.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -19,7 +20,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [visibleCount, setVisibleCount] = useState(12);
+  const [visibleCount, setVisibleCount] = useState(PRODUCT_BATCH_SIZE);
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   const productCategories = useMemo(
@@ -136,7 +137,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
   const remainingProducts = Math.max(0, filteredProducts.length - visibleProducts.length);
 
   useEffect(() => {
-    setVisibleCount(12);
+    setVisibleCount(PRODUCT_BATCH_SIZE);
   }, [maxPrice, selectedCategory, selectedOccasion, selectedRoom, sortBy]);
 
   useEffect(() => {
@@ -303,8 +304,8 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
               {remainingProducts > 0 && (
                 <div className="shop-load-more">
                   <p>Showing {visibleProducts.length} of {filteredProducts.length} pieces</p>
-                  <button type="button" onClick={() => setVisibleCount((count) => count + 12)}>
-                    View 12 more <span>{remainingProducts} remaining</span>
+                  <button type="button" onClick={() => setVisibleCount((count) => count + PRODUCT_BATCH_SIZE)}>
+                    View {PRODUCT_BATCH_SIZE} more <span>{remainingProducts} remaining</span>
                   </button>
                 </div>
               )}
