@@ -186,6 +186,123 @@ export default function ProductDetailModal({
           </button>
         </section>
       </article>
+      <style jsx global>{`
+        @media (min-width: 769px) {
+          .product-detail-backdrop {
+            display: grid !important;
+            place-items: center !important;
+            padding: clamp(20px, 3vw, 48px) !important;
+          }
+          .product-detail-modal {
+            grid-template-columns: minmax(0, 1.08fr) minmax(390px, .92fr) !important;
+            width: min(1280px, 96vw) !important;
+            height: min(86vh, 820px) !important;
+            max-height: 820px !important;
+            overflow: hidden !important;
+            border: 1px solid rgba(72, 53, 43, .1);
+            border-radius: 20px !important;
+          }
+          .product-gallery {
+            grid-template-rows: minmax(0, 1fr) auto !important;
+            min-height: 0 !important;
+            height: 100% !important;
+            padding: 24px !important;
+            border-right: 1px solid rgba(72, 53, 43, .1);
+            background: #eee8df;
+          }
+          .product-gallery-stage {
+            width: 100%;
+            height: 100% !important;
+            min-height: 0 !important;
+            border-radius: 14px;
+            background: #f8f4ee;
+          }
+          .product-gallery-stage img {
+            object-fit: contain !important;
+            padding: clamp(12px, 2vw, 24px) !important;
+          }
+          .product-gallery-thumbs {
+            grid-template-columns: repeat(4, minmax(0, 88px)) !important;
+            justify-content: center;
+            gap: 10px;
+          }
+          .product-gallery-thumbs button { min-height: 72px !important; }
+          .product-detail-copy {
+            height: 100%;
+            overflow-y: auto !important;
+            padding: clamp(40px, 4vw, 58px) clamp(34px, 4vw, 54px) 44px !important;
+            scrollbar-width: thin;
+            scrollbar-color: #cda9a2 transparent;
+          }
+          .product-detail-copy h2 {
+            max-width: 13ch;
+            margin-top: 12px;
+            font-size: clamp(2.35rem, 3.2vw, 3.5rem) !important;
+            line-height: .98 !important;
+          }
+          .product-detail-price { margin-top: 22px; font-size: 1.55rem; }
+          .product-detail-add {
+            position: sticky;
+            bottom: 0;
+            min-height: 56px;
+            margin-top: 6px;
+            box-shadow: 0 -12px 22px #fffaf4;
+          }
+          .product-detail-close { top: 18px; right: 18px; }
+        }
+
+        @media (max-width: 768px) {
+          .product-detail-backdrop {
+            display: flex !important;
+            align-items: flex-end !important;
+            padding: 0 !important;
+          }
+          .product-detail-modal {
+            display: block !important;
+            width: 100% !important;
+            height: min(94dvh, 900px) !important;
+            max-height: 94dvh !important;
+            overflow-y: auto !important;
+            border-radius: 18px 18px 0 0 !important;
+          }
+          .product-gallery {
+            display: grid !important;
+            grid-template-rows: minmax(0, 1fr) auto !important;
+            width: 100%;
+            height: min(52vh, 470px) !important;
+            min-height: 390px !important;
+            padding: 12px !important;
+          }
+          .product-gallery-stage {
+            width: 100%;
+            height: 100% !important;
+            min-height: 0 !important;
+            border-radius: 10px;
+          }
+          .product-gallery-stage img { padding: 8px !important; }
+          .product-gallery-thumbs {
+            grid-template-columns: repeat(4, minmax(0, 68px)) !important;
+            justify-content: center;
+            gap: 7px;
+            padding-top: 8px;
+          }
+          .product-gallery-thumbs button { min-height: 54px !important; }
+          .product-detail-copy {
+            overflow: visible !important;
+            padding: 26px 20px calc(30px + env(safe-area-inset-bottom)) !important;
+          }
+          .product-detail-copy h2 {
+            max-width: 15ch;
+            font-size: clamp(2rem, 10vw, 2.65rem) !important;
+            line-height: 1 !important;
+          }
+          .product-detail-close {
+            position: fixed;
+            top: max(12px, env(safe-area-inset-top));
+            right: 12px;
+          }
+        }
+      `}</style>
     </div>
   );
 }
