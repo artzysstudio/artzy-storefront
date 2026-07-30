@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 import LaunchGate from "@/components/LaunchGate";
+import ArtzyMuseFloater from "@/components/ArtzyMuseFloater";
+import MediaProtection from "@/components/MediaProtection";
 
 const cormorant = Cormorant_Garamond({
   weight: ['300', '400', '500', '600'],
@@ -49,7 +51,11 @@ export default function RootLayout({
       <body>
         <CustomerProvider>
           <CartProvider>
-            <LaunchGate>{children}</LaunchGate>
+            <LaunchGate>
+              {children}
+              <MediaProtection />
+              <ArtzyMuseFloater />
+            </LaunchGate>
           </CartProvider>
         </CustomerProvider>
       </body>
