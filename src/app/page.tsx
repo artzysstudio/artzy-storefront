@@ -7,6 +7,8 @@ import ArtzyMuse from '@/components/muse/ArtzyMuse';
 import { api } from '@/lib/api';
 import Link from 'next/link';
 
+const ARTZY_AI_ENABLED = false;
+
 export default async function Home() {
   const products = await api.products.list();
 
@@ -32,7 +34,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="section container home-muse">
+        {ARTZY_AI_ENABLED && <section className="section container home-muse">
           <ArtzyMuse content={{
             title: 'Imagine it in your space.',
             subtitle: 'ArtzyAI',
@@ -40,7 +42,7 @@ export default async function Home() {
             ctaText: 'Try ArtzyAI',
             ctaLink: '/shop'
           }} />
-        </section>
+        </section>}
       </main>
       <Footer />
     </>
