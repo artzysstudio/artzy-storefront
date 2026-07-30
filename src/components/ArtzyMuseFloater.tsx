@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ARTZY_LOGO } from "@/components/layout/Header";
 
 const musePaths = [
   // Keep each route direct and descriptive for first-time mobile shoppers.
@@ -47,7 +48,7 @@ export default function ArtzyMuseFloater() {
         onClick={() => setIsOpen((open) => !open)}
       >
         <span className="muse-floater-mark" aria-hidden="true">
-          <img src="/artzy-logo.png" alt="" draggable="false" />
+          <img src={ARTZY_LOGO} alt="" draggable="false" />
         </span>
         <span className="muse-floater-copy"><strong>Ask me</strong><small>Artzy Muse</small></span>
       </button>
@@ -57,7 +58,7 @@ export default function ArtzyMuseFloater() {
         <aside id="artzy-muse-guide" className="muse-guide" role="dialog" aria-modal="true" aria-labelledby="muse-guide-title">
           <div className="muse-guide-top">
             <div className="muse-guide-brand">
-              <img src="/artzy-logo.png" alt="Artzy's Studio" draggable="false" />
+              <img src={ARTZY_LOGO} alt="Artzy's Studio" draggable="false" />
               <span>Artzy Muse</span>
             </div>
             <button type="button" aria-label="Close Artzy Muse" onClick={() => setIsOpen(false)}>×</button>
