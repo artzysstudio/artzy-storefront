@@ -163,6 +163,55 @@ export default function ArtzyMuseFloater() {
           </Link>
         </aside>
       </div>
+      <style jsx global>{`
+        .muse-floater-mark {
+          overflow: visible !important;
+          background: #a64e52 !important;
+          color: #fffaf4 !important;
+          box-shadow: inset 0 0 0 1px rgba(255,255,255,.32), 0 5px 14px rgba(113,47,52,.18) !important;
+        }
+        .muse-panel-mark,
+        .muse-message > span {
+          background: #a64e52 !important;
+          color: #fffaf4 !important;
+        }
+        .muse-flower-petals ellipse {
+          fill: none;
+          stroke: currentColor;
+          stroke-width: 2.15;
+        }
+        .muse-flower-centre {
+          fill: #a64e52;
+          stroke: currentColor;
+          stroke-width: 2;
+        }
+        .muse-flower-dot { fill: #f3cf92; stroke: none; }
+        .muse-floater-mark::after { border-color: rgba(166,78,82,.25) !important; }
+        .muse-quick-questions {
+          display: grid !important;
+          grid-auto-flow: column;
+          grid-auto-columns: max-content;
+          justify-content: start;
+          width: 100%;
+          max-width: 100%;
+          overflow-x: auto !important;
+          overflow-y: hidden;
+          padding: 12px 2px 11px !important;
+          scroll-padding-inline: 2px;
+          scroll-snap-type: x proximity;
+          scrollbar-width: thin !important;
+          scrollbar-color: #c98e91 #f1e5dc;
+          overscroll-behavior-inline: contain;
+          touch-action: pan-x;
+        }
+        .muse-quick-questions::-webkit-scrollbar { display: block !important; height: 4px; }
+        .muse-quick-questions::-webkit-scrollbar-track { background: #f1e5dc; border-radius: 99px; }
+        .muse-quick-questions::-webkit-scrollbar-thumb { background: #c98e91; border-radius: 99px; }
+        .muse-quick-questions button {
+          scroll-snap-align: start;
+          white-space: nowrap;
+        }
+      `}</style>
     </>
   );
 }
