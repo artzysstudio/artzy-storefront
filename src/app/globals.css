@@ -1156,6 +1156,42 @@ img, video, canvas { max-width: 100%; height: auto; }
   }
 }
 
+/* Keep Artzy Muse compact, reachable and unobtrusive on touch screens. */
+@media screen and (max-width: 768px) {
+  .muse-floater {
+    right: 12px !important;
+    bottom: max(14px, calc(env(safe-area-inset-bottom) + 10px)) !important;
+    width: 58px !important;
+    min-width: 58px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    padding: 6px !important;
+  }
+
+  .muse-floater-copy {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    white-space: nowrap !important;
+  }
+
+  .muse-floater-mark {
+    width: 46px;
+    height: 46px;
+  }
+
+  .muse-guide {
+    width: min(94vw, 430px);
+    padding-inline: 20px;
+  }
+
+  .muse-guide-intro h2 {
+    font-size: 2.1rem;
+  }
+}
+
 
 /* Premium Contact experience */
 .contact-page{background:#f8f1e8;color:var(--text-main)}
