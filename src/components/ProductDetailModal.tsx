@@ -259,10 +259,13 @@ export default function ProductDetailModal({
           }
           .product-detail-modal {
             display: block !important;
-            width: 100% !important;
+            width: 100dvw !important;
+            max-width: 100dvw !important;
             height: min(94dvh, 900px) !important;
             max-height: 94dvh !important;
+            overflow-x: hidden !important;
             overflow-y: auto !important;
+            overscroll-behavior: contain;
             border-radius: 18px 18px 0 0 !important;
           }
           .product-gallery {
