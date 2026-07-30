@@ -39,6 +39,19 @@ export interface ProductSEO {
   keywords: string[];
 }
 
+export interface ProductVariant {
+  id?: string;
+  sku?: string;
+  name?: string;
+  title?: string;
+  option?: string;
+  value?: string;
+  price?: number;
+  quantity?: number;
+  isAvailable?: boolean;
+  attributes?: Record<string, string>;
+}
+
 export interface Product {
   id: string;
   sku?: string;
@@ -48,6 +61,7 @@ export interface Product {
   salePrice?: number | null;
   quantity?: number;
   images: string[];
+  variants?: ProductVariant[];
   videoUrl?: string;
   
   // PIM Extended Fields
