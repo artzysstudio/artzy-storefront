@@ -11,6 +11,8 @@ const SmartSearch = dynamic(() => import('@/components/search/SmartSearch'), {
   ssr: false,
 });
 
+const ARTZY_AI_ENABLED = false;
+
 export default function Header() {
   const { cartCount } = useCart();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -29,9 +31,9 @@ export default function Header() {
           <Link href="/shop/?category=personalised-gifts">Personalised gifts</Link>
           <Link href="/shop/?category=corporate-gifts">Corporate gifts</Link>
           <Link href="/about">Meet Deepti</Link>
-          <a href="https://artzyai.artzysstudio.in/" className="artzy-ai-nav" target="_blank" rel="noreferrer" aria-label="Visualise your space with ArtzyAI">
+          {ARTZY_AI_ENABLED && <a href="https://artzyai.artzysstudio.in/" className="artzy-ai-nav" target="_blank" rel="noreferrer" aria-label="Visualise your space with ArtzyAI">
             <span aria-hidden="true">✦</span> Try ArtzyAI
-          </a>
+          </a>}
         </nav>
 
         <Link href="/" className="header-logo" aria-label="Artzy's Studio by Deepti J. Shah — home">
@@ -50,9 +52,9 @@ export default function Header() {
           >
             <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
           </button>
-          <a href="https://artzyai.artzysstudio.in/" className="artzy-ai-mobile-nav" target="_blank" rel="noreferrer" aria-label="Visualise with ArtzyAI">
+          {ARTZY_AI_ENABLED && <a href="https://artzyai.artzysstudio.in/" className="artzy-ai-mobile-nav" target="_blank" rel="noreferrer" aria-label="Visualise with ArtzyAI">
             <span aria-hidden="true">✦</span> ArtzyAI
-          </a>
+          </a>}
           <button className="header-icon" aria-label="Search" onClick={() => setIsSearchOpen(true)}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <circle cx="11" cy="11" r="8"></circle>
@@ -91,7 +93,7 @@ export default function Header() {
             <Link href="/about" onClick={() => setIsMenuOpen(false)}>Meet Deepti</Link>
             <Link href="/contact" onClick={() => setIsMenuOpen(false)}>Contact & visit the studio</Link>
           </div>
-          <a className="mobile-menu-artzyai" href="https://artzyai.artzysstudio.in/" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)}>✦ Visualise with ArtzyAI <span>→</span></a>
+          {ARTZY_AI_ENABLED && <a className="mobile-menu-artzyai" href="https://artzyai.artzysstudio.in/" target="_blank" rel="noopener noreferrer" onClick={() => setIsMenuOpen(false)}>✦ Visualise with ArtzyAI <span>→</span></a>}
         </nav>
       </div>
 
