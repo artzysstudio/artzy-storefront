@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const musePaths = [
+  // Keep each route direct and descriptive for first-time mobile shoppers.
   {
     title: "Find the right piece",
     hint: "Tell us the room, colour mood or budget you have in mind.",
