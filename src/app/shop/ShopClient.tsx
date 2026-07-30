@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Product } from '@/lib/api';
 import ProductCard from '@/components/ProductCard';
+import ProductDetailModal from '@/components/ProductDetailModal';
 
 const ERP_PRODUCT_FEED =
   process.env.NEXT_PUBLIC_ERP_API_URL || 'https://erp.artzysstudio.in/api';
@@ -17,6 +18,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
   const [selectedRoom, setSelectedRoom] = useState('');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const productCategories = useMemo(
     () => Array.from(new Set(products.map((product) => product.category))).filter(Boolean),
@@ -81,6 +83,27 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
     );
     if (matchingCategory) setSelectedCategory(matchingCategory);
   }, [categories, highestPrice]);
+
+  useEffect(() => {
+    const requestedProduct = new URLSearchParams(window.location.search).get('product');
+    if (!requestedProduct) return;
+    const match = products.find((product) => String(product.id) === requestedProduct);
+    if (match) setSelectedProduct(match);
+  }, [products]);
+
+  const openProduct = (product: Product) => {
+    setSelectedProduct(product);
+    const url = new URL(window.location.href);
+    url.searchParams.set('product', String(product.id));
+    window.history.replaceState({}, '', url);
+  };
+
+  const closeProduct = () => {
+    setSelectedProduct(null);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('product');
+    window.history.replaceState({}, '', url);
+  };
 
   useEffect(() => {
     document.body.style.overflow = mobileFiltersOpen ? 'hidden' : '';
@@ -252,7 +275,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
         <section className="shop-results" aria-live="polite">
           {filteredProducts.length > 0 ? (
             <div className="product-grid">
-              {filteredProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+              {filteredProducts.map((product) => <ProductCard key={product.id} product={product} onView={() => openProduct(product)} />)}
             </div>
           ) : (
             <div className="empty-results">
@@ -291,6 +314,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
           </aside>
         </div>
       )}
+      {selectedProduct && <ProductDetailModal product={selectedProduct} onClose={closeProduct} />}
     </div>
   );
 }
