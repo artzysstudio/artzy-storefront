@@ -1938,10 +1938,14 @@ body {
 
 /* Fast, organised catalogue navigation */
 .header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  right: 0;
+  left: 0;
+  width: 100%;
   z-index: 1000;
 }
+.announcement { margin-top: 82px; }
 
 .shop-controls {
   position: sticky;
@@ -2054,6 +2058,7 @@ body {
 .back-to-top strong { font-size: .75rem; letter-spacing: .04em; text-transform: uppercase; }
 
 @media (max-width: 768px) {
+  .announcement { margin-top: 58px; }
   .shop-controls {
     top: 58px;
     margin-inline: -.75rem;
