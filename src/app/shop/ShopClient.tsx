@@ -19,6 +19,8 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [visibleCount, setVisibleCount] = useState(12);
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   const productCategories = useMemo(
     () => Array.from(new Set(products.map((product) => product.category))).filter(Boolean),
@@ -130,6 +132,20 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
     [selectedCategory, selectedOccasion, selectedRoom].filter(Boolean).length +
     (maxPrice < highestPrice ? 1 : 0);
 
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
+  const remainingProducts = Math.max(0, filteredProducts.length - visibleProducts.length);
+
+  useEffect(() => {
+    setVisibleCount(12);
+  }, [maxPrice, selectedCategory, selectedOccasion, selectedRoom, sortBy]);
+
+  useEffect(() => {
+    const updateBackToTop = () => setShowBackToTop(window.scrollY > 650);
+    updateBackToTop();
+    window.addEventListener('scroll', updateBackToTop, { passive: true });
+    return () => window.removeEventListener('scroll', updateBackToTop);
+  }, []);
+
   const clearFilters = () => {
     setSelectedCategory('');
     setSelectedOccasion('');
@@ -139,7 +155,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
 
   const chooseCategory = (category: string) => {
     setSelectedCategory(category);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('shop-products')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const filterPanel = (
@@ -231,42 +247,48 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
 
   return (
     <div className="shop-shell container">
-      <nav className="category-strip" aria-label="Shop categories">
-        <button className={!selectedCategory ? 'active' : ''} onClick={() => chooseCategory('')}>All</button>
-        {categories.map((category) => (
-          <button
-            className={selectedCategory === category ? 'active' : ''}
-            key={category}
-            onClick={() => chooseCategory(category)}
-          >
-            {category}
-          </button>
-        ))}
-      </nav>
-
-      <div className="shop-toolbar">
-        <div className="results-count"><strong>{filteredProducts.length}</strong> pieces</div>
-        <div className="shop-toolbar-actions">
-          <button
-            className="mobile-filter-button"
-            onClick={() => setMobileFiltersOpen(true)}
-            aria-expanded={mobileFiltersOpen}
-          >
-            Filters {activeFilterCount > 0 && <span>{activeFilterCount}</span>}
-          </button>
-          <label className="sort-control">
-            <span>Sort</span>
-            <select
-              value={sortBy}
-              onChange={(event) => setSortBy(event.target.value)}
-              aria-label="Sort products"
+      <div className="shop-controls" id="shop-products">
+        <div className="category-strip-heading">
+          <strong>Browse categories</strong>
+          <span>Swipe or tap to explore</span>
+        </div>
+        <nav className="category-strip" aria-label="Shop categories">
+          <button className={!selectedCategory ? 'active' : ''} onClick={() => chooseCategory('')}>All products</button>
+          {categories.map((category) => (
+            <button
+              className={selectedCategory === category ? 'active' : ''}
+              key={category}
+              onClick={() => chooseCategory(category)}
             >
-              <option value="featured">Featured</option>
-              <option value="price-low">Price: Low to high</option>
-              <option value="price-high">Price: High to low</option>
-              <option value="name">Name</option>
-            </select>
-          </label>
+              {category}
+            </button>
+          ))}
+        </nav>
+
+        <div className="shop-toolbar">
+          <div className="results-count"><strong>{filteredProducts.length}</strong> pieces</div>
+          <div className="shop-toolbar-actions">
+            <button
+              className="mobile-filter-button"
+              onClick={() => setMobileFiltersOpen(true)}
+              aria-expanded={mobileFiltersOpen}
+            >
+              Filters {activeFilterCount > 0 && <span>{activeFilterCount}</span>}
+            </button>
+            <label className="sort-control">
+              <span>Sort</span>
+              <select
+                value={sortBy}
+                onChange={(event) => setSortBy(event.target.value)}
+                aria-label="Sort products"
+              >
+                <option value="featured">Featured</option>
+                <option value="price-low">Price: Low to high</option>
+                <option value="price-high">Price: High to low</option>
+                <option value="name">Name</option>
+              </select>
+            </label>
+          </div>
         </div>
       </div>
 
@@ -274,9 +296,19 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
         <aside className="shop-filters desktop-filters">{filterPanel}</aside>
         <section className="shop-results" aria-live="polite">
           {filteredProducts.length > 0 ? (
-            <div className="product-grid">
-              {filteredProducts.map((product) => <ProductCard key={product.id} product={product} onView={() => openProduct(product)} />)}
-            </div>
+            <>
+              <div className="product-grid">
+                {visibleProducts.map((product) => <ProductCard key={product.id} product={product} onView={() => openProduct(product)} />)}
+              </div>
+              {remainingProducts > 0 && (
+                <div className="shop-load-more">
+                  <p>Showing {visibleProducts.length} of {filteredProducts.length} pieces</p>
+                  <button type="button" onClick={() => setVisibleCount((count) => count + 12)}>
+                    View 12 more <span>{remainingProducts} remaining</span>
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="empty-results">
               <h2>No pieces match these filters</h2>
@@ -315,6 +347,15 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
         </div>
       )}
       {selectedProduct && <ProductDetailModal product={selectedProduct} onClose={closeProduct} />}
+      <button
+        className={`back-to-top${showBackToTop ? ' visible' : ''}`}
+        type="button"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="Back to top"
+      >
+        <span aria-hidden="true">↑</span>
+        <strong>Top</strong>
+      </button>
     </div>
   );
 }
