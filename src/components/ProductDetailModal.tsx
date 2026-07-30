@@ -7,6 +7,7 @@ import { useCart } from "@/context/CartContext";
 
 const FALLBACK_IMAGE = "/images/deepti_painting.png";
 
+// Optional ERP fields are rendered only when the product feed provides them.
 const variantLabel = (variant: ProductVariant, index: number) =>
   variant.name ||
   variant.title ||
