@@ -1,33 +1,71 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { ARTZY_LOGO } from "@/components/layout/Header";
+import { FormEvent, useEffect, useRef, useState } from "react";
 
-const musePaths = [
-  // Keep each route direct and descriptive for first-time mobile shoppers.
+type MuseMessage = { id: number; role: "assistant" | "customer"; text: string };
+
+const quickQuestions = [
+  "Help me choose a gift",
+  "What can be customised?",
+  "Delivery and availability",
+];
+
+const studioAnswers = [
   {
-    title: "Find the right piece",
-    hint: "Tell us the room, colour mood or budget you have in mind.",
-    href: "/shop",
-    label: "Explore the collection",
+    words: ["gift", "birthday", "anniversary", "wedding", "occasion"],
+    answer: "For a meaningful gift, tell me the occasion, recipient, budget and required date. Artzy’s Studio can suggest personalised art, caricatures, hand-painted pieces, combination gifts or corporate gifting options.",
   },
   {
-    title: "Create a personal gift",
-    hint: "Share the occasion, recipient and story you want the gift to carry.",
-    href: "/contact?type=personalised",
-    label: "Plan a personal gift",
+    words: ["custom", "customise", "customized", "personalise", "personalised"],
+    answer: "Custom work can include names, messages, colours, themes, portraits, caricatures, sizes and corporate branding. Final possibilities depend on the chosen product, material and delivery date.",
   },
   {
-    title: "Discuss custom or corporate work",
-    hint: "Ask about quantities, timelines, themes, branding and custom artwork.",
-    href: "/contact?type=corporate",
-    label: "Start a conversation",
+    words: ["digital", "print", "abstract", "geometric", "decor"],
+    answer: "Digital prints can be created for home or corporate décor in modern, abstract, geometric and requirement-led styles. Share your wall size, colour palette and a room photograph for a clearer recommendation.",
+  },
+  {
+    words: ["caricature", "portrait", "face", "photo"],
+    answer: "A caricature turns a person, couple, family or team into a character-led artwork. A clear front-facing photograph, preferred theme, names and occasion help the studio prepare the brief.",
+  },
+  {
+    words: ["corporate", "bulk", "employee", "client", "branding"],
+    answer: "Corporate gifts can be planned around quantity, budget, branding, recipient type and delivery schedule. The studio confirms samples, production timing and branding feasibility before the order.",
+  },
+  {
+    words: ["delivery", "dispatch", "stock", "available", "availability", "time"],
+    answer: "Stock and variants are shown on each product. Ready pieces usually dispatch in 3–5 working days; made-to-order and personalised work receives a studio-confirmed timeline before production.",
+  },
+  {
+    words: ["visit", "address", "location", "pune", "contact", "whatsapp"],
+    answer: "Visit Artzy’s Studio at Prashant Society, Preetishilp Building, Ground Floor, Lane 3, Plot 22, Paud Road, Kothrud, Pune 411038. You may also WhatsApp +91 91586 80722 or email artzysstudio@gmail.com.",
   },
 ];
 
+const answerQuestion = (question: string) => {
+  const normalised = question.toLowerCase();
+  const match = studioAnswers.find((entry) => entry.words.some((word) => normalised.includes(word)));
+  return match?.answer || "I can help with product selection, personalised gifts, digital prints, caricatures, corporate orders, stock, delivery and visiting the studio. Ask in your own words, or contact Deepti’s studio for a personal recommendation.";
+};
+
+function MuseMark() {
+  return (
+    <svg viewBox="0 0 64 64" role="img" aria-label="Artzy Muse flower and sparkle">
+      <path d="M32 17c3-7 10-9 14-4 4 5 1 11-5 14 7-1 12 3 11 9-1 7-8 8-14 5 4 6 2 13-4 14-6 1-10-5-9-12-3 7-10 9-14 4-5-4-3-12 3-16-7 1-12-4-11-10 1-6 8-8 14-5-4-6-1-13 5-14 6-1 10 5 9 12Z" />
+      <circle cx="32" cy="34" r="7" />
+      <path className="muse-spark" d="M50 7l2.2 5.8L58 15l-5.8 2.2L50 23l-2.2-5.8L42 15l5.8-2.2L50 7Z" />
+    </svg>
+  );
+}
+
 export default function ArtzyMuseFloater() {
   const [isOpen, setIsOpen] = useState(false);
+  const [question, setQuestion] = useState("");
+  const [messages, setMessages] = useState<MuseMessage[]>([
+    { id: 1, role: "assistant", text: "Namaste. I’m Artzy Muse, your studio guide. Tell me what you are choosing, who it is for, or where the artwork will live." },
+  ]);
+  const nextId = useRef(2);
+  const conversationEnd = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -36,6 +74,26 @@ export default function ArtzyMuseFloater() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  useEffect(() => {
+    if (isOpen) conversationEnd.current?.scrollIntoView({ behavior: "smooth" });
+  }, [isOpen, messages]);
+
+  const ask = (text: string) => {
+    const clean = text.trim();
+    if (!clean) return;
+    setMessages((current) => [
+      ...current,
+      { id: nextId.current++, role: "customer", text: clean },
+      { id: nextId.current++, role: "assistant", text: answerQuestion(clean) },
+    ]);
+    setQuestion("");
+  };
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    ask(question);
+  };
 
   return (
     <>
@@ -47,57 +105,52 @@ export default function ArtzyMuseFloater() {
         aria-controls="artzy-muse-guide"
         onClick={() => setIsOpen((open) => !open)}
       >
-        <span className="muse-floater-mark" aria-hidden="true">
-          <img src={ARTZY_LOGO} alt="" draggable="false" />
-        </span>
-        <span className="muse-floater-copy"><strong>Ask me</strong><small>Artzy Muse</small></span>
+        <span className="muse-floater-mark" aria-hidden="true"><MuseMark /></span>
+        <span className="muse-floater-copy"><strong>Ask Artzy Muse</strong><small>Your studio guide</small></span>
       </button>
 
       <div className={`muse-guide-shell${isOpen ? " open" : ""}`} aria-hidden={!isOpen}>
         <button className="muse-guide-backdrop" type="button" aria-label="Close Artzy Muse" onClick={() => setIsOpen(false)} />
-        <aside id="artzy-muse-guide" className="muse-guide" role="dialog" aria-modal="true" aria-labelledby="muse-guide-title">
+        <aside id="artzy-muse-guide" className="muse-guide muse-chat" role="dialog" aria-modal="true" aria-labelledby="muse-guide-title">
           <div className="muse-guide-top">
             <div className="muse-guide-brand">
-              <img src={ARTZY_LOGO} alt="Artzy's Studio" draggable="false" />
-              <span>Artzy Muse</span>
+              <span className="muse-panel-mark" aria-hidden="true"><MuseMark /></span>
+              <div><strong>Artzy Muse</strong><small>Artzy’s Studio assistant</small></div>
             </div>
-            <button type="button" aria-label="Close Artzy Muse" onClick={() => setIsOpen(false)}>×</button>
+            <button type="button" aria-label="Close Artzy Muse" onClick={() => setIsOpen(false)}>&times;</button>
           </div>
 
-          <div className="muse-guide-intro">
-            <span>Your studio guide</span>
-            <h2 id="muse-guide-title">A little help choosing something meaningful.</h2>
-            <p>
-              Artzy Muse helps you understand the collection, narrow down gift ideas
-              and prepare a clear brief for Deepti and the studio.
-            </p>
-            <small>
-              This guided assistant does not replace personal advice. For custom
-              artwork, availability or delivery commitments, the studio confirms every detail.
-            </small>
+          <div className="muse-chat-intro">
+            <span>ASK • DISCOVER • CREATE</span>
+            <h2 id="muse-guide-title">How may I help?</h2>
+            <p>Get relevant guidance about the collection, customisation, gifting, delivery and the studio.</p>
           </div>
 
-          <div className="muse-guide-paths">
-            {musePaths.map((path, index) => (
-              <Link href={path.href} key={path.title} onClick={() => setIsOpen(false)}>
-                <span>0{index + 1}</span>
-                <div><strong>{path.title}</strong><small>{path.hint}</small></div>
-                <b aria-hidden="true">→</b>
-              </Link>
+          <div className="muse-conversation" aria-live="polite">
+            {messages.map((message) => (
+              <div className={`muse-message ${message.role}`} key={message.id}>
+                {message.role === "assistant" && <span aria-hidden="true"><MuseMark /></span>}
+                <p>{message.text}</p>
+              </div>
             ))}
+            <div ref={conversationEnd} />
           </div>
 
-          <div className="muse-guide-hints">
-            <strong>Helpful details to keep ready</strong>
-            <ul>
-              <li>A room or reference photograph</li>
-              <li>Your preferred size, colours and budget</li>
-              <li>The occasion and required delivery date</li>
-            </ul>
+          <div className="muse-quick-questions" aria-label="Suggested questions">
+            {quickQuestions.map((item) => <button type="button" key={item} onClick={() => ask(item)}>{item}</button>)}
           </div>
 
+          <form className="muse-chat-form" onSubmit={submit}>
+            <label htmlFor="muse-question">Ask about Artzy’s Studio</label>
+            <div>
+              <input id="muse-question" value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="Type your question…" autoComplete="off" />
+              <button type="submit" aria-label="Send question" disabled={!question.trim()}>&rarr;</button>
+            </div>
+          </form>
+
+          <p className="muse-chat-note">Muse provides general guidance. Stock, final price, custom feasibility and delivery are confirmed by the studio.</p>
           <Link className="muse-guide-contact" href="/contact" onClick={() => setIsOpen(false)}>
-            Ask the studio directly <span>→</span>
+            Speak with Deepti’s studio <span>&rarr;</span>
           </Link>
         </aside>
       </div>

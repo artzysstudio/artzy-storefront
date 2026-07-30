@@ -5,6 +5,7 @@ import { useCart } from '@/context/CartContext';
 import { Product } from '@/lib/api';
 import Image from 'next/image';
 import Link from 'next/link';
+import { RichProductName } from '@/components/RichProductText';
 
 const ARTZY_AI_ENABLED = false;
 
@@ -62,8 +63,8 @@ export default function ProductCard({ product, className, onView }: { product: P
       <div className="product-meta">
         <span className="product-category">{product.category}</span>
         {onView ? <button type="button" className="product-name-link product-name-trigger" onClick={onView}>
-          <h3 className="product-name">{product.name}</h3>
-        </button> : <Link href={`/shop?product=${encodeURIComponent(String(product.id))}`} className="product-name-link"><h3 className="product-name">{product.name}</h3></Link>}
+          <h3 className="product-name"><RichProductName name={product.name} /></h3>
+        </button> : <Link href={`/shop?product=${encodeURIComponent(String(product.id))}`} className="product-name-link"><h3 className="product-name"><RichProductName name={product.name} /></h3></Link>}
         <span className="product-price">₹{product.price.toLocaleString('en-IN')}</span>
       </div>
 

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Product, ProductVariant } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
+import RichProductText, { RichProductName } from "@/components/RichProductText";
 
 const FALLBACK_IMAGE = "/images/deepti_painting.png";
 
@@ -120,7 +121,7 @@ export default function ProductDetailModal({
 
         <section className="product-detail-copy">
           <span className="product-detail-category">{product.category}</span>
-          <h2 id="product-detail-title">{product.name}</h2>
+          <h2 id="product-detail-title"><RichProductName name={product.name} /></h2>
           {product.sku && <span className="product-detail-sku">SKU {product.sku}</span>}
           <div className="product-detail-price">₹{displayPrice.toLocaleString("en-IN")}</div>
 
@@ -137,9 +138,9 @@ export default function ProductDetailModal({
                   : "Available to order"}
           </div>
 
-          <p className="product-detail-description">
-            {product.artworkStory || product.artistNotes || product.seo?.description || `A distinctive ${product.category.toLowerCase()} piece from Deepti J. Shah’s studio, created with an artist’s attention to colour, finish and detail.`}
-          </p>
+          <RichProductText
+            text={product.artworkStory || product.artistNotes || product.seo?.description || `A distinctive ${product.category.toLowerCase()} piece from Deepti J. Shah’s studio, created with an artist’s attention to colour, finish and detail.`}
+          />
 
           {availableVariants.length > 0 && (
             <fieldset className="product-variants">
@@ -176,7 +177,7 @@ export default function ProductDetailModal({
           {product.careInstructions && (
             <details className="product-care">
               <summary>Care instructions</summary>
-              <p>{product.careInstructions}</p>
+              <RichProductText text={product.careInstructions} />
             </details>
           )}
 
