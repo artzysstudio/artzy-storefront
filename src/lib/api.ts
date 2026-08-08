@@ -2,6 +2,7 @@ const getEnv = (key: string) => {
   try { return typeof process !== 'undefined' && process.env ? process.env[key] : undefined; } catch (e) { return undefined; }
 };
 const ERP_BASE_URL = getEnv('NEXT_PUBLIC_ERP_API_URL') || 'https://erp.artzysstudio.in/api';
+import erpProductSnapshot from '@/data/erp-products.json';
 
 // Fallback helper with Exponential Backoff Retry Logic
 async function fetchFromERP<T>(endpoint: string, fallback: T, retries = 0, delay = 500): Promise<T> {
@@ -57,6 +58,7 @@ export interface Product {
   sku?: string;
   name: string;
   category: string;
+  sourceCategory?: string;
   price: number;
   salePrice?: number | null;
   quantity?: number;
@@ -96,6 +98,7 @@ export interface Product {
   // SEO & Social
   seo?: ProductSEO;
   socialSharingImage?: string;
+  erpUpdatedAt?: string;
 }
 
 export interface CollectionSEO {
@@ -352,8 +355,9 @@ const mockAboutPage: PageDefinition = {
 
 export const api = {
   products: {
-    // Never show invented inventory, pricing or availability to a shopper.
-    list: async (): Promise<Product[]> => fetchFromERP('/products/featured', []),
+    // The committed ERP snapshot keeps the static storefront complete. A live
+    // feed replaces it automatically whenever the dedicated proxy is enabled.
+    list: async (): Promise<Product[]> => fetchFromERP('/products/featured', erpProductSnapshot as Product[]),
     get: async (id: string): Promise<Product | undefined> => fetchFromERP(`/products/${id}`, undefined)
   },
   pages: {

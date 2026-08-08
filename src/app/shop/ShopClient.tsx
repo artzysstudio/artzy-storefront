@@ -5,8 +5,7 @@ import { Product } from '@/lib/api';
 import ProductCard from '@/components/ProductCard';
 import ProductDetailModal from '@/components/ProductDetailModal';
 
-const ERP_PRODUCT_FEED =
-  process.env.NEXT_PUBLIC_ERP_API_URL || 'https://erp.artzysstudio.in/api';
+const ERP_PRODUCT_FEED = '/api/storefront/products';
 const PRODUCT_BATCH_SIZE = 12;
 
 const slugify = (value: string) =>
@@ -52,15 +51,16 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
       controller = new AbortController();
 
       try {
-        const response = await fetch(`${ERP_PRODUCT_FEED}/products/featured?ts=${Date.now()}`, {
+        const response = await fetch(`${ERP_PRODUCT_FEED}?ts=${Date.now()}`, {
           cache: 'no-store',
           headers: { Accept: 'application/json' },
           signal: controller.signal,
         });
         if (!response.ok) throw new Error(`Product sync failed with ${response.status}`);
 
-        const records = await response.json();
-        if (isCurrent && Array.isArray(records)) setProducts(records.filter(inScope));
+        const payload = await response.json();
+        const records = Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : Array.isArray(payload?.products) ? payload.products : [];
+        if (isCurrent && records.length > 0) setProducts(records.filter(inScope));
       } catch (error) {
         if (isCurrent && !(error instanceof DOMException && error.name === 'AbortError')) {
           console.error('Unable to refresh products from Artzy ERP.', error);

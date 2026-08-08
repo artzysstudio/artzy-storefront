@@ -11,7 +11,7 @@ export default function PremiumHero() {
       <h1 id="handmade-hero-title">Everyday objects.<br/><em>Made into art.</em></h1>
       <p>Hand-painted home décor, useful art and meaningful gifts—created in our own studio, one piece at a time.</p>
       <div className="handmade-hero__actions">
-        <Link className="handmade-hero__primary" href="/shop/?category=hand-painted-decor">Shop handmade crafts <span aria-hidden="true">→</span></Link>
+        <Link className="handmade-hero__primary" href="/shop/">Shop handmade crafts <span aria-hidden="true">→</span></Link>
         <Link className="handmade-hero__secondary" href="/personalised">Create something personal</Link>
       </div>
       <div className="handmade-hero__trust" aria-label="Artzy's Studio promises"><span>Artist-led studio</span><i/> <span>Small-batch creations</span><i/> <span>Made in Pune</span></div>

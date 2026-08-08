@@ -18,8 +18,7 @@ const NAV: NavGroup[] = [
     { label: 'Shop all', href: '/shop', note: 'Everything currently available from the studio' },
     { label: 'Wall art & frames', href: '/shop/?category=wall-art-frames' },
     { label: 'Table & utility art', href: '/shop/?category=table-utility-art' },
-    { label: 'Hand-painted décor', href: '/shop/?category=hand-painted-decor' },
-    { label: 'Mirrors & hangings', href: '/shop/?category=mirrors-hangings' },
+    { label: 'Mirrors & decorative hangings', href: '/shop/?category=mirrors-and-decorative-hangings' },
     { label: 'Spiritual & festive art', href: '/shop/?category=spiritual-festive-art' },
   ]},
   { label: 'Personalised', paths: ['/personalised', '/personalized', '/digital-prints', '/caricatures', '/gifts'], items: [

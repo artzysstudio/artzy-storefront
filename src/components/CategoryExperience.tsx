@@ -11,7 +11,7 @@ const categories = [
     note: "Original canvases, wall art and artist-painted objects",
     image: "/assets/painting_1.png",
     placement: "your wall or living space",
-    href: "/shop/?category=hand-painted-decor",
+    href: "/shop/?category=wall-art-and-frames",
   },
   {
     name: "Digital Art, Prints & Caricatures",
