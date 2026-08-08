@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
 
 export default function ArtzyWorldPreviewPage() {
-  redirect('https://artzyai.artzysstudio.in/artzy-world?source=storefront-fullpage');
+  redirect('/artzy-world/preview-app/index.html?source=storefront-fullpage');
 }
