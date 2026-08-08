@@ -65,7 +65,7 @@ function dimensions(record) {
   return `${values.map((value) => value || '—').join(' × ')} ${text(record.length_unit) || 'cm'}`;
 }
 
-const products = records
+let products = records
   .filter((record) => !['draft', 'archived'].includes(text(record.status).toLowerCase()))
   .map((record) => {
     const stock = Array.isArray(record.stock) ? record.stock[0] || {} : {};
@@ -115,10 +115,33 @@ const products = records
   })
   .sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
 
+async function imageExists(url) {
+  try {
+    const response = await fetch(url, { headers: { range: 'bytes=0-0' } });
+    await response.body?.cancel();
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+const imageUrls = unique(products.flatMap((product) => product.images));
+const validImages = new Set();
+for (let index = 0; index < imageUrls.length; index += 16) {
+  const batch = imageUrls.slice(index, index + 16);
+  const results = await Promise.all(batch.map(async (url) => [url, await imageExists(url)]));
+  results.forEach(([url, valid]) => { if (valid) validImages.add(url); });
+}
+products = products.map((product) => ({
+  ...product,
+  images: product.images.filter((url) => validImages.has(url)),
+}));
+
 const outputPath = resolve('src/data/erp-products.json');
 await mkdir(dirname(outputPath), { recursive: true });
 await writeFile(outputPath, `${JSON.stringify(products, null, 2)}\n`, 'utf8');
 
 const counts = Object.fromEntries(unique(products.map((product) => product.category)).map((category) => [category, products.filter((product) => product.category === category).length]));
 console.log(`Imported ${products.length} sellable ERP products into ${outputPath}.`);
+console.log(`Validated ${validImages.size} of ${imageUrls.length} ERP image URLs.`);
 console.log(counts);
