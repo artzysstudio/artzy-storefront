@@ -6,8 +6,6 @@ import { Product, ProductVariant } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
 import RichProductText, { RichProductName } from "@/components/RichProductText";
 
-const FALLBACK_IMAGE = "/images/deepti_painting.png";
-
 // Optional ERP fields are rendered only when the product feed provides them.
 const variantLabel = (variant: ProductVariant, index: number) =>
   variant.name ||
@@ -25,7 +23,7 @@ export default function ProductDetailModal({
 }) {
   const { addToCart } = useCart();
   const images = useMemo(
-    () => (product.images?.filter(Boolean).length ? product.images.filter(Boolean) : [FALLBACK_IMAGE]).slice(0, 4),
+    () => product.images.filter(Boolean).slice(0, 4),
     [product.images],
   );
   const availableVariants = product.variants || [];

@@ -101,6 +101,33 @@ export interface Product {
   erpUpdatedAt?: string;
 }
 
+/**
+ * A product may appear in the public shop only when it is a real, available
+ * ERP record with its own Artzy Studio product photograph. This deliberately
+ * excludes design concepts, generic fallback imagery and records whose studio
+ * photography has not been uploaded yet.
+ */
+export function isStorefrontInventoryProduct(product: Product): boolean {
+  const primaryImage = Array.isArray(product?.images) ? product.images[0] : '';
+  let isArtzyMedia = false;
+
+  try {
+    isArtzyMedia = new URL(primaryImage).hostname === 'media.artzysstudio.in';
+  } catch {
+    isArtzyMedia = false;
+  }
+
+  return Boolean(
+    product?.id &&
+    product?.name &&
+    Number(product?.price) > 0 &&
+    Number(product?.quantity ?? 0) > 0 &&
+    product?.availability !== 'out_of_stock' &&
+    product?.isSoldOut !== true &&
+    isArtzyMedia
+  );
+}
+
 export interface CollectionSEO {
   title: string;
   description: string;
@@ -196,56 +223,8 @@ async function requestERP<T>(endpoint: string, init: RequestInit = {}): Promise<
   return data as T;
 }
 
-// ------------------------------------------------------------------
-// MOCK DATA FOR FALLBACK
-// ------------------------------------------------------------------
-
-const mockProducts: Product[] = [
-  { 
-    id: '1', name: 'Golden Hour Horizon', category: 'Original Painting', price: 24999, 
-    images: ['/assets/painting_1.png'], 
-    artworkStory: 'Inspired by the setting sun over the Arabian Sea.',
-    artist: 'Deepti J. Shah',
-    collectionId: 'c-original-paintings',
-    medium: 'Oil on Canvas', material: 'Canvas, Oil Paint', dimensions: '36x48 inches', weight: '4kg',
-    colorPalette: ['Saffron', 'Warm Ivory', 'Soft Gold'], style: ['Contemporary', 'Abstract'],
-    occasion: ['Anniversary', 'Wedding'], roomType: ['Living Room', 'Bedroom'],
-    leadTime: '7-10 Days', availability: 'in_stock',
-    giftWrappingAvailable: true,
-    seo: { title: 'Golden Hour Horizon Painting', description: 'Original abstract painting by Deepti J. Shah.', keywords: ['abstract art', 'oil painting', 'sunset'] }
-  },
-  { 
-    id: '2', name: 'Ocean Breath', category: 'Resin Art', price: 38999, 
-    images: ['/assets/resin_art_1.png'],
-    artist: 'Deepti J. Shah', collectionId: 'c-resin-collection',
-    medium: 'Epoxy Resin', material: 'Epoxy Resin on Teak Wood', dimensions: '24x24 inches', weight: '8kg',
-    colorPalette: ['Blue', 'Teal', 'Soft Gold'], style: ['Fluid Art', 'Modern'],
-    occasion: ['Housewarming', 'Corporate'], roomType: ['Living Room', 'Office'],
-    careInstructions: 'Wipe with soft damp cloth. Keep away from direct sunlight.',
-    leadTime: '14-21 Days', availability: 'made_to_order',
-    seo: { title: 'Ocean Breath Resin Art', description: 'Fluid resin wall art.', keywords: ['resin art', 'ocean art'] }
-  },
-  { 
-    id: '3', name: 'Sands of Time', category: 'Wooden Art', price: 18999, 
-    images: ['/assets/hero_bg_authentic.png'],
-    artist: 'Deepti J. Shah', collectionId: 'c-wooden-art',
-    medium: 'Mixed Media', material: 'Teak Wood & Plaster', dimensions: '18x24 inches', weight: '5kg',
-    colorPalette: ['Sand', 'Cream', 'Natural Wood'], style: ['Minimalist', 'Textured'],
-    occasion: ['Housewarming'], roomType: ['Bedroom', 'Study'],
-    leadTime: 'In Stock', availability: 'in_stock'
-  },
-  { 
-    id: '4', name: 'Midnight Bloom Tray', category: 'Hand-painted Tray', price: 5499, 
-    images: ['/assets/corporate_gift_1.png'],
-    collectionId: 'c-corporate-gifts',
-    material: 'Mango Wood, Resin', dimensions: '14x14 inches', weight: '1.5kg',
-    colorPalette: ['Dark Blue', 'Soft Gold'], style: ['Elegant'],
-    occasion: ['Corporate', 'Diwali', 'Wedding'], roomType: ['Dining', 'Kitchen'],
-    personalizationOptions: ['Engrave Name', 'Custom Logo'],
-    giftWrappingAvailable: true, leadTime: '3-5 Days', availability: 'in_stock',
-    seo: { title: 'Midnight Bloom Hand-painted Tray', description: 'Elegant resin serving tray for corporate gifting.', keywords: ['resin tray', 'corporate gift'] }
-  },
-];
+// Page copy below is a continuity fallback only. Product inventory never uses
+// invented/demo records; it is always filtered from the ERP catalogue.
 
 const mockHomePage: PageDefinition = {
   slug: 'home',
@@ -357,7 +336,10 @@ export const api = {
   products: {
     // The committed ERP snapshot keeps the static storefront complete. A live
     // feed replaces it automatically whenever the dedicated proxy is enabled.
-    list: async (): Promise<Product[]> => fetchFromERP('/products/featured', erpProductSnapshot as Product[]),
+    list: async (): Promise<Product[]> => {
+      const records = await fetchFromERP('/products/featured', erpProductSnapshot as Product[]);
+      return (Array.isArray(records) ? records : []).filter(isStorefrontInventoryProduct);
+    },
     get: async (id: string): Promise<Product | undefined> => fetchFromERP(`/products/${id}`, undefined)
   },
   pages: {

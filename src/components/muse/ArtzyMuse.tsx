@@ -54,8 +54,9 @@ export default function ArtzyMuse({ content }: { content?: SectionContent }) {
             <button className="btn">Corporate Advisor</button>
           </div>
           
-          <div style={{ maxWidth: '600px', margin: '0 auto', aspectRatio: '16/9' }}>
-            <img src="/images/deepti_painting.png" alt="Muse AI Visualizer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <div style={{ maxWidth: '600px', margin: '0 auto', aspectRatio: '16/9', position: 'relative' }}>
+            <img src="/concepts/muse-samples/abstract-landscape.jpg" alt="Artzy Muse AI concept sample — not stock" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <span style={{ position: 'absolute', left: '12px', bottom: '12px', padding: '7px 10px', borderRadius: '999px', background: 'rgba(75,42,38,.9)', color: '#fff', fontSize: '.72rem', fontWeight: 700 }}>AI concept sample · not stock</span>
           </div>
         </>
       )}

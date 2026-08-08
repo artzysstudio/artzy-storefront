@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useCart } from '@/context/CartContext';
-import { Product } from '@/lib/api';
+import { isStorefrontInventoryProduct, Product } from '@/lib/api';
 import Image from 'next/image';
 import Link from 'next/link';
 import { RichProductName } from '@/components/RichProductText';
@@ -13,6 +13,8 @@ export default function ProductCard({ product, className, onView }: { product: P
   const { addToCart } = useCart();
   const [added, setAdded] = useState(false);
   const isCorporate = product.collectionId === 'c-corporate-gifts';
+
+  if (!isStorefrontInventoryProduct(product)) return null;
 
   const handlePrimaryAction = () => {
     if (isCorporate) {
@@ -27,23 +29,15 @@ export default function ProductCard({ product, className, onView }: { product: P
 
   const productImage = (
     <>
-      {product.images?.[0] ? (
-        <Image
-          src={product.images[0]}
-          alt={product.name}
-          fill
-          sizes="(max-width: 560px) 50vw, (max-width: 1024px) 33vw, 300px"
-          className="product-image"
-          style={{ objectFit: 'cover' }}
-          unoptimized
-        />
-      ) : (
-        <img
-          src="/images/deepti_painting.png"
-          alt={product.name}
-          className="product-image"
-        />
-      )}
+      <Image
+        src={product.images[0]}
+        alt={product.name}
+        fill
+        sizes="(max-width: 560px) 50vw, (max-width: 1024px) 33vw, 300px"
+        className="product-image"
+        style={{ objectFit: 'cover' }}
+        unoptimized
+      />
       {product.isSoldOut && <span className="product-status">Sold out</span>}
     </>
   );

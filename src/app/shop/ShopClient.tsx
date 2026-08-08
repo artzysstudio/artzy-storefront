@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Product } from '@/lib/api';
+import { isStorefrontInventoryProduct, Product } from '@/lib/api';
 import ProductCard from '@/components/ProductCard';
 import ProductDetailModal from '@/components/ProductDetailModal';
 
@@ -12,7 +12,7 @@ const slugify = (value: string) =>
   value.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
 export default function ShopClient({ initialProducts, categoryScope = [] }: { initialProducts: Product[]; categoryScope?: string[] }) {
-  const inScope = (product: Product) => categoryScope.length === 0 || categoryScope.some((scope) => slugify(product.category).includes(slugify(scope)));
+  const inScope = (product: Product) => isStorefrontInventoryProduct(product) && (categoryScope.length === 0 || categoryScope.some((scope) => slugify(product.category).includes(slugify(scope))));
   const [products, setProducts] = useState<Product[]>(() => initialProducts.filter(inScope));
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedOccasion, setSelectedOccasion] = useState('');
