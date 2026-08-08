@@ -24,7 +24,7 @@ async function fetchFromERP<T>(endpoint: string, fallback: T, retries = 0, delay
       await new Promise(res => setTimeout(res, delay));
       return fetchFromERP(endpoint, fallback, retries - 1, delay * 2);
     }
-    console.error(`[ERP Fallback] Failed to fetch ${endpoint} after all retries. Using mock data.`);
+    console.error(`[ERP unavailable] Failed to fetch ${endpoint} after all retries.`);
     return fallback;
   }
 }
@@ -352,8 +352,9 @@ const mockAboutPage: PageDefinition = {
 
 export const api = {
   products: {
-    list: async (): Promise<Product[]> => fetchFromERP('/products/featured', mockProducts),
-    get: async (id: string): Promise<Product | undefined> => fetchFromERP(`/products/${id}`, mockProducts.find(p => p.id === id))
+    // Never show invented inventory, pricing or availability to a shopper.
+    list: async (): Promise<Product[]> => fetchFromERP('/products/featured', []),
+    get: async (id: string): Promise<Product | undefined> => fetchFromERP(`/products/${id}`, undefined)
   },
   pages: {
     get: async (slug: string): Promise<PageDefinition | undefined> => {

@@ -21,9 +21,9 @@ export default function Footer() {
             <h4>Shop Artzy</h4>
             <ul className="footer-links">
               <li><Link href="/shop?category=hand-painted">Hand-painted Art</Link></li>
-              <li><Link href="/shop?category=digital-prints">Digital Prints</Link></li>
-              <li><Link href="/shop?category=caricatures">Caricatures</Link></li>
-              <li><Link href="/shop?category=personalised-gifts">Personalised Gifts</Link></li>
+              <li><Link href="/digital-prints">Digital Art &amp; Caricatures</Link></li>
+              <li><Link href="/gifts">Personalised &amp; Occasion Gifts</Link></li>
+              <li><Link href="/custom-corporate">Custom &amp; Corporate</Link></li>
             </ul>
           </div>
           <div className="footer-col footer-location">

@@ -1,5 +1,6 @@
 import PremiumHero from '@/components/PremiumHero';
 import CategoryExperience from '@/components/CategoryExperience';
+import StudioSignature from '@/components/StudioSignature';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/ProductCard';
@@ -17,6 +18,7 @@ export default async function Home() {
       <Header />
       <main>
         <PremiumHero />
+        <StudioSignature />
         <CategoryExperience />
 
         <section className="section container" aria-labelledby="fresh-from-studio">
@@ -32,6 +34,11 @@ export default async function Home() {
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
+          {products.length === 0 && <div className="home-products-unavailable" role="status">
+            <h3>The next studio pieces are being prepared.</h3>
+            <p>Current availability will appear here as soon as the live studio catalogue reconnects. For a specific piece, please ask the studio directly.</p>
+            <a href="https://wa.me/919158680722">Ask the studio on WhatsApp →</a>
+          </div>}
         </section>
 
         {ARTZY_AI_ENABLED && <section className="section container home-muse">

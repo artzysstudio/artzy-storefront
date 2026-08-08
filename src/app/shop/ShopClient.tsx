@@ -12,8 +12,9 @@ const PRODUCT_BATCH_SIZE = 12;
 const slugify = (value: string) =>
   value.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
-export default function ShopClient({ initialProducts }: { initialProducts: Product[] }) {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+export default function ShopClient({ initialProducts, categoryScope = [] }: { initialProducts: Product[]; categoryScope?: string[] }) {
+  const inScope = (product: Product) => categoryScope.length === 0 || categoryScope.some((scope) => slugify(product.category).includes(slugify(scope)));
+  const [products, setProducts] = useState<Product[]>(() => initialProducts.filter(inScope));
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedOccasion, setSelectedOccasion] = useState('');
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -59,7 +60,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
         if (!response.ok) throw new Error(`Product sync failed with ${response.status}`);
 
         const records = await response.json();
-        if (isCurrent && Array.isArray(records)) setProducts(records);
+        if (isCurrent && Array.isArray(records)) setProducts(records.filter(inScope));
       } catch (error) {
         if (isCurrent && !(error instanceof DOMException && error.name === 'AbortError')) {
           console.error('Unable to refresh products from Artzy ERP.', error);
@@ -79,13 +80,25 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
 
   useEffect(() => {
     setMaxPrice(highestPrice);
-    const requestedCategory = new URLSearchParams(window.location.search).get('category');
-    if (!requestedCategory) return;
-    const matchingCategory = categories.find(
-      (category) => slugify(category) === requestedCategory || slugify(category).includes(requestedCategory),
-    );
-    if (matchingCategory) setSelectedCategory(matchingCategory);
-  }, [categories, highestPrice]);
+    const params = new URLSearchParams(window.location.search);
+    const requestedCategory = params.get('category');
+    const requestedRoom = params.get('room');
+    const requestedOccasion = params.get('occasion');
+    if (requestedCategory) {
+      const matchingCategory = categories.find(
+        (category) => slugify(category) === requestedCategory || slugify(category).includes(requestedCategory),
+      );
+      if (matchingCategory) setSelectedCategory(matchingCategory);
+    }
+    if (requestedRoom) {
+      const matchingRoom = rooms.find((room) => slugify(room) === requestedRoom || slugify(room).includes(requestedRoom));
+      if (matchingRoom) setSelectedRoom(matchingRoom);
+    }
+    if (requestedOccasion) {
+      const matchingOccasion = occasions.find((occasion) => slugify(occasion) === requestedOccasion || slugify(occasion).includes(requestedOccasion));
+      if (matchingOccasion) setSelectedOccasion(matchingOccasion);
+    }
+  }, [categories, highestPrice, occasions, rooms]);
 
   useEffect(() => {
     const requestedProduct = new URLSearchParams(window.location.search).get('product');
@@ -145,7 +158,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
     updateBackToTop();
     window.addEventListener('scroll', updateBackToTop, { passive: true });
     return () => window.removeEventListener('scroll', updateBackToTop);
-  }, []);
+  }, [categoryScope.join('|')]);
 
   const clearFilters = () => {
     setSelectedCategory('');

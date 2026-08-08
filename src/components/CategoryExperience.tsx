@@ -11,28 +11,28 @@ const categories = [
     note: "Original canvases, wall art and artist-painted objects",
     image: "/assets/painting_1.png",
     placement: "your wall or living space",
-    href: "/shop?category=hand-painted",
+    href: "/shop/?category=hand-painted-decor",
   },
   {
-    name: "Digital Art & Prints",
-    note: "Digital paintings and vivid canvas prints for modern spaces",
+    name: "Digital Art, Prints & Caricatures",
+    note: "Modern, abstract and geometric art, plus expressive portraits created from your photographs",
     image: "/assets/hero_bg_authentic.png",
     placement: "your wall",
-    href: "/shop?category=digital-prints",
+    href: "/digital-prints",
   },
   {
-    name: "Caricatures & Portraits",
-    note: "Personalised, expressive art made from your photographs",
-    image: "/images/deepti_gifting.png",
-    placement: "your celebration space",
-    href: "/shop?category=caricatures",
-  },
-  {
-    name: "Artful Gifts & Projects",
-    note: "Personal gifts, corporate gifting and custom creative work",
+    name: "Personal & Combo Gifts",
+    note: "Story-led keepsakes, celebration gifts and thoughtfully assembled combinations",
     image: "/assets/corporate_gift_1.png",
-    placement: "your table, desk or office",
-    href: "/shop?category=artful-gifts",
+    placement: "your celebration",
+    href: "/gifts",
+  },
+  {
+    name: "Corporate & Commercial Art",
+    note: "Custom gifting, workplace art, brand-led visuals and creative project commissions",
+    image: "/assets/project_gallery_1.png",
+    placement: "your office or commercial space",
+    href: "/for-business",
   },
 ];
 
@@ -50,7 +50,7 @@ export default function CategoryExperience() {
 
   return (
     <>
-      <section className="artzy-shop" aria-labelledby="shop-creative-world">
+      <section id="shop-by-category" className="artzy-shop" aria-labelledby="shop-creative-world">
         <div className="artzy-shop__intro">
           <div>
             <span>Explore our creative world</span>
@@ -89,10 +89,10 @@ export default function CategoryExperience() {
         </div>
 
         <div className="artzy-shop__benefits">
-          <span>Artist-led creations</span>
-          <span>Hand-painted & digital</span>
-          <span>Personalisation available</span>
-          <span>ERP-backed availability</span>
+          <span>Made by our studio</span>
+          <span>Deepti &amp; deaf artists</span>
+          <span>Personal and commercial</span>
+          <span>Visit us in Kothrud, Pune</span>
         </div>
       </section>
 
