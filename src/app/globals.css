@@ -2028,6 +2028,8 @@ img, video, canvas { max-width: 100%; height: auto; }
   white-space: nowrap;
 }
 
+.home-section-source{margin:.45rem 0 0;color:#806b60;font-size:.72rem;letter-spacing:.04em}
+
 /* Keep touch navigation vertical while allowing only deliberate carousels to move sideways. */
 html,
 body {

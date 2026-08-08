@@ -5,13 +5,42 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/ProductCard';
 import ArtzyMuse from '@/components/muse/ArtzyMuse';
-import { api } from '@/lib/api';
+import type { Product } from '@/lib/api';
+import erpProductSnapshot from '@/data/erp-products.json';
 import Link from 'next/link';
 
 const ARTZY_AI_ENABLED = false;
 
+const freshStudioPriorities = [
+  'Handpainted Wooden Mirror Frame',
+  'Handpainted Wooden Medium Size Sarswati Frame',
+  'Handpainted Candle Tealight Holder Set Of 2',
+  'Bamboo Pen Stand',
+  'Cozy Tea Time Essentials',
+  'Hand-painted Spoon Stand of 3',
+  'Hand-painted Wooden Key Holder Cabinet',
+  'Wooden Hand-painted Warli design Round wall hager',
+];
+
+function getFreshERPProducts(): Product[] {
+  const available = (erpProductSnapshot as Product[]).filter((product) =>
+    Number(product.quantity || 0) > 0 &&
+    Boolean(product.images?.[0]?.startsWith('https://media.artzysstudio.in/'))
+  );
+  const chosen: Product[] = [];
+  for (const name of freshStudioPriorities) {
+    const match = available.find((product) => product.name === name && !chosen.some((item) => item.id === product.id));
+    if (match) chosen.push(match);
+  }
+  for (const product of available) {
+    if (chosen.length >= 8) break;
+    if (!chosen.some((item) => item.id === product.id)) chosen.push(product);
+  }
+  return chosen.slice(0, 8);
+}
+
 export default async function Home() {
-  const products = await api.products.list();
+  const products = getFreshERPProducts();
 
   return (
     <>
@@ -26,6 +55,7 @@ export default async function Home() {
             <div>
               <h4>Fresh from the studio</h4>
               <h2 id="fresh-from-studio">Pieces with a pulse</h2>
+              <p className="home-section-source">Available now in Artzy ERP inventory</p>
             </div>
             <Link href="/shop">View all artwork →</Link>
           </div>
