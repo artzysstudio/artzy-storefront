@@ -19,7 +19,7 @@ export default function ArtzyWorldPage() {
           <p>A place where art begins with Deepti&apos;s hand, carries a human story and finds its right place in your everyday world.</p>
           <div className="world-actions">
             <a className="world-primary" href="#purpose">Discover the idea</a>
-            <a className="world-secondary" href="#live-preview">Try the room preview</a>
+            <Link className="world-secondary" href="/artzy-world/preview/">Try the room preview</Link>
           </div>
           <div className="world-signature"><i aria-hidden="true">✿</i><span>From the studio<br/>to your space</span></div>
         </div>
@@ -70,24 +70,20 @@ export default function ArtzyWorldPage() {
             <li><i>03</i><span><strong>Decide with confidence</strong>Understand placement and visual mood before ordering.</span></li>
           </ul>
           <div className="world-coming-soon world-preview-live" role="status"><span aria-hidden="true">✿</span><div><strong>Interactive room preview is live</strong><small>Use the workspace below. Camera access is requested only when you choose your own wall photo.</small></div></div>
-          <div className="world-actions"><a className="world-primary" href="#live-preview">Open room preview</a><Link className="world-secondary" href="/contact/">Discuss your space</Link></div>
+          <div className="world-actions"><Link className="world-primary" href="/artzy-world/preview/">Open full room preview</Link><Link className="world-secondary" href="/contact/">Discuss your space</Link></div>
         </div>
       </section>
 
       <section className="world-live-preview" id="live-preview" aria-labelledby="live-preview-title">
         <header>
           <div><span className="world-eyebrow">Artzy World · Interactive preview</span><h2 id="live-preview-title">Place art in<br/><em>your own world.</em></h2></div>
-          <p>Choose a room and painting, upload or photograph your wall, drag the artwork into position and compare dimensions, frames and colour moods before you decide.</p>
+          <p>Open a comfortable full-page workspace to choose an available Artzy piece or an Artzy Muse direction, upload your wall and compare placement without working inside a small box.</p>
         </header>
-        <div className="world-preview-frame">
-          <iframe
-            src="https://artzyai.artzysstudio.in/artzy-world?embed=1&source=storefront"
-            title="Artzy World interactive room and artwork preview"
-            allow="camera; clipboard-write; fullscreen"
-            loading="eager"
-          />
+        <div className="world-preview-launch">
+          <span aria-hidden="true">✿</span>
+          <div><strong>Full-page preview workspace</strong><small>ERP availability stays separate from Muse-made custom concepts.</small></div>
+          <Link className="world-primary" href="/artzy-world/preview/">Enter the preview</Link>
         </div>
-        <p className="world-preview-fallback">If the preview does not load, <a href="https://artzyai.artzysstudio.in/artzy-world" target="_blank" rel="noreferrer">open Artzy World in a new window</a>.</p>
       </section>
 
       <section className="world-closing">

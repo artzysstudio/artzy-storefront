@@ -38,7 +38,7 @@ const NAV: NavGroup[] = [
   { label: 'Artzy World', paths: ['/artzy-world'], items: [
     { label: 'Enter Artzy World', href: '/artzy-world', note: 'Discover, understand and preview art for your space' },
     { label: 'Why Artzy World', href: '/artzy-world/#purpose' },
-    { label: 'Live preview', href: '/artzy-world/#live-preview' },
+    { label: 'Live preview', href: '/artzy-world/preview/' },
     { label: 'AR experience', href: '/artzy-world/#ar-experience' },
   ]},
   { label: 'Our Studio', paths: ['/about', '/contact'], items: [
