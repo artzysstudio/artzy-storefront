@@ -13,18 +13,17 @@ export default function DigitalPrintsPage() {
   return <>
     <Header />
     <main className="digital-page">
-      <section className="service-hero digital-hero">
-        <div className="service-hero-copy digital-hero-copy">
+      <section className="story-hero story-hero--digital">
+        <img className="story-hero__image" src="/images/digital-hero-v3.webp" alt="Modern abstract and geometric prints with a complete personalised couple caricature in an Artzy-style digital design workspace" />
+        <div className="story-hero__shade" aria-hidden="true" />
+        <div className="story-hero__copy digital-hero-copy">
           <span className="service-eyebrow">Digital art · prints · caricatures</span>
           <h1>Your idea, reimagined as <em>art.</em></h1>
           <p>Share a photograph, a room or a creative brief. Deepti&apos;s studio transforms it into modern wall art, a custom canvas print or a joyful personalised caricature.</p>
           <div className="digital-hero-tags" aria-label="Digital art services"><span>Abstract &amp; modern</span><span>Custom canvas prints</span><span>Caricatures from photos</span></div>
-          <div className="service-actions"><a className="service-primary" href="#create">See what we create</a><Link className="service-secondary" href="/contact/">Discuss your idea</Link></div>
+          <div className="story-hero__actions"><a className="story-hero__primary" href="#create">See what we create</a><Link className="story-hero__secondary" href="/contact/">Discuss your idea</Link></div>
+          <small>Artzy-style illustration · Custom direction, format and price confirmed before production</small>
         </div>
-        <figure className="digital-hero-visual">
-          <img src="/assets/digital-caricature-hero-v2.png" alt="Artzy's Studio workspace with abstract art, a geometric print and a personalised caricature" width="1536" height="1024" />
-          <figcaption><span>Designed by Deepti J. Shah</span><strong>From your story to your space</strong></figcaption>
-        </figure>
       </section>
 
       <section className="digital-promise" aria-label="Service benefits">

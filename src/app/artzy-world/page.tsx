@@ -12,21 +12,20 @@ export default function ArtzyWorldPage() {
   return <>
     <Header />
     <main className="artzy-world-page">
-      <section className="world-hero">
-        <div className="world-hero-copy">
+      <section className="story-hero story-hero--world">
+        <img className="story-hero__image" src="/images/artzy-world-hero-v2.webp" alt="An Artzy floral artwork moving from a painted studio piece to a framed home display and phone room preview" />
+        <div className="story-hero__shade" aria-hidden="true" />
+        <div className="story-hero__copy">
           <span className="world-eyebrow">Handmade · Personal · Imaginative</span>
           <h1>Welcome to<br/><em>Artzy World.</em></h1>
           <p>A place where art begins with Deepti&apos;s hand, carries a human story and finds its right place in your everyday world.</p>
-          <div className="world-actions">
-            <a className="world-primary" href="#purpose">Discover the idea</a>
-            <Link className="world-secondary" href="/artzy-world/preview/">Try the room preview</Link>
+          <div className="story-hero__actions">
+            <a className="story-hero__primary" href="#purpose">Discover the idea</a>
+            <Link className="story-hero__secondary" href="/artzy-world/preview/">Try the room preview</Link>
           </div>
           <div className="world-signature"><i aria-hidden="true">✿</i><span>From the studio<br/>to your space</span></div>
+          <small>Artzy-style illustration · Preview features are separate from current ERP stock</small>
         </div>
-        <figure className="world-hero-art">
-          <img src="/assets/artzy-world-hero.webp" width="1536" height="1024" alt="Illustration of handmade Artzy Studio pieces moving from an artist's studio into a customer's home and phone preview" />
-          <figcaption>Made with intention. Experienced your way.</figcaption>
-        </figure>
       </section>
 
       <nav className="world-path-nav" aria-label="Artzy World page journey">
