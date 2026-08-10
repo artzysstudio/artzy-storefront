@@ -1,18 +1,24 @@
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import ShopClient from '@/app/shop/ShopClient';
-import { api } from '@/lib/api';
+import GiftBuilder from '@/features/gifts/GiftBuilder';
+import { api, isStorefrontInventoryProduct } from '@/lib/api';
 
-export const metadata = { title: "Personalised & Occasion Gifts | Artzy's Studio", description: 'Artist-made wedding, celebration, corporate and personalised gifts from Artzy’s Studio.' };
+export const metadata = {
+  title: "Gift Concierge | Personalised, Occasion & Corporate Gifts | Artzy's Studio",
+  description: "Build an artistic gift plan for weddings, birthdays, housewarmings, festivals, employees and clients using real Artzy's Studio inventory.",
+};
 
 export default async function GiftsPage() {
-  const products = await api.products.list();
-  return <><Header/><main className="gifts-page">
-    <section className="gifts-hero"><div className="gifts-hero-copy"><span className="service-eyebrow">Gifts with a personal story</span><h1>Made for the moment.<br/><em>Remembered long after.</em></h1><p>Artist-made gifts for weddings, anniversaries, birthdays, housewarmings, festivals and meaningful milestones—thoughtfully personalised by Deepti&apos;s studio.</p><div className="service-actions"><a className="service-primary" href="#gift-products">Shop gift collection</a><Link className="service-secondary" href="/custom-corporate">Plan a custom gift</Link></div></div><div className="gifts-hero-art" aria-label="A curated selection of artistic gifts"><span className="gift-box gift-one">✿</span><span className="gift-box gift-two">For you</span><span className="gift-frame">Together</span><i>Hand finished in Pune</i></div></section>
-    <section className="occasion-strip" aria-label="Gift occasions"><span>Weddings</span><span>Anniversaries</span><span>Birthdays</span><span>Housewarmings</span><span>Festivals</span><span>Corporate milestones</span></section>
-    <section className="gift-intro"><span className="service-eyebrow">Shop from the ERP collection</span><h2>Gifts currently selected by the studio.</h2><p>Only products assigned to a gift category in Artzy&apos;s ERP appear below. New gift products will be added automatically when the studio publishes them.</p></section>
-    <div id="gift-products"><ShopClient initialProducts={products} categoryScope={['gift']} /></div>
-    <section className="gift-custom-cta" id="corporate-gifts"><div><span className="service-eyebrow">Need quantities or personalisation?</span><h2>Wedding sets, event gifting and corporate collections.</h2></div><div><p>Tell us the occasion, quantity, budget, preferred colours and delivery date. The studio will recommend a practical, artistic direction.</p><Link className="service-primary" href="/custom-corporate">Explore custom &amp; corporate gifting</Link></div></section>
+  const products = (await api.products.list()).filter(isStorefrontInventoryProduct);
+  return <><Header/><main className="gift-concierge-page">
+    <section className="gift-concierge-hero">
+      <div className="gift-concierge-hero__copy"><span>Handmade in Pune · chosen for one person</span><h1>Gift with intention.<br/><em>Give something Artzy.</em></h1><p>From a single birthday surprise to a hundred employee gifts, begin with the person—not a crowded product grid.</p><div><a href="#gift-concierge">Build my gift plan</a><Link href="/shop">Browse all studio pieces</Link></div></div>
+      <div className="gift-concierge-hero__art" aria-label="Artist-made gifts wrapped at Artzy's Studio"><div className="gift-ribbon">✿</div><div className="gift-card-one"><small>For the story</small><b>they will remember</b></div><div className="gift-card-two"><span>Made by hand</span><strong>Wrapped with care</strong></div><i>By Deepti J. Shah &amp; her artist team</i></div>
+    </section>
+    <div className="gift-trust-strip"><span><b>Real stock first</b> ERP-validated products</span><span><b>Clear budgets</b> Full price breakdown</span><span><b>Human confirmation</b> For custom work &amp; timelines</span></div>
+    <GiftBuilder products={products}/>
+    <section className="gift-seo-links"><div><span>Explore by moment</span><h2>Every reason to make someone feel seen.</h2></div><div>{['Wedding gifts','Birthday gifts','Housewarming gifts','Festival gifts','Employee gifts','Client gifts','Return gifts','Anniversary gifts'].map((label) => <a href="#gift-concierge" key={label}>{label}<span>→</span></a>)}</div></section>
+    <section className="gift-studio-cta"><div><span>Can’t find the exact fit?</span><h2>A custom gift begins with a conversation.</h2></div><p>Share a photograph, story, palette, company brief or quantity. Deepti&apos;s studio will confirm what can be made, the exact cost and a realistic delivery date.<br/><Link href="/custom-corporate">Discuss a custom or corporate gift →</Link></p></section>
   </main><Footer/></>;
 }

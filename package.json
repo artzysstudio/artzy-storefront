@@ -9,7 +9,8 @@
     "start": "node node_modules/next/dist/bin/next start",
     "lint": "node node_modules/next/dist/bin/next lint",
     "pages:build": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\" && node node_modules/next/dist/bin/next build",
-    "catalogue:import": "node scripts/import-erp-products.mjs"
+    "catalogue:import": "node scripts/import-erp-products.mjs",
+    "test:gifts": "tsx --test tests/gift-engine.test.ts"
   },
   "dependencies": {
     "next": "15.0.3",
@@ -24,6 +25,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.0.3",
     "tailwindcss": "^4",
+    "tsx": "^4.20.3",
     "typescript": "^5",
     "wrangler": "^4.105.0"
   }

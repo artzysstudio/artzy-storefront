@@ -89,6 +89,19 @@ export interface Product {
   isSoldOut?: boolean;
   giftWrappingAvailable?: boolean;
   personalizationOptions?: string[];
+  giftEligible?: boolean;
+  giftOccasions?: string[];
+  giftRecipients?: string[];
+  giftStyles?: string[];
+  personalisationPrice?: number;
+  personalisationLeadTime?: string;
+  packagingCompatibility?: string[];
+  giftPopularityScore?: number;
+  productionLeadTime?: string;
+  madeToOrder?: boolean;
+  minimumGiftQuantity?: number;
+  maximumGiftQuantity?: number;
+  bulkGiftEligible?: boolean;
   
   // Merchandising
   relatedProductIds?: string[];

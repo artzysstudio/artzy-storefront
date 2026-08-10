@@ -9,7 +9,7 @@ import { useCustomer } from '@/context/CustomerContext';
 type CheckoutStep = 'auth' | 'address' | 'gifting' | 'shipping' | 'payment';
 
 export default function CheckoutClient() {
-  const { items, clearCart } = useCart();
+  const { items, giftBundles, clearCart } = useCart();
   const { isAuthenticated, user, login, signup } = useCustomer();
   const router = useRouter();
   
@@ -72,6 +72,13 @@ export default function CheckoutClient() {
       setAddress((previous) => ({ ...previous, name: previous.name || user.name, email: user.email }));
     }
   }, [isAuthenticated, user]);
+
+  useEffect(() => {
+    if (giftBundles.length > 0) {
+      setIsGift(true);
+      setOccasion((current) => current || giftBundles[0].occasion);
+    }
+  }, [giftBundles]);
 
   const handleAuthContinue = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,12 +156,13 @@ export default function CheckoutClient() {
         items,
         address,
         shipping: { id: shippingRate.id, service: shippingRate.service },
-        isGift,
-        giftWrapping,
+        isGift: isGift || giftBundles.length > 0,
+        giftWrapping: giftWrapping || giftBundles.some((bundle) => bundle.packaging.unitPrice > 0),
         giftMessage,
         occasion,
         hidePrice,
-        deliveryNotes
+        deliveryNotes,
+        giftBundles
       });
       
       // 3. Initialize Razorpay
@@ -238,7 +246,9 @@ export default function CheckoutClient() {
     return <div style={{ textAlign: 'center' }}><h2>Your Cart is Empty</h2><button className="btn" onClick={() => router.push('/shop')}>Return to Shop</button></div>;
   }
 
-  const finalTotal = subtotal + (shippingRate?.rate || 0) + (giftWrapping ? 500 : 0);
+  const configuredGiftExtras = giftBundles.reduce((total, bundle) => total + bundle.packaging.total + bundle.personalisation.total, 0);
+  const manualGiftWrap = giftBundles.length === 0 && giftWrapping ? 500 : 0;
+  const finalTotal = subtotal + (shippingRate?.rate || 0) + configuredGiftExtras + manualGiftWrap;
 
   return (
     <div className="checkout-layout" style={{ display: 'flex', gap: '4rem', flexWrap: 'wrap' }}>
@@ -312,6 +322,7 @@ export default function CheckoutClient() {
           <form onSubmit={handleGiftingContinue} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <h2>Gifting Experience</h2>
             
+            {giftBundles.length > 0 && <div style={{ padding: '1rem', border: '1px solid var(--border-color)', borderRadius: '8px', background: 'var(--bg-secondary)' }}><strong>Your Gift Concierge plan is attached.</strong><p style={{ marginBottom: 0 }}>You can add a message and delivery notes below. Its selected packaging is already included.</p></div>}
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: 'bold' }}>
               <input type="checkbox" checked={isGift} onChange={e => setIsGift(e.target.checked)} />
               Is this a gift?
@@ -320,7 +331,7 @@ export default function CheckoutClient() {
             {isGift && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1rem', border: '1px solid var(--border-color)', borderRadius: '4px', background: 'var(--bg-secondary)' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                  <input type="checkbox" checked={giftWrapping} onChange={e => setGiftWrapping(e.target.checked)} />
+                  <input type="checkbox" disabled={giftBundles.length > 0} checked={giftBundles.length > 0 ? giftBundles.some((bundle) => bundle.packaging.unitPrice > 0) : giftWrapping} onChange={e => setGiftWrapping(e.target.checked)} />
                   Premium Gift Wrapping (+₹500)
                 </label>
                 
@@ -437,18 +448,20 @@ export default function CheckoutClient() {
             </div>
           ))}
         </div>
+        {giftBundles.map((bundle) => <div key={bundle.id} style={{ border: '1px solid rgba(181,79,85,.35)', background: '#fff8f5', padding: '1rem', borderRadius: '8px', marginBottom: '1rem' }}><strong>Artzy Gift Plan · {bundle.occasion}</strong><div style={{ fontSize: '.85rem', marginTop: '.35rem' }}>{bundle.quantity} gift{bundle.quantity === 1 ? '' : 's'} · {bundle.packaging.name}</div><div style={{ fontSize: '.8rem', color: 'var(--text-muted)', marginTop: '.35rem' }}>{bundle.museReason}</div></div>)}
         
         <div style={{ borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span>Subtotal</span>
             <span>₹{subtotal.toLocaleString('en-IN')}</span>
           </div>
-          {giftWrapping && (
+          {manualGiftWrap > 0 && (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Gift Wrapping</span>
               <span>₹500</span>
             </div>
           )}
+          {configuredGiftExtras > 0 && <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>Configured gift packaging</span><span>₹{configuredGiftExtras.toLocaleString('en-IN')}</span></div>}
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span>Shipping</span>
             <span>{shippingRate ? (shippingRate.rate === 0 ? 'FREE' : `₹${shippingRate.rate}`) : 'Calculated at next step'}</span>
