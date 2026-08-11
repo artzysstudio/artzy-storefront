@@ -2421,3 +2421,15 @@ body {
 @media(max-width:900px){.ai-concept-preview{grid-template-columns:1fr}.ai-concept-preview__stage{min-height:430px}}
 @media(max-width:600px){.sample-plate__copy,.live-name-plate__copy{width:70%;padding:10px 12px}.ai-concept-preview{margin-top:36px;scroll-margin-top:90px}.ai-concept-preview__intro,.ai-concept-preview__stage{padding:28px 18px}.ai-concept-preview__stage{min-height:380px}.ai-concept-preview__actions{display:grid}.ai-concept-preview__actions>*{width:100%;text-align:center}.ai-concept-preview__wording{width:68%;padding:10px}.ai-concept-preview__handoff{font-size:.58rem}}
 .ai-concept-preview__intro li:before{content:'\2713'!important}.ai-concept-preview__empty button:disabled{cursor:not-allowed;opacity:.45}
+
+/* Artzy World hero: preserve the complete studio-to-room illustration. */
+.story-hero--world{min-height:clamp(680px,76svh,820px);background:#ead8c6}
+.story-hero--world .story-hero__image{object-fit:contain;object-position:center;background:#ead8c6;animation:none}
+.story-hero--world .story-hero__shade{background:linear-gradient(90deg,#f8f0e7 0%,rgba(248,240,231,.98) 28%,rgba(248,240,231,.82) 42%,rgba(248,240,231,.18) 62%,transparent 75%)}
+@media(max-width:700px){
+  .story-hero--world{display:flex;min-height:0;flex-direction:column;align-items:stretch;background:#f8f0e7}
+  .story-hero--world .story-hero__image{position:relative;inset:auto;width:100%;height:auto;aspect-ratio:2/1;object-fit:contain!important;object-position:center!important;border-radius:0;background:#ead8c6}
+  .story-hero--world .story-hero__shade{display:none}
+  .story-hero--world .story-hero__copy{width:auto;margin:0;padding:36px 20px 40px}
+}
+@media(max-width:390px){.story-hero--world .story-hero__copy{padding:32px 18px 36px}}
