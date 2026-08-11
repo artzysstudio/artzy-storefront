@@ -1,6 +1,13 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import DigitalArtPlanner from '@/features/digital/DigitalArtPlanner';
+
+export const metadata: Metadata = {
+  title: "Custom Digital Art, Prints & Caricatures | Artzy's Studio",
+  description: "Plan custom digital wall art, canvas prints, caricatures and commercial artwork with a friendly guided brief from Artzy's Studio.",
+};
 
 const directions = [
   ['Modern & abstract', 'Colour-led compositions for living rooms, bedrooms and statement walls.'],
@@ -21,7 +28,7 @@ export default function DigitalPrintsPage() {
           <h1>Your idea, reimagined as <em>art.</em></h1>
           <p>Share a photograph, a room or a creative brief. Deepti&apos;s studio transforms it into modern wall art, a custom canvas print or a joyful personalised caricature.</p>
           <div className="digital-hero-tags" aria-label="Digital art services"><span>Abstract &amp; modern</span><span>Custom canvas prints</span><span>Caricatures from photos</span></div>
-          <div className="story-hero__actions"><a className="story-hero__primary" href="#create">See what we create</a><Link className="story-hero__secondary" href="/contact/">Discuss your idea</Link></div>
+          <div className="story-hero__actions"><a className="story-hero__primary" href="#digital-planner">Plan my artwork</a><a className="story-hero__secondary" href="#create">See what we create</a></div>
           <small>Artzy-style illustration · Custom direction, format and price confirmed before production</small>
         </div>
       </section>
@@ -29,6 +36,10 @@ export default function DigitalPrintsPage() {
       <section className="digital-promise" aria-label="Service benefits">
         <span>Created to your brief</span><span>Preview before production</span><span>Digital file or physical print</span><span>Home &amp; commercial projects</span>
       </section>
+
+      <nav className="digital-page-nav" aria-label="Digital art page sections"><a href="#digital-planner"><b>01</b>Plan my artwork</a><a href="#create"><b>02</b>Explore services</a><a href="#formats"><b>03</b>Choose a finish</a><a href="#process"><b>04</b>Understand the process</a></nav>
+
+      <DigitalArtPlanner />
 
       <section className="digital-create" id="create">
         <div className="digital-section-heading"><span className="service-eyebrow">Choose your creative path</span><h2>What would you like us to make?</h2><p>Two specialist services, each guided personally by the studio.</p></div>
@@ -46,9 +57,11 @@ export default function DigitalPrintsPage() {
 
       <section className="digital-directions"><div className="digital-section-heading"><span className="service-eyebrow">Creative directions</span><h2>A starting point—not a limit.</h2></div><div className="digital-direction-grid">{directions.map(([title, copy], index) => <article key={title}><span>0{index + 1}</span><h3>{title}</h3><p>{copy}</p></article>)}</div></section>
 
-      <section className="digital-formats"><div><span className="service-eyebrow">Choose the finish</span><h2>Made for how you want to use it.</h2><p>Final size, material, stock availability and delivery timing are confirmed by the studio before payment for a custom order.</p></div><div className="digital-format-list"><article><strong>Digital file</strong><span>High-resolution artwork for approved personal or commercial use.</span></article><article><strong>Fine-art print</strong><span>A refined paper finish suited to framing and gifting.</span></article><article><strong>Canvas print</strong><span>A ready-to-display choice for homes, offices and hospitality.</span></article><article><strong>Custom series</strong><span>Coordinated multi-piece art for larger walls and business spaces.</span></article></div></section>
+      <section className="digital-formats" id="formats"><div><span className="service-eyebrow">Choose the finish</span><h2>Made for how you want to use it.</h2><p>Final size, material, stock availability and delivery timing are confirmed by the studio before payment for a custom order.</p></div><div className="digital-format-list"><article><strong>Digital file</strong><span>High-resolution artwork for approved personal or commercial use.</span></article><article><strong>Fine-art print</strong><span>A refined paper finish suited to framing and gifting.</span></article><article><strong>Canvas print</strong><span>A ready-to-display choice for homes, offices and hospitality.</span></article><article><strong>Custom series</strong><span>Coordinated multi-piece art for larger walls and business spaces.</span></article></div></section>
 
-      <section className="digital-process"><div className="digital-section-heading"><span className="service-eyebrow">A clear custom workflow</span><h2>From inspiration to finished artwork.</h2></div><ol><li><b>1</b><strong>Share</strong><span>Send photos, wall measurements, colours, occasion and budget.</span></li><li><b>2</b><strong>Direction</strong><span>The studio confirms style, format, price and expected timeline.</span></li><li><b>3</b><strong>Preview</strong><span>Review the concept and provide feedback before final production.</span></li><li><b>4</b><strong>Receive</strong><span>Get the approved digital file or your carefully finished physical print.</span></li></ol><div className="service-actions center"><Link className="service-primary" href="/contact/">Start a custom artwork</Link><a className="service-secondary" href="https://wa.me/919158680722" target="_blank" rel="noreferrer">Ask on WhatsApp</a></div></section>
+      <section className="digital-confidence" aria-labelledby="digital-confidence-title"><header><span className="service-eyebrow">Friendly, clear and confirmed</span><h2 id="digital-confidence-title">Know what happens before you commit.</h2></header><div><article><b>Not sure about style?</b><p>Choose “Recommend a style” in the planner. Deepti can guide the visual direction from your room, story, photographs or intended use.</p></article><article><b>When will I know the price?</b><p>The studio reviews complexity, size, finish, quantity, usage and required date, then confirms a quote before production begins.</p></article><article><b>Will I see it first?</b><p>The concept and permitted revision process are explained with the quote. The approved direction is confirmed before final printing.</p></article><article><b>Can I use the digital file anywhere?</b><p>Personal or commercial usage is agreed in writing. A digital file does not automatically include unrestricted reproduction rights.</p></article></div></section>
+
+      <section className="digital-process" id="process"><div className="digital-section-heading"><span className="service-eyebrow">A clear custom workflow</span><h2>From inspiration to finished artwork.</h2></div><ol><li><b>1</b><strong>Share</strong><span>Use the planner, then send available photos, dimensions, purpose and required date.</span></li><li><b>2</b><strong>Confirm</strong><span>The studio confirms feasibility, creative direction, revisions, usage, price and timeline.</span></li><li><b>3</b><strong>Approve</strong><span>Review the agreed concept or proof before final production or printing.</span></li><li><b>4</b><strong>Receive</strong><span>Receive the approved digital file or carefully finished physical print.</span></li></ol><div className="service-actions center"><a className="service-primary" href="#digital-planner">Build my brief</a><Link className="service-secondary" href="/contact/?interest=digital-art">Talk to the studio</Link></div></section>
     </main>
     <Footer />
   </>;
