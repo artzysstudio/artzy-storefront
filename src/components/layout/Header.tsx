@@ -21,11 +21,12 @@ const NAV: NavGroup[] = [
     { label: 'Mirrors & decorative hangings', href: '/shop/?category=mirrors-and-decorative-hangings' },
     { label: 'Spiritual & festive art', href: '/shop/?category=spiritual-festive-art' },
   ]},
-  { label: 'Personalised', paths: ['/personalised', '/personalized', '/digital-prints', '/caricatures', '/gifts'], items: [
+  { label: 'Personalised', paths: ['/personalised', '/personalized', '/digital-prints', '/caricatures', '/gifts', '/name-plates'], items: [
     { label: 'Start a personal piece', href: '/personalised', note: 'Choose the right creative path for your story' },
     { label: 'Digital art & prints', href: '/digital-prints' },
     { label: 'Caricatures from photos', href: '/caricatures' },
     { label: 'Occasion gifts', href: '/gifts' },
+    { label: 'Name plates', href: '/name-plates' },
     { label: 'Custom artwork', href: '/personalised/#custom-artwork' },
   ]},
   { label: 'For Business', paths: ['/for-business', '/custom-corporate'], items: [
