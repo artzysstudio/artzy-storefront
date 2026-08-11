@@ -157,6 +157,7 @@ export default function ArtzyMuseFloater() {
             </div>
           </form>
 
+          <div className="muse-imagine-links"><span>CREATE AN AI CONCEPT</span><p>Complete a custom brief first, then generate a clearly labelled imaginative preview.</p><div><Link href="/name-plates/#name-plate-builder" onClick={() => setIsOpen(false)}>Name plate preview</Link><Link href="/digital-prints/#digital-planner" onClick={() => setIsOpen(false)}>Digital art preview</Link></div></div>
           <p className="muse-chat-note">Muse provides general guidance. Stock, final price, custom feasibility and delivery are confirmed by the studio.</p>
           <Link className="muse-guide-contact" href="/contact" onClick={() => setIsOpen(false)}>
             Speak with Deepti’s studio <span>&rarr;</span>
@@ -185,6 +186,7 @@ export default function ArtzyMuseFloater() {
           stroke: currentColor;
           stroke-width: 2;
         }
+        .muse-imagine-links{margin:12px 0;padding:14px;border:1px solid #dfcfc4;background:#fbf3ec}.muse-imagine-links>span{color:#a44a4f;font-size:.57rem;font-weight:800;letter-spacing:.12em}.muse-imagine-links p{margin:6px 0 10px;color:#725f55;font-size:.64rem;line-height:1.4}.muse-imagine-links>div{display:flex;flex-wrap:wrap;gap:6px}.muse-imagine-links a{padding:7px 9px;border:1px solid #b66a6c;border-radius:999px;color:#934147;font-size:.59rem;font-weight:750;text-decoration:none}
         .muse-flower-dot { fill: #f3cf92; stroke: none; }
         .muse-floater-mark::after { border-color: rgba(166,78,82,.25) !important; }
         .muse-quick-questions {

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import ArtDirectionMark from '@/components/ArtDirectionMark';
+import AIConceptPreview from '@/components/AIConceptPreview';
 import { ART_DIRECTIONS, DIGITAL_ART_DIRECTION_IDS } from '@/data/artDirections';
 
 const purposes = [
@@ -82,5 +83,10 @@ export default function DigitalArtPlanner() {
         <small className="digital-planner__honesty">No payment or final order is created here. Feasibility, revisions, usage rights, material, price and timing are confirmed personally by the studio.</small>
       </aside>
     </div>
+    {readyToSend && <AIConceptPreview
+      title={`Artzy Muse concept · ${purpose?.label}`}
+      studioMessage={message}
+      brief={{ kind: 'digital-art', style: style?.name ?? 'Studio recommendation', palette: 'Warm terracotta, muted botanical green and cream', purpose: `${purpose?.label}. ${size}. ${output?.[1]}.` }}
+    />}
   </section>;
 }

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import ArtDirectionMark from '@/components/ArtDirectionMark';
+import AIConceptPreview from '@/components/AIConceptPreview';
 import { ART_DIRECTIONS, type ArtDirectionId } from '@/data/artDirections';
 
 const shapes = [
@@ -100,9 +101,7 @@ export default function NamePlateBuilder() {
         <div className="plate-builder__wall">
           <div className={`live-name-plate live-name-plate--${shape.slug} live-name-plate--${palette.slug} live-name-plate--motif-${motif.slug}`} aria-live="polite">
             <ArtDirectionMark direction={motif.slug} className="live-name-plate__art" frame/>
-            <strong>{familyName || 'Your name here'}</strong>
-            <small>{secondLine || 'Your second line'}</small>
-            <em>{motif.name} style</em>
+            <span className="live-name-plate__copy"><strong>{familyName || 'Your name here'}</strong><small>{secondLine || 'Your second line'}</small><em>{motif.name} style</em></span>
           </div>
         </div>
         <div className="plate-preview-note"><span>Live design preview</span><small>Illustrative only · not an AR or production proof</small></div>
@@ -126,5 +125,14 @@ export default function NamePlateBuilder() {
         <p className="plate-builder__assurance"><b>Before anything is made:</b> the studio confirms spelling, artwork, material, mounting, final price and realistic delivery time. No payment is taken from this builder.</p>
       </form>
     </div>
+    <AIConceptPreview
+      title={`Artzy name plate concept for ${familyName || 'our home'}`}
+      primaryText={familyName}
+      secondaryText={secondLine}
+      studioMessage={brief}
+      enabled={familyName.trim().length > 0}
+      disabledHint="Enter the name or family wording above before generating a concept."
+      brief={{ kind: 'name-plate', style: motif.name, palette: palette.name, shape: shape.name, material: material.name, purpose: placement.name }}
+    />
   </section>;
 }
