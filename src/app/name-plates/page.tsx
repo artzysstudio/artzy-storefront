@@ -10,20 +10,20 @@ export const metadata: Metadata = {
 };
 
 const directions = [
-  ['botanical','Botanical arch','Flowing leaves and flowers for a warm, graceful entrance.'],
-  ['warli','Warli welcome','Story-led folk figures with a rhythmic hand-painted border.'],
-  ['lotus','Lotus scallop','A soft ceremonial silhouette with a centred lotus motif.'],
-  ['geometric','Modern geometry','Balanced lines and restrained pattern for contemporary homes.'],
-  ['madhubani','Madhubani garden','Dense floral detail inspired by Indian folk-art composition.'],
-  ['minimal','Quiet minimal','Clean lettering, fine borders and a small signature motif.'],
+  ['botanical','Botanical arch','Flowing leaves and flowers for a warm, graceful entrance.','Aarav'],
+  ['warli','Warli welcome','Story-led folk figures with a rhythmic hand-painted border.','Meera'],
+  ['lotus','Lotus scallop','A soft ceremonial silhouette with a centred lotus motif.','Anaya'],
+  ['geometric','Modern geometry','Balanced lines and restrained pattern for contemporary homes.','Aarohi'],
+  ['madhubani','Madhubani garden','Dense floral detail inspired by Indian folk-art composition.','The Patils'],
+  ['minimal','Quiet minimal','Clean lettering, fine borders and a small signature motif.','Shanti'],
 ];
 
 export default function NamePlatesPage() {
   return <><Header/><main className="name-plates-page">
-    <section className="story-hero story-hero--name-plates"><img className="story-hero__image" src="/images/name-plates-hero.webp" alt="Artzy-style hand-painted name plate directions displayed at a warm Indian home entrance"/><div className="story-hero__shade" aria-hidden="true"/><div className="story-hero__copy"><span>Hand-painted · personal · made for your door</span><h1>Let your entrance<br/><em>tell your story.</em></h1><p>Begin with your family name, home name or welcome line. Choose an Artzy direction and shape it with the studio into a name plate that feels genuinely yours.</p><div className="story-hero__actions"><a className="story-hero__primary" href="#name-plate-builder">Build your name plate</a><a className="story-hero__secondary" href="#plate-directions">See design directions</a></div><small>Artzy-style illustration · Final design, material, price and timeline confirmed by the studio</small></div></section>
+    <section className="story-hero story-hero--name-plates"><img className="story-hero__image" src="/images/name-plates-hero-v2.webp" alt="A complete Artzy-style Indian entrance with The Shah Family wall name plate and Aarav, Meera and Anaya standing name plate examples"/><div className="story-hero__shade" aria-hidden="true"/><div className="story-hero__copy"><span>Hand-painted · personal · made for your door</span><h1>Let your entrance<br/><em>tell your story.</em></h1><p>Begin with your family name, home name or welcome line. Choose an Artzy direction and shape it with the studio into a name plate that feels genuinely yours.</p><div className="story-hero__actions"><a className="story-hero__primary" href="#name-plate-builder">Build your name plate</a><a className="story-hero__secondary" href="#plate-directions">See design directions</a></div><small>Artzy-style illustration · Final design, material, price and timeline confirmed by the studio</small></div></section>
     <div className="story-hero-strip"><span><b>Choose a direction</b>Shape, motif and colour mood</span><span><b>Enter your wording</b>English or your preferred Indian script</span><span><b>Approve before making</b>Spelling, drawing, price and delivery</span></div>
 
-    <section className="plate-directions" id="plate-directions"><header><span>Design directions</span><h2>A starting point for<br/><em>your own welcome.</em></h2><p>These are illustrative creative directions—not ready-stock products. Select the feeling you prefer, then use the builder to prepare your enquiry.</p></header><div className="plate-direction-grid">{directions.map(([slug,title,copy], index) => <article key={slug}><div className={`sample-plate sample-plate--${slug}`} aria-hidden="true"><i>{slug === 'warli' ? '△ ○ △' : slug === 'lotus' ? '✿' : slug === 'geometric' ? '◇' : slug === 'minimal' ? '•' : '❧'}</i><b>YOUR NAME</b><small>WELCOME HOME</small></div><span>0{index + 1}</span><h3>{title}</h3><p>{copy}</p><a href="#name-plate-builder">Use this direction <b>→</b></a></article>)}</div></section>
+    <section className="plate-directions" id="plate-directions"><header><span>Design directions</span><h2>A starting point for<br/><em>your own welcome.</em></h2><p>These named examples demonstrate shape and painting style—they are not ready-stock products. Choose a direction, then use the builder to see its design and estimated price.</p></header><div className="plate-direction-grid">{directions.map(([slug,title,copy,sampleName], index) => <article key={slug}><div className={`sample-plate sample-plate--${slug}`} aria-hidden="true"><i>{slug === 'warli' ? '△ ○ △' : slug === 'lotus' ? '✿' : slug === 'geometric' ? '◇' : slug === 'minimal' ? '•' : '❧'}</i><b>{sampleName}</b><small>WELCOME HOME</small></div><span>0{index + 1}</span><h3>{title}</h3><p>{copy}</p><a href="#name-plate-builder">Use this direction <b>→</b></a></article>)}</div></section>
 
     <NamePlateBuilder/>
 
