@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from 'react';
+import ArtDirectionMark from '@/components/ArtDirectionMark';
+import { ART_DIRECTIONS, type ArtDirectionId } from '@/data/artDirections';
 
 const shapes = [
   { name: 'Classic rectangle', slug: 'classic-rectangle', price: 0, note: 'Balanced and timeless' },
@@ -8,14 +10,12 @@ const shapes = [
   { name: 'Scalloped', slug: 'scalloped', price: 350, note: 'Decorative curved edge' },
   { name: 'Oval', slug: 'oval', price: 300, note: 'Graceful compact form' },
 ];
-const motifs = [
-  { name: 'Botanical', slug: 'botanical', price: 450, note: 'Hand-painted leaves and flowers' },
-  { name: 'Lotus', slug: 'lotus', price: 450, note: 'Centred lotus with fine foliage' },
-  { name: 'Warli', slug: 'warli', price: 650, note: 'Narrative figures and folk border' },
-  { name: 'Geometric', slug: 'geometric', price: 250, note: 'Contemporary lines and rhythm' },
-  { name: 'Madhubani', slug: 'madhubani', price: 750, note: 'Detailed folk florals and pattern' },
-  { name: 'Minimal', slug: 'minimal', price: 0, note: 'Clean border and signature accent' },
-];
+const motifPrices: Partial<Record<ArtDirectionId, number>> = {
+  botanical: 450, lotus: 450, warli: 650, geometric: 250, madhubani: 750, minimal: 0,
+};
+const motifs = (['botanical', 'lotus', 'warli', 'geometric', 'madhubani', 'minimal'] as ArtDirectionId[]).map((slug) => ({
+  ...ART_DIRECTIONS[slug], slug, price: motifPrices[slug] ?? 0, note: ART_DIRECTIONS[slug].shortNote,
+}));
 const palettes = [
   { name: 'Terracotta rose', slug: 'terracotta' },
   { name: 'Olive & gold', slug: 'olive' },
@@ -69,7 +69,7 @@ export default function NamePlateBuilder() {
       <div className="plate-builder__preview-panel">
         <div className="plate-builder__wall">
           <div className={`live-name-plate live-name-plate--${shape.slug} live-name-plate--${palette.slug} live-name-plate--motif-${motif.slug}`} aria-live="polite">
-            <span className="live-name-plate__pattern" aria-hidden="true"><i/><i/><i/><i/><i/></span>
+            <ArtDirectionMark direction={motif.slug} className="live-name-plate__art" frame/>
             <strong>{familyName || 'Your name here'}</strong>
             <small>{secondLine || 'Your second line'}</small>
             <em>{motif.name} style</em>
@@ -86,7 +86,7 @@ export default function NamePlateBuilder() {
       <form className="plate-builder__controls" onSubmit={(event) => event.preventDefault()}>
         <fieldset><legend>1 · Your wording</legend><div className="plate-input-grid"><label>Main name<input value={familyName} onChange={(e) => setFamilyName(e.target.value.slice(0, 36))} maxLength={36} placeholder="Family or home name"/></label><label>Second line <small>Optional</small><input value={secondLine} onChange={(e) => setSecondLine(e.target.value.slice(0, 42))} maxLength={42} placeholder="Flat number, welcome line or names"/></label></div><p className="plate-field-help">You may type English, Marathi, Hindi or another preferred script. The studio will check spelling with you before painting.</p></fieldset>
         <fieldset><legend>2 · Shape</legend><div className="plate-shape-options">{shapes.map((item) => <button type="button" className={shape.slug === item.slug ? 'selected' : ''} onClick={() => setShape(item)} key={item.slug}><i className={`plate-shape-icon plate-shape-icon--${item.slug}`} aria-hidden="true"/><span><b>{item.name}</b><small>{item.note}{item.price ? ` · +₹${inr.format(item.price)}` : ' · included'}</small></span></button>)}</div></fieldset>
-        <fieldset><legend>3 · Painting style</legend><div className="plate-motif-options">{motifs.map((item) => <button type="button" className={motif.slug === item.slug ? 'selected' : ''} onClick={() => setMotif(item)} key={item.slug}><i className={`plate-motif-icon plate-motif-icon--${item.slug}`} aria-hidden="true"><span/><span/><span/></i><span><b>{item.name}</b><small>{item.note}{item.price ? ` · +₹${inr.format(item.price)}` : ' · included'}</small></span></button>)}</div></fieldset>
+        <fieldset><legend>3 · Painting style</legend><div className="plate-motif-options">{motifs.map((item) => <button type="button" className={motif.slug === item.slug ? 'selected' : ''} onClick={() => setMotif(item)} key={item.slug}><ArtDirectionMark direction={item.slug}/><span><b>{item.name}</b><small>{item.note}{item.price ? ` · +₹${inr.format(item.price)}` : ' · included'}</small></span></button>)}</div><p className="plate-field-help"><b>{motif.name}:</b> {motif.visualLanguage}. {motif.studioNote}</p></fieldset>
         <fieldset><legend>4 · Colour mood</legend><div className="plate-palette-options">{palettes.map((item) => <button type="button" className={palette.slug === item.slug ? 'selected' : ''} onClick={() => setPalette(item)} key={item.slug}><i className={`plate-swatch plate-swatch--${item.slug}`} aria-hidden="true"/><span>{item.name}</span></button>)}</div></fieldset>
         <div className="plate-select-grid"><label>Approximate size<select value={size.slug} onChange={(e) => setSize(sizes.find((item) => item.slug === e.target.value) ?? sizes[1])}>{sizes.map((item) => <option value={item.slug} key={item.slug}>{item.name} · from ₹{inr.format(item.price)}</option>)}</select></label><label>Mounting preference<select value={mounting.name} onChange={(e) => setMounting(mountings.find((item) => item.name === e.target.value) ?? mountings[0])}>{mountings.map((item) => <option value={item.name} key={item.name}>{item.name}{item.price ? ` · +₹${inr.format(item.price)}` : ' · included'}</option>)}</select></label></div>
         <div className="plate-builder__actions"><a href={`https://wa.me/919158680722?text=${encodeURIComponent(brief)}`} target="_blank" rel="noreferrer">Send design + estimate on WhatsApp</a><button type="button" onClick={reset}>Start again</button></div>
