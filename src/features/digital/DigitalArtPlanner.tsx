@@ -83,10 +83,12 @@ export default function DigitalArtPlanner() {
         <small className="digital-planner__honesty">No payment or final order is created here. Feasibility, revisions, usage rights, material, price and timing are confirmed personally by the studio.</small>
       </aside>
     </div>
-    {readyToSend && <AIConceptPreview
+    <AIConceptPreview
       title={`Artzy Muse concept · ${purpose?.label}`}
       studioMessage={message}
+      enabled={readyToSend}
+      disabledHint="Choose the purpose, art direction and output above to unlock your imaginative preview."
       brief={{ kind: 'digital-art', style: style?.name ?? 'Studio recommendation', palette: 'Warm terracotta, muted botanical green and cream', purpose: `${purpose?.label}. ${size}. ${output?.[1]}.` }}
-    />}
+    />
   </section>;
 }
