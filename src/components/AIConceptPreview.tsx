@@ -38,17 +38,20 @@ async function composedFile(imageUrl: string, primaryText: string, secondaryText
     const width = canvas.width * .62;
     const x = canvas.width / 2;
     const y = canvas.height / 2;
-    context.fillStyle = 'rgba(46, 28, 23, .70)';
-    context.fillRect(x - width / 2, y - canvas.height * .095, width, canvas.height * .19);
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillStyle = '#fff8ef';
+    context.shadowColor = 'rgba(255, 248, 239, .95)';
+    context.shadowBlur = Math.max(4, Math.round(canvas.width * .009));
+    context.shadowOffsetY = 1;
+    context.fillStyle = '#49362f';
     context.font = `600 ${Math.max(26, Math.round(canvas.width * .052))}px Georgia, serif`;
     context.fillText(primaryText.slice(0, 36), x, y - canvas.height * .018, width * .9);
     if (secondaryText) {
       context.font = `600 ${Math.max(13, Math.round(canvas.width * .018))}px Arial, sans-serif`;
       context.fillText(secondaryText.toUpperCase().slice(0, 42), x, y + canvas.height * .055, width * .86);
     }
+    context.shadowColor = 'transparent';
+    context.shadowBlur = 0;
   }
 
   const footerHeight = Math.max(28, canvas.height * .055);
