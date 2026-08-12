@@ -5,14 +5,14 @@ import Footer from '@/components/layout/Footer';
 import DigitalArtPlanner from '@/features/digital/DigitalArtPlanner';
 
 export const metadata: Metadata = {
-  title: "Custom Digital Art, Prints & Caricatures | Artzy's Studio",
-  description: "Plan custom digital wall art, canvas prints, caricatures and commercial artwork with a friendly guided brief from Artzy's Studio.",
+  title: "Custom Digital Art & Prints | Artzy's Studio",
+  description: "Plan custom digital wall art, canvas prints and commercial artwork, or continue to Artzy's dedicated photo-to-caricature studio.",
 };
 
 const directions = [
   ['Modern & abstract', 'Colour-led compositions for living rooms, bedrooms and statement walls.'],
   ['Geometric & minimal', 'Balanced shapes, restrained palettes and contemporary visual rhythm.'],
-  ['Caricatures from photos', 'Joyful portraits for couples, families, birthdays, weddings and teams.'],
+  ['Indian art directions', 'Floral, geometric, folk-inspired and completely bespoke visual directions.'],
   ['Commercial art', 'Custom artwork for offices, hospitality, gifting and brand-led spaces.'],
 ];
 
@@ -20,14 +20,15 @@ export default function DigitalPrintsPage() {
   return <>
     <Header />
     <main className="digital-page">
+      <nav className="creative-service-tabs" aria-label="Choose digital art or caricature service"><span aria-current="page">Digital Art &amp; Prints<small>Wall art, canvas and commercial work</small></span><Link href="/caricatures/">Caricatures<small>Upload a photo and build a portrait</small></Link></nav>
       <section className="story-hero story-hero--digital">
         <img className="story-hero__image" src="/images/digital-hero-v3.webp" alt="Modern abstract and geometric prints with a complete personalised couple caricature in an Artzy-style digital design workspace" />
         <div className="story-hero__shade" aria-hidden="true" />
         <div className="story-hero__copy digital-hero-copy">
-          <span className="service-eyebrow">Digital art · prints · caricatures</span>
+          <span className="service-eyebrow">Digital art · prints · custom directions</span>
           <h1>Your idea, reimagined as <em>art.</em></h1>
-          <p>Share a photograph, a room or a creative brief. Deepti&apos;s studio transforms it into modern wall art, a custom canvas print or a joyful personalised caricature.</p>
-          <div className="digital-hero-tags" aria-label="Digital art services"><span>Abstract &amp; modern</span><span>Custom canvas prints</span><span>Caricatures from photos</span></div>
+          <p>Share a room, colour palette or creative brief. Deepti&apos;s studio transforms it into modern wall art, a custom canvas print or a commercial artwork direction.</p>
+          <div className="digital-hero-tags" aria-label="Digital art services"><span>Abstract &amp; modern</span><span>Custom canvas prints</span><span>Commercial art</span></div>
           <div className="story-hero__actions"><a className="story-hero__primary" href="#digital-planner">Plan my artwork</a><a className="story-hero__secondary" href="#create">See what we create</a></div>
           <small>Artzy-style illustration · Custom direction, format and price confirmed before production</small>
         </div>
@@ -42,15 +43,15 @@ export default function DigitalPrintsPage() {
       <DigitalArtPlanner />
 
       <section className="digital-create" id="create">
-        <div className="digital-section-heading"><span className="service-eyebrow">Choose your creative path</span><h2>What would you like us to make?</h2><p>Two specialist services, each guided personally by the studio.</p></div>
+        <div className="digital-section-heading"><span className="service-eyebrow">Choose your creative path</span><h2>Art for a wall, space or brief.</h2><p>Digital artwork stays here. The specialised photo-to-caricature workflow has its own focused studio.</p></div>
         <div className="digital-path-grid">
           <article className="digital-path digital-path-print">
             <div className="digital-path-art" aria-hidden="true"><span className="art-frame frame-one"/><span className="art-frame frame-two"/><span className="art-frame frame-three"/></div>
             <div className="digital-path-copy"><span className="digital-path-number">01 · Digital prints &amp; wall art</span><h3>Art composed for your room.</h3><p>Tell us the wall size, palette and mood. We can develop modern, abstract, geometric or completely bespoke artwork for homes, offices and hospitality spaces.</p><ul><li>Custom colours, proportions and sizes</li><li>Fine-art paper or canvas options</li><li>Single statement pieces or coordinated sets</li><li>Print-ready digital artwork also available</li></ul><Link href="/shop/?category=digital-prints">Explore available prints <span>→</span></Link></div>
           </article>
-          <article className="digital-path digital-path-caricature">
+          <article className="digital-path digital-path-caricature digital-path-specialist">
             <div className="digital-path-art caricature-scene" aria-hidden="true"><div className="portrait-card"><span className="portrait-head"/><span className="portrait-body"/><i>♥</i></div><div className="portrait-card second"><span className="portrait-head"/><span className="portrait-body"/><i>✦</i></div></div>
-            <div className="digital-path-copy"><span className="digital-path-number">02 · Personalised caricatures</span><h3>Their personality, drawn with joy.</h3><p>Send clear photographs and tell us their story. We turn familiar expressions, hobbies and memorable details into an affectionate artwork made especially for the occasion.</p><ul><li>Individuals, couples, families and pets</li><li>Birthdays, weddings and anniversaries</li><li>Team, farewell and corporate tributes</li><li>Digital file, framed print or canvas</li></ul><Link href="/caricatures/">Discover caricatures <span>→</span></Link></div>
+            <div className="digital-path-copy"><span className="digital-path-number">Specialist studio · Personalised caricatures</span><h3>Looking for a portrait from a photo?</h3><p>Caricatures now have a dedicated guided builder with six styles, people and pet choices, occasions, compositions, AI likeness preview and studio handoff.</p><ul><li>Individuals, couples, families, groups and pets</li><li>Six original illustration directions</li><li>Private photo preparation and explicit consent</li><li>AI concept followed by studio refinement</li></ul><Link href="/caricatures/">Open the caricature studio <span>→</span></Link></div>
           </article>
         </div>
       </section>

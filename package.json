@@ -10,7 +10,8 @@
     "lint": "node node_modules/next/dist/bin/next lint",
     "pages:build": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\" && node node_modules/next/dist/bin/next build",
     "catalogue:import": "node scripts/import-erp-products.mjs",
-    "test:gifts": "tsx --test tests/gift-engine.test.ts"
+    "test:gifts": "tsx --test tests/gift-engine.test.ts",
+    "test:caricatures": "tsx --test tests/caricature-engine.test.ts"
   },
   "dependencies": {
     "next": "15.0.3",

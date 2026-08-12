@@ -1,84 +1,35 @@
 "use client";
+import {ChangeEvent,useEffect,useMemo,useState} from 'react';
+import {aiReliable,CARICATURE_STYLES,COMPOSITIONS,OCCASIONS,OUTPUTS,SUBJECTS,validatePhotoFile,type CaricatureBrief,type CaricatureStyleId,type CompositionId,type SubjectId} from '@/features/caricatures/config';
 
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+const label=(value:string)=>value.replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase());
+const steps=['Photo','Subjects','Style','Purpose','Details','Review'];
+async function preparePhoto(file:File){const source=await new Promise<string>((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result));reader.onerror=()=>reject(new Error('Could not read this photo.'));reader.readAsDataURL(file)});const image=await new Promise<HTMLImageElement>((resolve,reject)=>{const el=new Image();el.onload=()=>resolve(el);el.onerror=()=>reject(new Error('This image could not be opened.'));el.src=source});if(image.width<320||image.height<320)throw new Error('Choose a clearer photo at least 320 × 320 pixels.');const scale=Math.min(1,896/Math.max(image.width,image.height)),canvas=document.createElement('canvas');canvas.width=Math.max(256,Math.round(image.width*scale));canvas.height=Math.max(256,Math.round(image.height*scale));const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Your browser could not prepare this photo.');ctx.drawImage(image,0,0,canvas.width,canvas.height);const preview=canvas.toDataURL('image/jpeg',.86);return{preview,base64:preview.split(',')[1]}}
 
-const STYLES = ["Warm watercolour", "Playful editorial", "Elegant minimal", "Colourful story scene"];
-const OCCASIONS = ["Birthday", "Wedding or anniversary", "Family memory", "Retirement or team tribute", "Just for fun"];
-
-async function preparePhoto(file: File): Promise<{ preview: string; base64: string }> {
-  const source = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(new Error("Could not read this photo."));
-    reader.readAsDataURL(file);
-  });
-  const image = await new Promise<HTMLImageElement>((resolve, reject) => {
-    const element = new Image();
-    element.onload = () => resolve(element);
-    element.onerror = () => reject(new Error("This image could not be opened."));
-    element.src = source;
-  });
-  const scale = Math.min(1, 896 / Math.max(image.width, image.height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.max(256, Math.round(image.width * scale));
-  canvas.height = Math.max(256, Math.round(image.height * scale));
-  canvas.getContext("2d")?.drawImage(image, 0, 0, canvas.width, canvas.height);
-  const preview = canvas.toDataURL("image/jpeg", 0.86);
-  return { preview, base64: preview.split(",")[1] };
-}
-
-export default function CaricaturePhotoBuilder() {
-  const [photo, setPhoto] = useState("");
-  const [imageBase64, setImageBase64] = useState("");
-  const [style, setStyle] = useState(STYLES[0]);
-  const [occasion, setOccasion] = useState(OCCASIONS[0]);
-  const [details, setDetails] = useState("");
-  const [consent, setConsent] = useState(false);
-  const [concept, setConcept] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-
-  useEffect(() => () => { if (concept.startsWith("blob:")) URL.revokeObjectURL(concept); }, [concept]);
-  const whatsapp = useMemo(() => `https://wa.me/919158680722?text=${encodeURIComponent(["Hello Artzy's Studio, I created a caricature direction.", `Occasion: ${occasion}`, `Style: ${style}`, `Personal details: ${details || "Please guide me"}`, "I understand the AI image is an imaginative likeness concept, not the final artwork or production proof."].join("\n"))}`, [details, occasion, style]);
-
-  async function onPhoto(event: ChangeEvent<HTMLInputElement>) {
-    setError(""); setConcept("");
-    const file = event.target.files?.[0];
-    if (!file) return;
-    if (!/^image\/(jpeg|png|webp)$/.test(file.type) || file.size > 8 * 1024 * 1024) { setError("Choose a JPG, PNG or WebP photo up to 8 MB."); return; }
-    try { const prepared = await preparePhoto(file); setPhoto(prepared.preview); setImageBase64(prepared.base64); }
-    catch (cause) { setError(cause instanceof Error ? cause.message : "Could not prepare this photo."); }
-  }
-
-  async function generate() {
-    if (!imageBase64 || !consent || busy) return;
-    setBusy(true); setError("");
-    try {
-      const response = await fetch("/api/muse/caricature", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image_b64: imageBase64, style, occasion, details }) });
-      if (!response.ok) throw new Error((await response.json().catch(() => null))?.error || "The concept could not be generated.");
-      setConcept(URL.createObjectURL(await response.blob()));
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "The concept could not be generated."); }
-    finally { setBusy(false); }
-  }
-
-  return <section className="caricature-builder" id="caricature-builder" aria-labelledby="caricature-builder-title">
-    <div className="caricature-builder__intro"><span className="service-eyebrow">Try it with your photograph</span><h2 id="caricature-builder-title">From a familiar face<br/><em>to a playful first concept.</em></h2><p>Upload a clear photograph, choose a feeling and add the details that make the person special. Artzy Muse creates a likeness concept for discussion; Deepti’s studio refines the final composition and confirms production.</p><ul><li>Your upload is used for this generation request and is not saved by the storefront.</li><li>Use a front-facing, well-lit photo with every face fully visible.</li><li>AI can change facial details. The final likeness is reviewed with the studio.</li></ul></div>
+export default function CaricaturePhotoBuilder(){
+  const [step,setStep]=useState(0),[photo,setPhoto]=useState(''),[imageBase64,setImageBase64]=useState(''),[concept,setConcept]=useState(''),[busy,setBusy]=useState(false),[progress,setProgress]=useState(''),[error,setError]=useState(''),[reference,setReference]=useState(''),[consent,setConsent]=useState(false);
+  const [brief,setBrief]=useState<CaricatureBrief>({styleId:'watercolour',occasion:'birthday',composition:'half_body',subject:'one_person',people:1,pets:0,profession:'',hobbies:'',colours:'',clothing:'',background:'',props:'',notes:'',output:'studio_guidance'});
+  const patch=<K extends keyof CaricatureBrief>(key:K,value:CaricatureBrief[K])=>setBrief(current=>({...current,[key]:value}));
+  useEffect(()=>()=>{if(concept.startsWith('blob:'))URL.revokeObjectURL(concept)},[concept]);
+  useEffect(()=>{if(!busy){setProgress('');return}const messages=['Checking your photo…','Preparing your selected style…','Creating your AI caricature concept…','Finishing the preview…'];let index=0;setProgress(messages[0]);const timer=setInterval(()=>{index=Math.min(index+1,messages.length-1);setProgress(messages[index])},7000);return()=>clearInterval(timer)},[busy]);
+  const manual=!aiReliable(brief),style=CARICATURE_STYLES[brief.styleId];
+  const whatsapp=useMemo(()=>`https://wa.me/919158680722?text=${encodeURIComponent([`Hello Artzy's Studio — Caricature brief ${reference||'(new)'}`,`Style: ${style.name}`,`Occasion: ${label(brief.occasion)}`,`Subjects: ${brief.people} people, ${brief.pets} pets`,`Composition: ${label(brief.composition)}`,`Background / props: ${brief.background||'Studio guidance'} / ${brief.props||'None'}`,`Requirement: ${label(brief.output)}`,`Notes: ${brief.notes||'None'}`,'AI preview is a concept only; please confirm final artwork, price and timeline.'].join('\n'))}`,[brief,reference,style.name]);
+  const canNext=[Boolean(photo),brief.people+brief.pets>0,Boolean(brief.styleId),Boolean(brief.occasion&&brief.composition),true,consent][step];
+  async function onPhoto(event:ChangeEvent<HTMLInputElement>){setError('');setConcept('');const file=event.target.files?.[0];if(!file)return;const invalid=validatePhotoFile(file);if(invalid){setError(invalid);return}try{const prepared=await preparePhoto(file);setPhoto(prepared.preview);setImageBase64(prepared.base64)}catch(cause){setError(cause instanceof Error?cause.message:'Could not prepare this photo.')}}
+  function chooseSubject(id:SubjectId){const item=SUBJECTS.find(x=>x.id===id)!;setBrief(current=>({...current,subject:id,people:item.people,pets:item.pets}))}
+  async function generate(){if(!imageBase64||!consent||busy||manual)return;setBusy(true);setError('');try{let session=sessionStorage.getItem('artzy-caricature-session');if(!session){session=crypto.randomUUID();sessionStorage.setItem('artzy-caricature-session',session)}const response=await fetch('/api/muse/caricature',{method:'POST',headers:{'Content-Type':'application/json','X-Artzy-Session':session},body:JSON.stringify({...brief,image_b64:imageBase64,consent:true})});const id=response.headers.get('X-Artzy-Reference');if(id)setReference(id);if(!response.ok){const data=await response.json().catch(()=>null);if(data?.referenceId)setReference(data.referenceId);throw new Error(data?.error||'The concept could not be generated.')}setConcept(URL.createObjectURL(await response.blob()))}catch(cause){setError(cause instanceof Error?cause.message:'The concept could not be generated.')}finally{setBusy(false)}}
+  return <section className="caricature-builder caricature-wizard" id="caricature-builder" aria-labelledby="caricature-builder-title">
+    <div className="caricature-builder__intro"><span className="service-eyebrow">Artzy Muse · photo-to-caricature</span><h2 id="caricature-builder-title">Build the idea<br/><em>one clear step at a time.</em></h2><p>Your choices remain here as you move back and forward. Larger groups are handed to the studio instead of producing an unreliable preview.</p><ol className="caricature-stepper">{steps.map((name,index)=><li className={index===step?'is-current':index<step?'is-done':''} key={name}><button type="button" onClick={()=>setStep(index)} aria-current={index===step?'step':undefined}><span>{index+1}</span>{name}</button></li>)}</ol></div>
     <div className="caricature-builder__panel">
-      <div className="caricature-builder__fields">
-        <label className="caricature-upload"><b>1 · Add a reference photo</b><span>{photo ? "Choose another photo" : "Take or upload a photo"}</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={onPhoto}/><small>JPG, PNG or WebP · maximum 8 MB</small></label>
-        <label><b>2 · Occasion</b><select value={occasion} onChange={event => setOccasion(event.target.value)}>{OCCASIONS.map(item => <option key={item}>{item}</option>)}</select></label>
-        <label><b>3 · Illustration feeling</b><select value={style} onChange={event => setStyle(event.target.value)}>{STYLES.map(item => <option key={item}>{item}</option>)}</select></label>
-        <label className="caricature-builder__details"><b>4 · What makes them, them? <small>optional</small></b><textarea maxLength={240} rows={3} value={details} onChange={event => setDetails(event.target.value)} placeholder="Hobbies, profession, favourite colours, pet, memorable place or gift message…"/></label>
-        <label className="caricature-builder__consent"><input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)}/><span>I have permission from everyone shown. For a child’s photo, I am their parent or guardian.</span></label>
-        <button type="button" onClick={generate} disabled={!photo || !consent || busy}>{busy ? "Creating your concept…" : "Create AI caricature concept"}</button>
-        {error && <p className="caricature-builder__error" role="alert">{error}</p>}
-      </div>
-      <div className="caricature-builder__comparison">
-        <figure className={!photo ? "is-empty" : ""}>{photo ? <img src={photo} alt="Customer reference preview"/> : <div><span>01</span><b>Your reference photo</b><small>Upload a photograph to begin</small></div>}<figcaption>Reference photo · visible only for this preview</figcaption></figure>
-        <span className="caricature-builder__arrow" aria-hidden="true">→</span>
-        <figure className={!concept ? "is-empty" : ""}>{concept ? <img src={concept} alt="AI-generated caricature likeness concept"/> : <div><span>02</span><b>Your caricature concept</b><small>Choose your direction, then generate</small></div>}<figcaption>AI likeness concept · not a final artwork</figcaption></figure>
-      </div>
-      {concept && <div className="caricature-builder__actions"><a href={concept} download="artzy-caricature-concept.png">Download concept</a><a href={whatsapp} target="_blank" rel="noreferrer">Ask the studio on WhatsApp</a></div>}
+      {step===0&&<div className="wizard-pane"><header><b>Step 1</b><h3>Add one clear reference photograph</h3><p>Use a front-facing, well-lit image with every face fully visible. The browser removes metadata while preparing a smaller JPEG.</p></header><label className="caricature-upload"><span>{photo?'Choose another photo':'Take or upload a photo'}</span><input type="file" accept="image/jpeg,image/png,image/webp" capture="user" onChange={onPhoto}/><small>JPG, PNG or WebP · 320 px minimum · 8 MB maximum</small></label>{photo&&<img className="wizard-photo" src={photo} alt="Uploaded reference preview"/>}</div>}
+      {step===1&&<div className="wizard-pane"><header><b>Step 2</b><h3>Who is in the artwork?</h3><p>Choose the closest group, then correct the numbers.</p></header><div className="choice-chips">{SUBJECTS.map(item=><button type="button" className={brief.subject===item.id?'is-selected':''} onClick={()=>chooseSubject(item.id)} key={item.id}>{item.label}</button>)}</div><div className="number-fields"><label>People<input type="number" min="0" max="12" value={brief.people} onChange={e=>patch('people',Number(e.target.value))}/></label><label>Pets<input type="number" min="0" max="6" value={brief.pets} onChange={e=>patch('pets',Number(e.target.value))}/></label></div>{manual&&<p className="manual-note">For reliable results, AI preview supports up to 4 people and 2 pets. Your larger group brief can still go directly to the studio.</p>}</div>}
+      {step===2&&<div className="wizard-pane"><header><b>Step 3</b><h3>Choose a caricature style</h3><p>Every example is fictional and AI-generated—not a real customer.</p></header><div className="caricature-style-grid">{Object.values(CARICATURE_STYLES).map(item=><button type="button" aria-pressed={brief.styleId===item.id} className={brief.styleId===item.id?'is-selected':''} onClick={()=>patch('styleId',item.id as CaricatureStyleId)} key={item.id}><img src={item.image} loading="lazy" alt={`${item.name} fictional AI-generated style demonstration`}/><span><b>{item.name}</b><small>{item.summary}</small><em>Best for: {item.bestFor}</em></span></button>)}</div><p className="demo-disclosure">Fictional AI-generated style demonstrations—not real customers.</p></div>}
+      {step===3&&<div className="wizard-pane"><header><b>Step 4</b><h3>Purpose and composition</h3><p>These choices guide the mood, clothing, setting and framing. We do not add unconfirmed wording.</p></header><div className="wizard-selects"><label>Occasion<select value={brief.occasion} onChange={e=>patch('occasion',e.target.value as CaricatureBrief['occasion'])}>{OCCASIONS.map(x=><option value={x} key={x}>{label(x)}</option>)}</select></label><label>Composition<select value={brief.composition} onChange={e=>patch('composition',e.target.value as CompositionId)}>{COMPOSITIONS.filter(x=>style.compositions.includes(x.id)).map(x=><option value={x.id} key={x.id}>{x.label}</option>)}</select></label><label>Final requirement<select value={brief.output} onChange={e=>patch('output',e.target.value as CaricatureBrief['output'])}>{OUTPUTS.map(x=><option value={x} key={x}>{label(x)}</option>)}</select></label></div></div>}
+      {step===4&&<div className="wizard-pane"><header><b>Step 5</b><h3>Add the details that make it personal</h3><p>Optional—leave anything blank when you want Deepti’s guidance.</p></header><div className="wizard-details">{(['profession','hobbies','colours','clothing','background','props'] as const).map(key=><label key={key}>{label(key)}<input value={brief[key]} maxLength={120} onChange={e=>patch(key,e.target.value)} placeholder={`Add ${label(key).toLowerCase()}…`}/></label>)}<label className="wide">Customer notes<textarea rows={3} value={brief.notes} maxLength={240} onChange={e=>patch('notes',e.target.value)} placeholder="Important expressions, relationship, mood or instructions…"/></label></div></div>}
+      {step===5&&<div className="wizard-pane"><header><b>Step 6</b><h3>Review and give permission</h3><p>Nothing is sent until you press the generation or WhatsApp button.</p></header><div className="brief-review"><span><b>Style</b>{style.name}</span><span><b>Occasion</b>{label(brief.occasion)}</span><span><b>Subjects</b>{brief.people} people · {brief.pets} pets</span><span><b>Composition</b>{label(brief.composition)}</span><span><b>Requirement</b>{label(brief.output)}</span></div><label className="caricature-builder__consent"><input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)}/><span>I have permission to use every photo and understand it is processed only for this AI concept—not for unrelated marketing or model training. For a child, I am their parent or guardian.</span></label>{manual?<a className="wizard-primary" href={whatsapp} target="_blank" rel="noreferrer">Send larger-group brief to studio</a>:<button className="wizard-primary" type="button" onClick={generate} disabled={!consent||busy}>{busy?'Creating your AI concept…':'Generate AI concept'}</button>}</div>}
+      {busy&&<p className="wizard-progress" role="status">{progress}</p>}{error&&<p className="caricature-builder__error" role="alert">{error}</p>}
+      <div className="wizard-controls"><button type="button" onClick={()=>setStep(Math.max(0,step-1))} disabled={step===0}>Back</button>{step<5&&<button type="button" onClick={()=>setStep(Math.min(5,step+1))} disabled={!canNext}>Continue</button>}</div>
+      {(concept||step===5)&&<div className="caricature-result"><div className="caricature-builder__comparison"><figure>{photo&&<img src={photo} alt="Uploaded Reference Photo"/>}<figcaption>Uploaded Reference Photo</figcaption></figure><span aria-hidden="true">→</span><figure className={!concept?'is-empty':''}>{concept?<img src={concept} alt="AI-Generated Concept Preview"/>:<div><b>AI concept preview</b><small>Generate after confirming consent</small></div>}<figcaption>AI-Generated Concept Preview</figcaption></figure></div>{concept&&<><p><b>{style.name} · {label(brief.occasion)} · {label(brief.composition)}</b><br/>AI concepts may contain imperfections. Artzy’s Studio can manually refine the final likeness and production artwork. {reference&&`Reference: ${reference}`}</p><div className="caricature-builder__actions"><a href={concept} download={`${reference||'artzy-caricature'}-concept.png`}>Download concept</a><a href={whatsapp} target="_blank" rel="noreferrer">Continue on WhatsApp</a></div></>}</div>}
     </div>
   </section>;
 }

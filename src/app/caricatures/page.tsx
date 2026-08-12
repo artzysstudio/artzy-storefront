@@ -12,6 +12,7 @@ const occasions = [
 
 export default function CaricaturesPage() {
   return <><Header/><main className="service-page caricature-page">
+    <nav className="creative-service-tabs" aria-label="Choose digital art or caricature service"><Link href="/digital-prints/">Digital Art &amp; Prints<small>Wall art, canvas and commercial work</small></Link><span aria-current="page">Caricatures<small>Upload a photo and build a portrait</small></span></nav>
     <section className="story-hero story-hero--caricature"><img className="story-hero__image" src="/images/caricature-hero-v2.webp" alt="Three complete personalised caricature examples beside their reference photographs in an Artzy-style studio"/><div className="story-hero__shade" aria-hidden="true"/><div className="story-hero__copy"><span>Drawn from their story</span><h1>More than a portrait.<br/><em>A moment with personality.</em></h1><p>Turn clear photographs, favourite details and a meaningful occasion into an expressive caricature that still feels recognisably them.</p><div className="story-hero__actions"><a className="story-hero__primary" href="#caricature-builder">Try my photograph</a><a className="story-hero__secondary" href="#caricature-examples">See how it works</a></div><small>AI concepts are inspiration · final likeness and production are confirmed by the studio</small></div></section>
 
     <section className="caricature-explainer" id="caricature-examples">
