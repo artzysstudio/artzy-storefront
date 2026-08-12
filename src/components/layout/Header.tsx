@@ -18,33 +18,26 @@ const NAV: NavGroup[] = [
     { label: 'Shop all', href: '/shop', note: 'Everything currently available from the studio' },
     { label: 'Wall art & frames', href: '/shop/?category=wall-art-frames' },
     { label: 'Table & utility art', href: '/shop/?category=table-utility-art' },
-    { label: 'Mirrors & decorative hangings', href: '/shop/?category=mirrors-and-decorative-hangings' },
-    { label: 'Spiritual & festive art', href: '/shop/?category=spiritual-festive-art' },
+    { label: 'More studio categories', href: '/shop' },
   ]},
   { label: 'Personalised', paths: ['/personalised', '/personalized', '/digital-prints', '/caricatures', '/gifts', '/name-plates'], items: [
-    { label: 'Start a personal piece', href: '/personalised', note: 'Choose the right creative path for your story' },
-    { label: 'Digital art & prints', href: '/digital-prints' },
-    { label: 'Caricatures from photos', href: '/caricatures' },
-    { label: 'Occasion gifts', href: '/gifts' },
-    { label: 'Name plates', href: '/name-plates' },
-    { label: 'Custom artwork', href: '/personalised/#custom-artwork' },
+    { label: 'Explore personalised', href: '/personalised', note: 'Choose the right creative path for your story' },
+    { label: 'Digital art & caricatures', href: '/digital-prints' },
+    { label: 'Gifts & name plates', href: '/gifts' },
+    { label: 'Start a custom piece', href: '/personalised/#custom-artwork' },
   ]},
   { label: 'For Business', paths: ['/for-business', '/custom-corporate'], items: [
-    { label: 'Business & project services', href: '/for-business', note: 'Creative work made for organisations and spaces' },
+    { label: 'Explore business services', href: '/for-business', note: 'Creative work made for organisations and spaces' },
     { label: 'Corporate gifting', href: '/for-business/#corporate-gifting' },
-    { label: 'Commercial art', href: '/for-business/#commercial-art' },
-    { label: 'Bulk & festive orders', href: '/for-business/#bulk-orders' },
-    { label: 'Discuss a project', href: '/for-business/#project-enquiry' },
+    { label: 'Art for business spaces', href: '/for-business/#commercial-art' },
+    { label: 'Start a project', href: '/for-business/#project-enquiry' },
   ]},
   { label: 'Artzy World', paths: ['/artzy-world'], items: [
     { label: 'Enter Artzy World', href: '/artzy-world', note: 'Discover, understand and preview art for your space' },
-    { label: 'Why Artzy World', href: '/artzy-world/#purpose' },
-    { label: 'Live preview', href: '/artzy-world/preview/' },
-    { label: 'AR experience', href: '/artzy-world/#ar-experience' },
+    { label: 'Preview art in your room', href: '/artzy-world/preview/' },
   ]},
   { label: 'Our Studio', paths: ['/about', '/contact'], items: [
     { label: 'Meet Deepti J. Shah', href: '/about', note: 'The artist, team and story behind every creation' },
-    { label: 'Our creative studio', href: '/about/#studio' },
     { label: 'Visit the Pune store', href: '/contact/#visit' },
     { label: 'Contact us', href: '/contact' },
   ]},
@@ -115,8 +108,8 @@ export default function Header() {
       <nav className="mobile-navigation__panel" aria-label="Mobile navigation">
         <div className="mobile-navigation__head"><span>Explore Artzy's Studio</span><button aria-label="Close menu" onClick={() => setMobileOpen(false)}>×</button></div>
         {NAV.map((group, index) => <section className="mobile-accordion" key={group.label}>
-          <button className={isActive(group) ? 'is-active' : ''} aria-expanded={openGroup === index} aria-controls={`mobile-group-${index}`} onClick={() => setOpenGroup(openGroup === index ? null : index)}>{group.label}<span>{openGroup === index ? '−' : '+'}</span></button>
-          <div id={`mobile-group-${index}`} hidden={openGroup !== index}>{group.items.map((item) => <Link href={item.href} key={item.href + item.label}>{item.label}</Link>)}</div>
+          <div className={`mobile-accordion__row ${isActive(group) ? 'is-active' : ''}`}><Link href={group.items[0].href}>{group.label}</Link><button aria-label={`${openGroup === index ? 'Hide' : 'Show'} ${group.label} choices`} aria-expanded={openGroup === index} aria-controls={`mobile-group-${index}`} onClick={() => setOpenGroup(openGroup === index ? null : index)}>{openGroup === index ? '−' : '+'}</button></div>
+          <div id={`mobile-group-${index}`} hidden={openGroup !== index}>{group.items.slice(1).map((item) => <Link href={item.href} key={item.href + item.label}>{item.label}</Link>)}</div>
         </section>)}
         <div className="mobile-navigation__quick"><Link href="/account">Your account</Link><a href="https://wa.me/919158680722">WhatsApp the studio</a></div>
       </nav>

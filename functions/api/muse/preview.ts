@@ -1,5 +1,5 @@
 type PreviewRequest = {
-  kind: 'name-plate' | 'digital-art';
+  kind: 'name-plate' | 'digital-art' | 'caricature' | 'gift' | 'business' | 'personalised';
   style: string;
   palette: string;
   shape?: string;
@@ -16,7 +16,7 @@ type PreviewEnv = {
 type FunctionContext = { request: Request; env: PreviewEnv };
 type FunctionHandler = (context: FunctionContext) => Response | Promise<Response>;
 
-const allowedKinds = new Set<PreviewRequest['kind']>(['name-plate', 'digital-art']);
+const allowedKinds = new Set<PreviewRequest['kind']>(['name-plate', 'digital-art', 'caricature', 'gift', 'business', 'personalised']);
 const clean = (value: unknown, maximum = 80) => typeof value === 'string'
   ? value.replace(/[\r\n<>]/g, ' ').trim().slice(0, maximum)
   : '';
@@ -49,6 +49,15 @@ function promptFor(input: PreviewRequest): string {
       'Front-facing view, entire plaque visible, warm natural light, refined Artzy Studio character, realistic material texture.',
       'No people, no hands, no brand logo, no watermark, no letters, no words, no numbers, no fake typography, no cropped edges.',
     ].join(' ');
+  }
+  if (input.kind === 'caricature') {
+    return ['Premium respectful Indian caricature concept for a personalised gift.', `Purpose: ${input.purpose}. Style: ${input.style}. Palette: ${input.palette}.`, 'Show the complete framed illustration and its surrounding gift presentation. Expressive, warm and recognisable rather than grotesque. No logo, watermark, price, text, cropped frame or distorted anatomy.'].join(' ');
+  }
+  if (input.kind === 'gift') {
+    return ['Premium Artzy-style handcrafted Indian gift concept.', `Purpose: ${input.purpose}. Style: ${input.style}. Palette: ${input.palette}.`, 'Show a complete coordinated gift presentation with hand-painted character and emotional warmth. This is a custom inspiration concept, not inventory. No logo, watermark, price, text, cropped products or mass-market packaging.'].join(' ');
+  }
+  if (input.kind === 'business') {
+    return ['Premium creative-project concept for an Indian organisation or commercial space.', `Purpose: ${input.purpose}. Style: ${input.style}. Palette: ${input.palette}.`, 'Show one coherent complete presentation of coordinated artwork or gifting, practical and refined. No logo, watermark, price, text, cropped objects or generic corporate stock imagery.'].join(' ');
   }
   return [
     'Premium custom-art concept mockup composed for an Indian home or thoughtful gift.',

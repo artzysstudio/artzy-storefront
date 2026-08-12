@@ -14,11 +14,9 @@ export default async function ShopPage() {
   return (
     <>
       <Header />
-      <main style={{ paddingTop: 'var(--spacing-xl)', minHeight: '80vh' }}>
-        <div className="container" style={{ marginBottom: 'var(--spacing-md)' }}>
-          <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '3rem', marginBottom: '0.5rem' }}>Portfolio &amp; Gifts</h1>
-          <p style={{ color: 'var(--text-muted)' }}>Discover pieces tailored to your space and occasion.</p>
-        </div>
+      <main className="shop-page" style={{ minHeight: '80vh' }}>
+        <section className="shop-intro"><span>Available from the studio</span><h1>Handmade art,<br/><em>ready to discover.</em></h1><p>Browse only real products supplied by Artzy’s Studio ERP. Filter by category, price, room and occasion, then open any piece for stock, dimensions and delivery information.</p><div><a href="#shop-products">Browse products</a><a href="/personalised">Need something custom?</a></div></section>
+        <div id="shop-products" className="shop-anchor"/>
         <ShopClient initialProducts={products} />
       </main>
       <Footer />

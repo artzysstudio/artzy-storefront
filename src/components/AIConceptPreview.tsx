@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 type ConceptBrief = {
-  kind: 'name-plate' | 'digital-art';
+  kind: 'name-plate' | 'digital-art' | 'caricature' | 'gift' | 'business' | 'personalised';
   style: string;
   palette: string;
   shape?: string;

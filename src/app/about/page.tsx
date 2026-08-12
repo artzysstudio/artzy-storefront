@@ -4,8 +4,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Link from "next/link";
 
-const deeptiPhoto =
-  "https://lime-cattle-779404.hostingersite.com/images/deeptiShah-photo.jpg";
+const deeptiPhoto = "/images/deepti_portrait.png";
 
 export default function AboutPage() {
   return (

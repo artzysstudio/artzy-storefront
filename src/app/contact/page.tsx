@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import Header, { ARTZY_LOGO } from "@/components/layout/Header";
+import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import CreativeConceptBuilder from "@/components/CreativeConceptBuilder";
 
 export default function ContactPage() {
   const [sent, setSent] = useState(false);
@@ -30,6 +31,8 @@ export default function ContactPage() {
       <Header />
       <main className="contact-page">
         <section className="contact-hero">
+          <img className="contact-hero__image" src="/images/contact-studio-hero.webp" alt="An inviting Artzy-style studio consultation table with sketches, painted objects, gift wrapping and two cups of chai"/>
+          <div className="contact-hero__shade" aria-hidden="true"/>
           <div className="contact-hero-copy">
             <span className="contact-kicker">VISIT · COLLABORATE · CREATE</span>
             <h1>Let’s make something <em>meaningful.</em></h1>
@@ -39,16 +42,9 @@ export default function ContactPage() {
               <a href="mailto:artzysstudio@gmail.com">Email the studio ↗</a>
             </div>
           </div>
-          <div className="contact-mark" aria-label="Artzy's Studio by Deepti J. Shah">
-            <div className="contact-mark-orbit contact-mark-orbit-one" aria-hidden="true" />
-            <div className="contact-mark-orbit contact-mark-orbit-two" aria-hidden="true" />
-            <div className="contact-logo-stage">
-              <span className="contact-logo-glow" aria-hidden="true" />
-              <img src={ARTZY_LOGO} alt="Artzy's Studio" className="contact-animated-logo" />
-              <small>ORIGINAL ART · PERSONAL STORIES</small>
-            </div>
-          </div>
         </section>
+
+        <CreativeConceptBuilder kind="contact"/>
 
         <section className="contact-main">
           <div className="contact-details">
