@@ -23,6 +23,7 @@ export default function Footer() {
               <li><Link href="/shop">Hand-painted Art</Link></li>
               <li><Link href="/digital-prints">Digital Art &amp; Caricatures</Link></li>
               <li><Link href="/gifts">Personalised &amp; Occasion Gifts</Link></li>
+              <li><Link href="/name-plates">Custom Name Plates</Link></li>
               <li><Link href="/custom-corporate">Custom &amp; Corporate</Link></li>
             </ul>
           </div>
