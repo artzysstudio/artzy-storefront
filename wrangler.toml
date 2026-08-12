@@ -5,11 +5,3 @@ pages_build_output_dir = ".vercel/output/static"
 
 [ai]
 binding = "AI"
-
-[[ratelimits]]
-name = "CARICATURE_RATE_LIMITER"
-namespace_id = "220322"
-
-  [ratelimits.simple]
-  limit = 4
-  period = 60
