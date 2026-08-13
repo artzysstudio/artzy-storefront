@@ -4,7 +4,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Link from "next/link";
 
-const deeptiPhoto = "/images/deepti_portrait.png";
+const deeptiPhoto = "/images/deepti_portrait.jpg";
 
 export default function AboutPage() {
   return (
@@ -124,7 +124,7 @@ export default function AboutPage() {
         .about-page{background:#fdf8f1;color:#3c2e2a;overflow:hidden}
         .about-hero{display:grid;grid-template-columns:minmax(0,52%) minmax(0,48%);min-height:760px;background:#f4eadf}
         .about-hero__portrait{position:relative;min-width:0;overflow:hidden}
-        .about-hero__portrait img{width:100%;height:100%;object-fit:cover;object-position:center 28%;display:block;filter:saturate(.9)}
+        .about-hero__portrait img{width:100%;height:100%;object-fit:cover;object-position:center 32%;display:block}
         .about-hero__seal{position:absolute;right:24px;bottom:24px;width:116px;height:116px;border-radius:50%;display:grid;place-content:center;text-align:center;background:rgba(255,250,245,.92);color:#a64e52;font-size:.64rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;backdrop-filter:blur(8px)}
         .about-hero__seal b{display:block;font-size:1.45rem;margin-bottom:5px}
         .about-hero__copy{display:flex;flex-direction:column;justify-content:center;min-width:0;padding:clamp(56px,7vw,110px)}
