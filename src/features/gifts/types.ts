@@ -5,6 +5,7 @@ export type GiftDeliveryWindow = 'no-rush' | 'two-days' | 'three-five-days' | 'o
 export type GiftRecommendationKind = 'best-match' | 'best-value' | 'something-special';
 
 export interface GiftIntent {
+  giftType: 'single' | 'hamper';
   occasion: string;
   recipient: string;
   budget: number;
@@ -100,6 +101,7 @@ export interface GiftCartBundle {
 }
 
 export const defaultGiftIntent: GiftIntent = {
+  giftType: 'single',
   occasion: '',
   recipient: '',
   budget: 2000,

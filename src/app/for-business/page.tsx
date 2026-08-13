@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Corporate Gifting & Commercial Art |
 const services = [
   ['corporate-gifting','Corporate gifting','Thoughtful, brand-aware gifts for teams, clients, milestones and celebrations.'],
   ['commercial-art','Commercial art & décor','Original or digital art concepts designed for offices, hospitality and customer spaces.'],
-  ['bulk-orders','Bulk & festive orders','Studio-made gift sets and painted products planned around quantity, budget and date.'],
+  ['bulk-orders','Bulk hampers & festive orders','Studio-made gift hampers and painted products planned around quantity, budget and date.'],
 ];
 
 export default function ForBusinessPage(){return <><Header/><main className="business-page">

@@ -25,6 +25,7 @@ const NAV: NavGroup[] = [
     { label: 'Digital art & prints', href: '/digital-prints' },
     { label: 'Caricature studio', href: '/caricatures' },
     { label: 'Gifts & occasions', href: '/gifts' },
+    { label: 'Gift hampers', href: '/gifts/#gift-quick-start' },
     { label: 'Name plates', href: '/name-plates', note: 'A separate name plate gallery and guided builder' },
     { label: 'Start a custom piece', href: '/personalised/#custom-artwork' },
   ]},

@@ -58,6 +58,24 @@ test('Muse parses recipient, quantity and total budget', () => {
   assert.ok(parsed.styles.includes('artistic'));
 });
 
+test('Muse recognises a hamper brief and builds only multi-product ERP combinations', () => {
+  const intent = parseGiftIntent('Imagine a premium wedding gift hamper under Rs 2,500', defaultGiftIntent);
+  const result = recommendGifts([
+    product({ id: 'erp-1', price: 800 }),
+    product({ id: 'erp-2', name: 'Handpainted Coaster Set', price: 600 }),
+  ], intent);
+  assert.equal(intent.giftType, 'hamper');
+  assert.ok(result.recommendations.length > 0);
+  assert.ok(result.recommendations.every((plan) => plan.items.length >= 2));
+});
+
+test('hamper mode never presents a single ERP product as a hamper', () => {
+  const intent = { ...defaultGiftIntent, giftType: 'hamper' as const, budget: 2500 };
+  const result = recommendGifts([product()], intent);
+  assert.equal(result.recommendations.length, 0);
+  assert.match(result.message, /No ERP-verified combination/);
+});
+
 test('unconfirmed packaging falls back to the safe standard option', () => {
   const intent = { ...defaultGiftIntent, packagingId: 'wedding-packaging' };
   const plan = recommendGifts([product()], intent, GIFT_PACKAGING).recommendations[0];

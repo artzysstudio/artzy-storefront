@@ -39,6 +39,7 @@ const STYLE_WORDS = ['handmade', 'artistic', 'colourful', 'colorful', 'elegant',
 
 export function parseGiftIntent(text: string, current: GiftIntent): GiftIntent {
   const source = normalise(text);
+  const giftType = includesAny(source, ['hamper', 'gift box', 'gift set', 'curated box', 'combination gift']) ? 'hamper' : current.giftType;
   const occasion = OCCASION_RULES.find(([, words]) => includesAny(source, words))?.[0] || current.occasion;
   const recipient = RECIPIENT_RULES.find(([, words]) => includesAny(source, words))?.[0] || current.recipient;
   const quantityMatch = source.match(/(?:need|for|quantity|qty)\s*(\d{1,4})\b|\b(\d{1,4})\s*(?:gifts|employees|clients|people|pieces)/);
@@ -54,7 +55,7 @@ export function parseGiftIntent(text: string, current: GiftIntent): GiftIntent {
   ]);
   const personalisation = includesAny(source, ['personalised', 'personalized', 'custom name', 'with name']) ? 'name' : current.personalisation;
 
-  return { ...current, occasion, recipient, quantity, budget, budgetMode, styles, personalisation, naturalLanguage: text };
+  return { ...current, giftType, occasion, recipient, quantity, budget, budgetMode, styles, personalisation, naturalLanguage: text };
 }
 
 function derivedTags(product: Product): Pick<GiftCandidateProduct, 'occasionTags' | 'recipientTags' | 'styleTags'> {
@@ -180,9 +181,10 @@ export function recommendGifts(products: Product[], intent: GiftIntent, packagin
     }
   }
 
-  const byMatch = [...combos].sort((a, b) => b.score - a.score || b.unitTotal - a.unitTotal);
-  const byValue = [...combos].sort((a, b) => b.unitTotal - a.unitTotal || b.score - a.score);
-  const bySpecial = [...combos].sort((a, b) => b.items.length - a.items.length || b.score - a.score || b.unitTotal - a.unitTotal);
+  const eligibleCombos = intent.giftType === 'hamper' ? combos.filter((combo) => combo.items.length >= 2) : combos;
+  const byMatch = [...eligibleCombos].sort((a, b) => b.score - a.score || b.unitTotal - a.unitTotal);
+  const byValue = [...eligibleCombos].sort((a, b) => b.unitTotal - a.unitTotal || b.score - a.score);
+  const bySpecial = [...eligibleCombos].sort((a, b) => b.items.length - a.items.length || b.score - a.score || b.unitTotal - a.unitTotal);
   const chosen: Array<[GiftRecommendationKind, typeof combos[number] | undefined]> = [
     ['best-match', byMatch[0]], ['best-value', byValue.find((combo) => combo.items.map((item) => item.product.id).join() !== byMatch[0]?.items.map((item) => item.product.id).join()) || byValue[0]],
     ['something-special', bySpecial.find((combo) => ![byMatch[0], byValue[0]].includes(combo)) || bySpecial[0]],
@@ -213,6 +215,8 @@ export function recommendGifts(products: Product[], intent: GiftIntent, packagin
       ? 'No current ERP product confirms the requested personalisation. Remove personalisation to see ready-stock gifts, or send the studio a custom brief.'
       : intent.quantity > 1 && excluded.quantity
         ? 'Current verified stock cannot fulfil that quantity as one repeated gift. Reduce the quantity or ask the studio to confirm made-to-order capacity.'
-        : 'No verified gift exactly matches every requirement. Relax one option below to see the closest safe alternative.';
+        : intent.giftType === 'hamper'
+          ? 'No ERP-verified combination currently fits this hamper brief and budget. Increase the budget or ask Artzy Muse and the studio to imagine a made-for-you hamper.'
+          : 'No verified gift exactly matches every requirement. Relax one option below to see the closest safe alternative.';
   return { intent, recommendations, eligibleProductCount: feasible.length, excluded, message, relaxations };
 }

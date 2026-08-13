@@ -21,8 +21,8 @@ const categories = [
     href: "/digital-prints",
   },
   {
-    name: "Personal & Combo Gifts",
-    note: "Story-led keepsakes, celebration gifts and thoughtfully assembled combinations",
+    name: "Gifts & Hampers",
+    note: "Story-led keepsakes, celebration gifts and hampers curated from available studio pieces",
     image: "/assets/corporate_gift_1.png",
     placement: "your celebration",
     href: "/gifts",

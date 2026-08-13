@@ -10,7 +10,7 @@ const paths = [
   { title: 'Caricatures from photos', copy: 'Turn people, memories and joyful details into expressive digital caricatures.', href: '/caricatures', mark: '01' },
   { title: 'Digital art & canvas prints', copy: 'Commission abstract, modern or story-led artwork made for your wall and space.', href: '/digital-prints', mark: '02' },
   { title: 'Custom name plates', copy: 'Build a hand-painted welcome around your name, entrance and preferred Artzy direction.', href: '/name-plates', mark: '03' },
-  { title: 'Occasion & milestone gifts', copy: 'Wedding, anniversary, birthday, housewarming and festive gifts with meaning.', href: '/gifts', mark: '04' },
+  { title: 'Gifts & curated hampers', copy: 'Wedding, anniversary, birthday, housewarming and festive hampers built from available studio pieces.', href: '/gifts/#gift-quick-start', mark: '04' },
   { title: 'Custom hand-painted artwork', copy: 'Begin with an object, idea or brief and shape a one-of-a-kind studio creation.', href: '/contact?interest=custom-artwork', mark: '05' },
 ];
 

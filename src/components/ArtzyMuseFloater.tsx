@@ -13,8 +13,8 @@ const quickQuestions = [
 
 const studioAnswers = [
   {
-    words: ["gift", "birthday", "anniversary", "wedding", "occasion"],
-    answer: "For a meaningful gift, tell me the occasion, recipient, budget and required date. Artzy’s Studio can suggest personalised art, caricatures, hand-painted pieces, combination gifts or corporate gifting options.",
+    words: ["gift", "hamper", "birthday", "anniversary", "wedding", "occasion"],
+    answer: "For a meaningful gift or hamper, tell me the occasion, recipient, budget and required date. I can suggest combinations from current ERP stock; when no verified combination fits, the studio can imagine and confirm a custom hamper direction.",
   },
   {
     words: ["custom", "customise", "customized", "personalise", "personalised"],
