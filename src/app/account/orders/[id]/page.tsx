@@ -17,6 +17,11 @@ export function generateStaticParams() {
 
 export default async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  if (id === 'ARTZY-0000') return <main className="container" style={{ padding: '8rem 1.25rem', minHeight: '70vh', maxWidth: '720px', textAlign: 'center' }}>
+    <h1>Track a confirmed order</h1>
+    <p style={{ color: 'var(--text-muted)', lineHeight: 1.7 }}>Order tracking appears here only for an order returned by Artzy ERP. Sign in to your account or ask the studio with your confirmed order number.</p>
+    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px', marginTop: '24px' }}><Link className="btn" href="/account">Your account</Link><a className="btn btn-solid" href="https://wa.me/919158680722">Ask on WhatsApp</a></div>
+  </main>;
   const order = await api.commerce.getOrder(id);
 
   if (!order) {
@@ -29,11 +34,8 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
     'Handed to Courier', 'In Transit', 'Out for Delivery', 'Delivered'
   ];
   
-  // Mock current step based on status
-  let currentStepIndex = 1; // Default mock progress
-  if (order.status === 'Processing') currentStepIndex = 1;
-  if (order.status === 'Shipped') currentStepIndex = 4;
-  if (order.status === 'Delivered') currentStepIndex = 7;
+  const statusStep: Record<string, number> = { Processing: 1, Shipped: 4, 'In Transit': 5, 'Out for Delivery': 6, Delivered: 7 };
+  const currentStepIndex = statusStep[order.status] ?? 0;
 
   const progressPercentage = (currentStepIndex / (journeySteps.length - 1)) * 100;
 
@@ -52,9 +54,6 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
           <div style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
             Total: ₹{order.total.toLocaleString('en-IN')}
           </div>
-          <button className="btn" style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
-            Download GST Invoice
-          </button>
         </div>
       </div>
 
@@ -100,11 +99,11 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
             </div>
             <div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Courier</div>
-              <div style={{ fontWeight: '500' }}>{order.courier}</div>
+              <div style={{ fontWeight: '500' }}>{order.courier || 'Awaiting courier assignment'}</div>
             </div>
             <div style={{ gridColumn: 'span 2' }}>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Tracking Number (AWB)</div>
-              <div style={{ fontWeight: 'bold', fontFamily: 'monospace', fontSize: '1.1rem' }}>{order.trackingNumber}</div>
+              <div style={{ fontWeight: 'bold', fontFamily: 'monospace', fontSize: '1.1rem' }}>{order.trackingNumber || 'Not assigned yet'}</div>
             </div>
           </div>
         </div>

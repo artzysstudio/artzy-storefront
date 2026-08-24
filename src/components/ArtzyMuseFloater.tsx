@@ -34,7 +34,7 @@ const studioAnswers = [
   },
   {
     words: ["delivery", "dispatch", "stock", "available", "availability", "time"],
-    answer: "Stock and variants are shown on each product. Ready pieces usually dispatch in 3–5 working days; made-to-order and personalised work receives a studio-confirmed timeline before production.",
+    answer: "Stock and variants are shown on each product when supplied by Artzy ERP. Dispatch and delivery are confirmed after the studio checks the item, PIN code and any personalisation; Muse does not promise a date.",
   },
   {
     words: ["visit", "address", "location", "pune", "contact", "whatsapp"],

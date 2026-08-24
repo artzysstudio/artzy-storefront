@@ -58,6 +58,15 @@ export default function Footer() {
             </ul>
           </div>
         </div>
+        <nav className="footer-policy-links" aria-label="Customer information">
+          <Link href="/shipping-policy">Shipping</Link>
+          <Link href="/returns-policy">Returns &amp; damage</Link>
+          <Link href="/customised-product-policy">Customised products</Link>
+          <Link href="/cancellation-policy">Cancellation</Link>
+          <Link href="/privacy-policy">Privacy</Link>
+          <Link href="/terms-and-conditions">Terms</Link>
+          <Link href="/ai-concept-disclosure">AI concept disclosure</Link>
+        </nav>
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} Artzy&apos;s Studio. All rights reserved.</span>
           <span>Created with intention in Pune, India</span>

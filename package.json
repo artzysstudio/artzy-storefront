@@ -7,16 +7,16 @@
     "build": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\" && node node_modules/next/dist/bin/next build",
     "postbuild": "node scripts/copy-output.js",
     "start": "node node_modules/next/dist/bin/next start",
-    "lint": "node node_modules/next/dist/bin/next lint",
+    "lint": "eslint .",
     "pages:build": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\" && node node_modules/next/dist/bin/next build",
     "catalogue:import": "node scripts/import-erp-products.mjs",
     "test:gifts": "tsx --test tests/gift-engine.test.ts",
     "test:caricatures": "tsx --test tests/caricature-engine.test.ts"
   },
   "dependencies": {
-    "next": "15.0.3",
-    "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106"
+    "next": "16.3.2",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -24,7 +24,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.0.3",
+    "eslint-config-next": "16.3.2",
     "tailwindcss": "^4",
     "tsx": "^4.20.3",
     "typescript": "^5",

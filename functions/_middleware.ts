@@ -1,4 +1,4 @@
-interface Env {}
+type Env = Record<string, never>;
 
 interface PagesContext {
   request: Request;

@@ -103,7 +103,7 @@ export default function GiftBuilder({ products }: { products: Product[] }) {
     requestAnimationFrame(() => document.querySelector('.gift-builder__shell')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   };
 
-  return <section className="gift-builder" id="gift-concierge" aria-labelledby="gift-builder-title">
+  return <section className="gift-builder" id="gift-finder" aria-labelledby="gift-builder-title">
     <div className="gift-quick-start" id="gift-quick-start">
       <div className="gift-quick-start__heading"><span className="gift-kicker">A simple place to begin</span><h2>What kind of help do you need?</h2><p>Choose a popular path and we&apos;ll prepare the details for you. You can change every answer before adding anything to your bag.</p></div>
       <div className="gift-quick-start__options">{quickStarts.map((preset, index) => <button type="button" key={preset.label} onClick={() => applyQuickStart(preset)}><span>{String(index + 1).padStart(2, '0')}</span><b>{preset.label}</b><small>{preset.note}</small><i>Start here →</i></button>)}</div>

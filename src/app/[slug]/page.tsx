@@ -28,7 +28,11 @@ export function generateStaticParams() {
   return [
     { slug: 'shipping-policy' },
     { slug: 'privacy-policy' },
-    { slug: 'terms-and-conditions' }
+    { slug: 'terms-and-conditions' },
+    { slug: 'returns-policy' },
+    { slug: 'customised-product-policy' },
+    { slug: 'cancellation-policy' },
+    { slug: 'ai-concept-disclosure' }
   ];
 }
 

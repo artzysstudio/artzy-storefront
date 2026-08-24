@@ -220,6 +220,15 @@ export interface ShippingQuote {
   options: ShippingOption[];
 }
 
+export interface StorefrontOrder {
+  id: string;
+  status: string;
+  date: string;
+  total: number;
+  courier?: string;
+  trackingNumber?: string;
+}
+
 async function requestERP<T>(endpoint: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(`${ERP_BASE_URL}${endpoint}`, {
     ...init,
@@ -341,6 +350,23 @@ const mockAboutPage: PageDefinition = {
   ]
 };
 
+const policyPage = (slug: string, title: string, body: string): PageDefinition => ({
+  slug,
+  title,
+  seoMetadata: { title: `${title} | Artzy's Studio`, description: body, keywords: [] },
+  sections: [{ id: `${slug}-content`, type: 'standard_text', isEnabled: true, sortOrder: 1, themeVariant: 'light', backgroundStyle: 'none', content: { title, body } }],
+});
+
+const policyPages: Record<string, PageDefinition> = {
+  'shipping-policy': policyPage('shipping-policy', 'Shipping information', 'Shipping cost, serviceability and any delivery estimate are shown only when the studio and shipping service can confirm them. For help before ordering, contact the studio with the product and delivery PIN code.'),
+  'returns-policy': policyPage('returns-policy', 'Returns and damage', 'Please inspect your order on arrival. If an item is damaged, keep the product and packaging and contact the studio promptly with clear photographs. Eligibility for a return or replacement depends on the item and the confirmed order details.'),
+  'customised-product-policy': policyPage('customised-product-policy', 'Customised products', 'A customised product begins only after the studio confirms the brief, price and timeline. Custom work may not be returnable unless it arrives damaged or differs materially from the approved brief. Ask the studio before payment if anything is unclear.'),
+  'cancellation-policy': policyPage('cancellation-policy', 'Cancellation', 'Contact the studio as soon as possible if you need to cancel. Whether cancellation is possible depends on payment status and whether making or dispatch has begun.'),
+  'privacy-policy': policyPage('privacy-policy', 'Privacy', 'Artzy’s Studio uses information you provide to answer enquiries, prepare custom briefs, fulfil orders and provide support. Uploaded reference images should be used only for the requested creative service and handled according to the confirmed brief.'),
+  'terms-and-conditions': policyPage('terms-and-conditions', 'Terms and conditions', 'Product availability, price, customisation and delivery are confirmed through the storefront and Artzy ERP. AI-generated previews are concepts only and are not stock, production proofs or confirmed orders.'),
+  'ai-concept-disclosure': policyPage('ai-concept-disclosure', 'AI concept disclosure', 'Artzy Muse previews are imaginative concepts to help discuss a direction. They are clearly separate from ERP stock, Deepti’s original artworks and final production proofs. The studio confirms feasibility, materials, price and delivery before work begins.'),
+};
+
 // ------------------------------------------------------------------
 // EXPORTED API CLIENT
 // ------------------------------------------------------------------
@@ -350,8 +376,16 @@ export const api = {
     // The committed ERP snapshot keeps the static storefront complete. A live
     // feed replaces it automatically whenever the dedicated proxy is enabled.
     list: async (): Promise<Product[]> => {
-      const records = await fetchFromERP('/products/featured', erpProductSnapshot as Product[]);
-      return (Array.isArray(records) ? records : []).filter(isStorefrontInventoryProduct);
+      const payload = await fetchFromERP<unknown>('/products/featured', erpProductSnapshot as Product[]);
+      const records = Array.isArray(payload)
+        ? payload
+        : payload && typeof payload === 'object' && Array.isArray((payload as { data?: unknown }).data)
+          ? (payload as { data: Product[] }).data
+          : payload && typeof payload === 'object' && Array.isArray((payload as { products?: unknown }).products)
+            ? (payload as { products: Product[] }).products
+            : erpProductSnapshot as Product[];
+      const continuityRecords = records.length > 0 ? records : erpProductSnapshot as Product[];
+      return continuityRecords.filter(isStorefrontInventoryProduct);
     },
     get: async (id: string): Promise<Product | undefined> => fetchFromERP(`/products/${id}`, undefined)
   },
@@ -362,7 +396,8 @@ export const api = {
         'home': mockHomePage,
         'about': mockAboutPage,
         'projects': mockProjectsPage,
-        'inspiration': mockInspirationPage
+        'inspiration': mockInspirationPage,
+        ...policyPages,
       };
       const fallback = mockPages[slug];
       return fetchFromERP(`/pages/${slug}`, fallback);
@@ -371,21 +406,13 @@ export const api = {
   // We keep these for backwards compatibility or specific component fetches if needed, 
   // but ideally page definitions pass this data down eventually.
   collections: {
-    listGifts: async (): Promise<Collection[]> => fetchFromERP('/collections/gifts', [
-      { id: 'g1', name: 'Personalized Gifts', slug: 'personalized-gifts', heroImage: '', thumbnailImage: '', description: 'Handcrafted gifts tailored specifically to your loved ones.' },
-      { id: 'g2', name: 'Corporate Hampers', slug: 'corporate-hampers', heroImage: '', thumbnailImage: '', description: 'Elegant, bulk-order gifting for the corporate world.' }
-    ]),
+    listGifts: async (): Promise<Collection[]> => fetchFromERP('/collections/gifts', []),
   },
   testimonials: {
-    list: async (): Promise<Testimonial[]> => fetchFromERP('/testimonials', [
-      { id: 't1', text: "Deepti's resin art is mesmerizing.", author: "Priya S." }
-    ]),
+    list: async (): Promise<Testimonial[]> => fetchFromERP('/testimonials', []),
   },
   instagram: {
-    listFeed: async (): Promise<InstagramPost[]> => fetchFromERP('/instagram/feed', [
-      { id: 'ig1', url: 'ig.com', imageUrl: '' }, { id: 'ig2', url: 'ig.com', imageUrl: '' },
-      { id: 'ig3', url: 'ig.com', imageUrl: '' }, { id: 'ig4', url: 'ig.com', imageUrl: '' }
-    ]),
+    listFeed: async (): Promise<InstagramPost[]> => fetchFromERP('/instagram/feed', []),
   },
   cart: {
     add: async (productId: string, quantity: number) => ({ success: true }),
@@ -415,16 +442,7 @@ export const api = {
         body: JSON.stringify(payload)
       });
     },
-    getOrder: async (id: string) => {
-      return fetchFromERP(`/orders/${id}`, {
-        id,
-        status: 'Processing',
-        trackingNumber: `AWB${Math.floor(Math.random() * 10000000)}`,
-        courier: 'Delhivery',
-        date: new Date().toISOString(),
-        total: 24999
-      }, 1, 200);
-    }
+    getOrder: async (id: string): Promise<StorefrontOrder | null> => fetchFromERP<StorefrontOrder | null>(`/orders/${encodeURIComponent(id)}`, null)
   },
   customerAuth: {
     signup: async (name: string, email: string, password: string): Promise<any> => {

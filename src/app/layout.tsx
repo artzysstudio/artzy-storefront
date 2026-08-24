@@ -1,41 +1,30 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 import LaunchGate from "@/components/LaunchGate";
 import ArtzyMuseFloater from "@/components/ArtzyMuseFloater";
 import MediaProtection from "@/components/MediaProtection";
 
-const cormorant = Cormorant_Garamond({
-  weight: ['300', '400', '500', '600'],
-  style: ['normal', 'italic'],
-  subsets: ["latin"],
-  variable: "--font-serif",
-  display: "swap",
-});
-
-const dmSans = DM_Sans({
-  weight: ['300', '400', '500'],
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://artzy-storefront.pages.dev';
+const isIndexable = process.env.NEXT_PUBLIC_SITE_INDEXABLE === 'true';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Artzy's Studio | Premium Handcrafted Art & Gifting",
   description: "Authentic resin art, original paintings, and curated bespoke corporate gifting by Deepti J. Shah. Elevate your space with our contemporary handcrafted collections.",
   keywords: ["resin art", "original paintings", "corporate gifting", "handcrafted home decor", "Deepti J. Shah", "custom artwork"],
   openGraph: {
     title: "Artzy's Studio | Premium Handcrafted Art & Gifting",
     description: "Authentic resin art, original paintings, and curated bespoke corporate gifting by Deepti J. Shah.",
-    url: "https://www.artzysstudio.in",
+    url: siteUrl,
     siteName: "Artzy's Studio",
     locale: "en_IN",
     type: "website",
   },
   robots: {
-    index: false,
-    follow: false,
-  }
+    index: isIndexable,
+    follow: isIndexable,
+  },
+  alternates: { canonical: '/' },
 };
 
 import { CartProvider } from "@/context/CartContext";
@@ -47,8 +36,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${dmSans.variable}`}>
+    <html lang="en">
       <body>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': ['Organization', 'LocalBusiness'],
+          name: "Artzy's Studio",
+          founder: { '@type': 'Person', name: 'Deepti J. Shah' },
+          url: siteUrl,
+          email: 'artzysstudio@gmail.com',
+          telephone: '+91 91586 80722',
+          address: { '@type': 'PostalAddress', streetAddress: 'Prashant Society, Preetishilp Bldg, Ground Floor, Lane #3, Plot #22, Paud Road, Kothrud', addressLocality: 'Pune', addressRegion: 'Maharashtra', postalCode: '411038', addressCountry: 'IN' },
+          sameAs: ['https://www.instagram.com/artzysstudio/', 'https://www.facebook.com/artzysstudio', 'https://www.youtube.com/@ArtzysStudio']
+        }) }} />
         <CustomerProvider>
           <CartProvider>
             <LaunchGate>

@@ -17,6 +17,7 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedOccasion, setSelectedOccasion] = useState('');
   const [selectedRoom, setSelectedRoom] = useState('');
+  const [readyToShipOnly, setReadyToShipOnly] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -84,6 +85,7 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
     const requestedCategory = params.get('category');
     const requestedRoom = params.get('room');
     const requestedOccasion = params.get('occasion');
+    setReadyToShipOnly(params.get('availability') === 'in-stock');
     if (requestedCategory) {
       const matchingCategory = categories.find(
         (category) => slugify(category) === requestedCategory || slugify(category).includes(requestedCategory),
@@ -133,25 +135,28 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
       if (selectedCategory && product.category !== selectedCategory) return false;
       if (selectedOccasion && (!product.occasion || !product.occasion.includes(selectedOccasion))) return false;
       if (selectedRoom && (!product.roomType || !product.roomType.includes(selectedRoom))) return false;
+      if (readyToShipOnly && product.availability !== 'in_stock') return false;
       return product.price <= maxPrice;
     });
 
     if (sortBy === 'price-low') return [...filtered].sort((a, b) => a.price - b.price);
     if (sortBy === 'price-high') return [...filtered].sort((a, b) => b.price - a.price);
+    if (sortBy === 'newest') return [...filtered].sort((a, b) => Date.parse(b.erpUpdatedAt || '') - Date.parse(a.erpUpdatedAt || ''));
+    if (sortBy === 'availability') return [...filtered].sort((a, b) => Number(b.availability === 'in_stock') - Number(a.availability === 'in_stock'));
     if (sortBy === 'name') return [...filtered].sort((a, b) => a.name.localeCompare(b.name));
     return filtered;
-  }, [products, maxPrice, selectedCategory, selectedOccasion, selectedRoom, sortBy]);
+  }, [products, maxPrice, readyToShipOnly, selectedCategory, selectedOccasion, selectedRoom, sortBy]);
 
   const activeFilterCount =
     [selectedCategory, selectedOccasion, selectedRoom].filter(Boolean).length +
-    (maxPrice < highestPrice ? 1 : 0);
+    (maxPrice < highestPrice ? 1 : 0) + (readyToShipOnly ? 1 : 0);
 
   const visibleProducts = filteredProducts.slice(0, visibleCount);
   const remainingProducts = Math.max(0, filteredProducts.length - visibleProducts.length);
 
   useEffect(() => {
     setVisibleCount(PRODUCT_BATCH_SIZE);
-  }, [maxPrice, selectedCategory, selectedOccasion, selectedRoom, sortBy]);
+  }, [maxPrice, readyToShipOnly, selectedCategory, selectedOccasion, selectedRoom, sortBy]);
 
   useEffect(() => {
     const updateBackToTop = () => setShowBackToTop(window.scrollY > 650);
@@ -165,6 +170,7 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
     setSelectedOccasion('');
     setSelectedRoom('');
     setMaxPrice(highestPrice);
+    setReadyToShipOnly(false);
   };
 
   const chooseCategory = (category: string) => {
@@ -256,6 +262,11 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
           ))}
         </fieldset>
       )}
+
+      <fieldset className="filter-group">
+        <legend>Availability</legend>
+        <label className="filter-option"><input type="checkbox" checked={readyToShipOnly} onChange={(event) => setReadyToShipOnly(event.target.checked)} /><span>Ready to ship</span></label>
+      </fieldset>
     </>
   );
 
@@ -279,6 +290,14 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
           ))}
         </nav>
 
+        {activeFilterCount > 0 && <div className="active-filter-chips" aria-label="Active filters">
+          {selectedCategory && <button onClick={() => setSelectedCategory('')}>{selectedCategory} <span aria-hidden="true">×</span></button>}
+          {selectedOccasion && <button onClick={() => setSelectedOccasion('')}>{selectedOccasion} <span aria-hidden="true">×</span></button>}
+          {selectedRoom && <button onClick={() => setSelectedRoom('')}>{selectedRoom} <span aria-hidden="true">×</span></button>}
+          {readyToShipOnly && <button onClick={() => setReadyToShipOnly(false)}>Ready to ship <span aria-hidden="true">×</span></button>}
+          {maxPrice < highestPrice && <button onClick={() => setMaxPrice(highestPrice)}>Up to ₹{maxPrice.toLocaleString('en-IN')} <span aria-hidden="true">×</span></button>}
+        </div>}
+
         <div className="shop-toolbar">
           <div className="results-count"><strong>{filteredProducts.length}</strong> pieces</div>
           <div className="shop-toolbar-actions">
@@ -297,6 +316,8 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
                 aria-label="Sort products"
               >
                 <option value="featured">Featured</option>
+                <option value="newest">Newest</option>
+                <option value="availability">Availability</option>
                 <option value="price-low">Price: Low to high</option>
                 <option value="price-high">Price: High to low</option>
                 <option value="name">Name</option>

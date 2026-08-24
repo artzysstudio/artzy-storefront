@@ -8,7 +8,7 @@ import { useCustomer } from '@/context/CustomerContext';
 
 type CheckoutStep = 'auth' | 'address' | 'gifting' | 'shipping' | 'payment';
 
-export default function CheckoutClient() {
+export default function CheckoutClient({ initialProducts }: { initialProducts: Product[] }) {
   const { items, giftBundles, clearCart } = useCart();
   const { isAuthenticated, user, login, signup } = useCustomer();
   const router = useRouter();
@@ -42,16 +42,16 @@ export default function CheckoutClient() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadCartDetails = async () => {
+    const loadCartDetails = () => {
       if (items.length === 0) {
         setIsLoading(false);
         return;
       }
       
-      let loadedProducts = [];
+      const loadedProducts = [];
       let total = 0;
       for (const item of items) {
-        const product = await api.products.get(item.productId);
+        const product = initialProducts.find((candidate) => candidate.id === item.productId);
         if (product) {
           const effectivePrice = product.salePrice && product.salePrice > 0 ? product.salePrice : product.price;
           loadedProducts.push({ ...product, price: effectivePrice, quantity: item.quantity });
@@ -64,7 +64,7 @@ export default function CheckoutClient() {
     };
     
     loadCartDetails();
-  }, [items]);
+  }, [initialProducts, items]);
 
   useEffect(() => {
     if (isAuthenticated && user) {

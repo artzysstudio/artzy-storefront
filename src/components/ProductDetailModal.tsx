@@ -42,7 +42,7 @@ export default function ProductDetailModal({
   const displayPrice = selected?.price ?? product.salePrice ?? product.price;
   const deliveryTime =
     product.leadTime ||
-    (product.availability === "made_to_order" ? "Made to order — dispatch time confirmed after your brief" : "Usually dispatched in 3–5 working days");
+    (product.availability === "made_to_order" ? "Made to order — dispatch time confirmed after your brief" : "Dispatch timing confirmed after your PIN code and order details");
 
   useEffect(() => {
     document.body.style.overflow = "hidden";

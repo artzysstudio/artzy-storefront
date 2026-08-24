@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 :root {
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-sans: Inter, "Segoe UI", Arial, sans-serif;
   /* Contemporary Artist Studio Palette */
   --bg-color: #FDFBF7; /* Warm Ivory / Cream */
   --bg-secondary: #F6F3EC; /* Sand */
@@ -2246,6 +2248,10 @@ body {
 }
 /* Honest catalogue fallback: never substitute invented ERP inventory. */
 .home-products-unavailable{max-width:720px;margin:28px auto 0;padding:34px;border:1px solid #decfc4;background:#fffaf4;text-align:center}.home-products-unavailable h3{margin:0 0 10px;font:400 2rem var(--font-serif),Georgia,serif}.home-products-unavailable p{margin:0 auto 18px;max-width:590px;color:#79665c;line-height:1.65}.home-products-unavailable a{color:#9d4449;font-size:.78rem;font-weight:700;text-decoration:none}
+.home-artist{display:grid;grid-template-columns:minmax(300px,.8fr) 1.2fr;min-height:560px;background:#4d3731;color:#fffaf4}.home-artist>img{width:100%;height:100%;max-height:650px;object-fit:cover;object-position:center 25%}.home-artist>div{align-self:center;max-width:720px;padding:clamp(42px,7vw,100px)}.home-artist>div>span{color:#e7aaa7;font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase}.home-artist h2{margin:15px 0 22px;font:400 clamp(2.7rem,5vw,5.2rem)/.94 var(--font-serif),Georgia,serif}.home-artist p{max-width:610px;color:#eaded6;line-height:1.75}.home-artist a{display:inline-flex;margin-top:22px;border-bottom:1px solid #e7aaa7;color:#fff;text-decoration:none}.home-artist a span{margin-left:12px}@media(max-width:720px){.home-artist{grid-template-columns:1fr}.home-artist>img{height:430px}.home-artist>div{padding:42px 21px}}
+.active-filter-chips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 4px;scrollbar-width:none}.active-filter-chips button{flex:0 0 auto;min-height:36px;padding:7px 12px;border:1px solid #c98f90;border-radius:999px;background:#fff8f3;color:#873b41;font-size:.72rem}.active-filter-chips span{margin-left:6px;font-size:1rem}
+:where(a,button,input,select,textarea):focus-visible{outline:3px solid #b25156;outline-offset:3px}button,a{touch-action:manipulation}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+.footer-policy-links{display:flex;flex-wrap:wrap;gap:10px 22px;padding:24px 0;border-top:1px solid rgba(255,255,255,.18)}.footer-policy-links a{color:inherit;font-size:.72rem;text-decoration:none}.footer-policy-links a:hover{text-decoration:underline}
 
 /* Artzy Gift Concierge */
 .gift-concierge-page{--gift-ink:#493c35;--gift-red:#b54f55;--gift-rose:#ead5cd;--gift-paper:#fbf7f0;color:var(--gift-ink);background:var(--gift-paper)}

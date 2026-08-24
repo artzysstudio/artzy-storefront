@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import Link from 'next/link';
 
 export default function Error({
   error,
@@ -27,7 +28,7 @@ export default function Error({
         </p>
         <div style={{ display: 'flex', gap: '1rem' }}>
           <button className="btn btn-solid" onClick={() => reset()}>Try Again</button>
-          <a href="/" className="btn">Return Home</a>
+          <Link href="/" className="btn">Return Home</Link>
         </div>
       </main>
       <Footer />
