@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import ArtzyAICreativeTool from '@/components/ArtzyAICreativeTool';
 
 export const metadata: Metadata = {
   title: "Artzy World | Art, Story & Space",
@@ -83,6 +84,18 @@ export default function ArtzyWorldPage() {
           <div><strong>Full-page preview workspace</strong><small>ERP availability stays separate from Muse-made custom concepts.</small></div>
           <a className="world-primary" href="/artzy-world/preview/">Enter the preview</a>
         </div>
+      </section>
+
+      <section className="world-live-preview" aria-label="Optional ArtzyAI wall-art direction">
+        <ArtzyAICreativeTool
+          variant="artzyWorld"
+          title="Imagine a custom wall-art direction"
+          purpose="A refined custom wall-art direction for an Indian living room; later placement and physical size remain controlled by the parametric Artzy World preview"
+          style="abstract"
+          palette={['warm terracotta', 'cream', 'muted olive']}
+          aspectRatio="4:5"
+          studioMessage="Hello Artzy’s Studio, I explored a custom Artzy World wall-art direction. Please confirm feasibility, material, exact dimensions, price and delivery time."
+        />
       </section>
 
       <section className="world-closing">

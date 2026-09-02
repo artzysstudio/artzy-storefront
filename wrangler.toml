@@ -3,5 +3,5 @@ compatibility_date = "2026-08-12"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
 
-[ai]
-binding = "AI"
+[vars]
+ARTZYAI_API_ORIGIN = "https://artzyai.artzysstudio.in"
