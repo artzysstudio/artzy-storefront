@@ -52,6 +52,18 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
       controller = new AbortController();
 
       try {
+        const statusResponse = await fetch('/api/storefront/status', {
+          cache: 'no-store',
+          headers: { Accept: 'application/json' },
+          signal: controller.signal,
+        });
+        const status = statusResponse.ok
+          ? await statusResponse.json() as { configured?: boolean }
+          : { configured: false };
+        // The committed ERP snapshot remains the authoritative continuity
+        // catalogue until a dedicated read-only ERP API token is configured.
+        if (!status.configured) return;
+
         const response = await fetch(`${ERP_PRODUCT_FEED}?ts=${Date.now()}`, {
           cache: 'no-store',
           headers: { Accept: 'application/json' },
@@ -64,7 +76,7 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
         if (isCurrent && records.length > 0) setProducts(records.filter(inScope));
       } catch (error) {
         if (isCurrent && !(error instanceof DOMException && error.name === 'AbortError')) {
-          console.error('Unable to refresh products from Artzy ERP.', error);
+          console.warn('Live ERP refresh is unavailable; retaining the ERP catalogue snapshot.', error);
         }
       }
     };
