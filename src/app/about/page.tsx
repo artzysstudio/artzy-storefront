@@ -4,7 +4,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Link from "next/link";
 
-const deeptiPhoto = "/images/deepti_portrait.png";
+const deeptiPhoto = "/images/deepti_portrait.jpg";
 
 export default function AboutPage() {
   return (
@@ -122,9 +122,9 @@ export default function AboutPage() {
       <style jsx>{`
         :global(.header){position:relative;top:auto;max-width:none;width:100%;margin:0;padding-inline:clamp(20px,4vw,72px)}
         .about-page{background:#fdf8f1;color:#3c2e2a;overflow:hidden}
-        .about-hero{display:grid;grid-template-columns:minmax(0,52%) minmax(0,48%);min-height:760px;background:#f4eadf}
-        .about-hero__portrait{position:relative;min-width:0;overflow:hidden}
-        .about-hero__portrait img{width:100%;height:100%;object-fit:cover;object-position:center 28%;display:block;filter:saturate(.9)}
+        .about-hero{display:grid;grid-template-columns:minmax(360px,44%) minmax(0,56%);min-height:700px;background:#f4eadf}
+        .about-hero__portrait{position:relative;min-width:0;display:grid;place-items:center;padding:clamp(24px,3vw,48px);overflow:hidden;background:#302722}
+        .about-hero__portrait img{display:block;width:min(100%,560px);height:auto;max-height:640px;object-fit:contain;box-shadow:0 22px 52px rgba(24,16,13,.3)}
         .about-hero__seal{position:absolute;right:24px;bottom:24px;width:116px;height:116px;border-radius:50%;display:grid;place-content:center;text-align:center;background:rgba(255,250,245,.92);color:#a64e52;font-size:.64rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;backdrop-filter:blur(8px)}
         .about-hero__seal b{display:block;font-size:1.45rem;margin-bottom:5px}
         .about-hero__copy{display:flex;flex-direction:column;justify-content:center;min-width:0;padding:clamp(56px,7vw,110px)}
@@ -158,8 +158,8 @@ export default function AboutPage() {
         .about-closing>span{color:#a64e52;font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
         .about-closing h2{max-width:900px;margin:24px 0 34px;font-size:clamp(3rem,6vw,6.5rem);line-height:.95}
         .about-closing a{padding-bottom:5px;border-bottom:1px solid #a64e52;font-weight:700}
-        @media(max-width:850px){:global(.header){position:relative;top:auto}.about-page{overflow:visible}.about-hero{grid-template-columns:1fr;min-height:auto}.about-hero__portrait{height:min(68svh,640px)}.about-hero__copy{padding:56px 22px 70px}.about-manifesto,.about-story{grid-template-columns:1fr;gap:32px;padding:78px 22px}.about-manifesto{margin:0}.about-story{margin:0}.about-practice{padding:78px 22px}.about-practice__heading{display:block}.about-practice h2{margin-top:18px}.about-practice__grid{grid-template-columns:1fr 1fr}.about-closing{min-height:460px;padding:76px 22px}}
-        @media(max-width:520px){.about-hero__portrait{height:520px}.about-hero__seal{right:14px;bottom:14px;width:92px;height:92px}h1{font-size:clamp(3.2rem,15vw,4.5rem)}.about-actions{align-items:stretch;flex-direction:column}.about-primary{width:100%;min-width:0}.about-secondary{width:max-content;max-width:100%}.about-practice__grid{grid-template-columns:1fr}.about-practice h3{margin-top:30px}.about-manifesto h2{font-size:3.1rem}}
+        @media(max-width:850px){:global(.header){position:relative;top:auto}.about-page{overflow:visible}.about-hero{grid-template-columns:1fr;min-height:auto}.about-hero__portrait{height:auto;padding:28px 22px}.about-hero__portrait img{width:min(100%,520px);max-height:none}.about-hero__copy{padding:56px 22px 70px}.about-manifesto,.about-story{grid-template-columns:1fr;gap:32px;padding:78px 22px}.about-manifesto{margin:0}.about-story{margin:0}.about-practice{padding:78px 22px}.about-practice__heading{display:block}.about-practice h2{margin-top:18px}.about-practice__grid{grid-template-columns:1fr 1fr}.about-closing{min-height:460px;padding:76px 22px}}
+        @media(max-width:520px){.about-hero__portrait{padding:16px}.about-hero__seal{right:24px;bottom:24px;width:84px;height:84px;font-size:.55rem}h1{font-size:clamp(3.2rem,15vw,4.5rem)}.about-actions{align-items:stretch;flex-direction:column}.about-primary{width:100%;min-width:0}.about-secondary{width:max-content;max-width:100%}.about-practice__grid{grid-template-columns:1fr}.about-practice h3{margin-top:30px}.about-manifesto h2{font-size:3.1rem}}
       `}</style>
     </>
   );
