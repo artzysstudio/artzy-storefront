@@ -39,6 +39,41 @@ export const onRequest = async (context: RouteContext) => {
     );
   }
 
+  if (route === "shipping/quote" && method === "POST") {
+    if (!(context.request.headers.get("content-type") ?? "").includes("application/json")) {
+      return json({ success: false, error: "JSON body required." }, 415);
+    }
+    const body = await context.request.text();
+    if (body.length > 16_000) return json({ success: false, error: "Shipping request is too large." }, 413);
+    let payload: { items?: unknown[]; pincode?: string };
+    try {
+      payload = JSON.parse(body);
+    } catch {
+      return json({ success: false, error: "Invalid shipping request." }, 400);
+    }
+    if (!Array.isArray(payload.items) || !/^\d{6}$/.test(payload.pincode ?? "")) {
+      return json({ success: false, error: "A valid cart and 6-digit PIN code are required." }, 400);
+    }
+
+    const confirmationRequired = () => json({
+      success: true,
+      pincode: payload.pincode,
+      subtotal: 0,
+      defaultService: "economical",
+      options: [],
+      requiresStudioConfirmation: true,
+      message: "Courier availability, delivery time and shipping cost must be confirmed by Artzy's Studio for this PIN code.",
+    });
+
+    if (!context.env.ERP_API_BASE_URL || !context.env.ERP_API_TOKEN) return confirmationRequired();
+    const upstream = await proxyErp(
+      context,
+      context.env.ERP_SHIPPING_PATH ?? "/api/commerce/shipping/calculate",
+      { method: "POST", headers: { "content-type": "application/json" }, body },
+    );
+    return upstream.ok ? upstream : confirmationRequired();
+  }
+
   if (route === "orders" && method === "POST") {
     if (
       !(context.request.headers.get("content-type") ?? "").includes(

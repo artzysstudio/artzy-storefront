@@ -4,6 +4,7 @@ export interface StorefrontEnv {
   ERP_PRODUCTS_PATH?: string;
   ERP_CATEGORIES_PATH?: string;
   ERP_ORDER_PATH?: string;
+  ERP_SHIPPING_PATH?: string;
 }
 
 export interface PagesContext {

@@ -28,6 +28,7 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
   const [address, setAddress] = useState({ name: '', email: '', phone: '', address: '', city: '', state: '', pincode: '' });
   const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
   const [shippingRate, setShippingRate] = useState<ShippingOption | null>(null);
+  const [shippingNeedsConfirmation, setShippingNeedsConfirmation] = useState(false);
   
   // Gifting State
   const [isGift, setIsGift] = useState(false);
@@ -115,7 +116,14 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
     setIsProcessing(true);
     try {
       const result = await api.commerce.calculateShipping(items, address.pincode);
+      setShippingNeedsConfirmation(Boolean(result.requiresStudioConfirmation));
       setShippingOptions(result.options);
+      if (result.requiresStudioConfirmation) {
+        setShippingRate(null);
+        setError(null);
+        setStep('shipping');
+        return;
+      }
       const economical = result.options.find((option) => option.service === result.defaultService) || result.options[0];
       setShippingRate(economical || null);
       if (!economical) throw new Error('No courier option is available.');
@@ -370,9 +378,14 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
         {step === 'shipping' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <h2>Shipping Method</h2>
-            <p style={{ marginTop: 0, color: 'var(--text-muted)' }}>
+            {!shippingNeedsConfirmation && <p style={{ marginTop: 0, color: 'var(--text-muted)' }}>
               Economical is selected by default. Express and urgent use available air services for PIN {address.pincode}.
-            </p>
+            </p>}
+            {shippingNeedsConfirmation && <div role="status" style={{ padding: '1.25rem', border: '1px solid var(--border-color)', borderRadius: '8px', background: 'var(--bg-secondary)' }}>
+              <strong>Delivery confirmation is needed</strong>
+              <p>Artzy&apos;s Studio must confirm courier availability, delivery time and shipping cost for PIN {address.pincode}. No delivery price has been assumed and payment is not available until this is confirmed.</p>
+              <a className="btn" target="_blank" rel="noreferrer" href={`https://wa.me/919158680722?text=${encodeURIComponent(`Hello Artzy's Studio, please confirm shipping for PIN ${address.pincode}. My bag has ${items.reduce((total, item) => total + item.quantity, 0)} item(s).`)}`}>Ask the studio on WhatsApp</a>
+            </div>}
             {shippingOptions.map((option) => {
               const selected = shippingRate?.id === option.id && shippingRate?.service === option.service;
               return (
@@ -390,7 +403,7 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
                 </label>
               );
             })}
-            <div style={{ padding: '1.5rem', border: '1px solid var(--border-color)', borderRadius: '4px', display: 'flex', justifyContent: 'space-between' }}>
+            {!shippingNeedsConfirmation && <div style={{ padding: '1.5rem', border: '1px solid var(--border-color)', borderRadius: '4px', display: 'flex', justifyContent: 'space-between' }}>
               <div>
                 <strong>{shippingRate?.label} · {shippingRate?.courier}</strong>
                 <p style={{ margin: 0, color: 'var(--text-muted)' }}>{shippingRate?.mode === 'air' ? 'Air courier' : 'Surface courier'} · {shippingRate?.etd || 'ETA shown after booking'}</p>
@@ -398,11 +411,11 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
               <div style={{ fontWeight: 'bold' }}>
                 {shippingRate?.rate === 0 ? 'FREE' : `₹${shippingRate?.rate}`}
               </div>
-            </div>
+            </div>}
             
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
               <button className="btn" style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }} onClick={() => setStep('gifting')}>Back</button>
-              <button className="btn" onClick={() => setStep('payment')} style={{ flex: 1 }}>Continue to Payment</button>
+              {!shippingNeedsConfirmation && <button className="btn" onClick={() => setStep('payment')} style={{ flex: 1 }}>Continue to Payment</button>}
             </div>
           </div>
         )}

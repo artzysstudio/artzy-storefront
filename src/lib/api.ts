@@ -218,6 +218,8 @@ export interface ShippingQuote {
   pincode: string;
   defaultService: 'economical';
   options: ShippingOption[];
+  requiresStudioConfirmation?: boolean;
+  message?: string;
 }
 
 export interface StorefrontOrder {
@@ -241,6 +243,19 @@ async function requestERP<T>(endpoint: string, init: RequestInit = {}): Promise<
   const data = await response.json().catch(() => ({}));
   if (!response.ok || data?.success === false) {
     throw new Error(data?.error || `ERP request failed with status ${response.status}`);
+  }
+  return data as T;
+}
+
+async function requestStorefront<T>(endpoint: string, init: RequestInit = {}): Promise<T> {
+  const response = await fetch(`/api/storefront${endpoint}`, {
+    ...init,
+    cache: 'no-store',
+    headers: { 'Content-Type': 'application/json', ...(init.headers || {}) },
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data?.success === false) {
+    throw new Error(data?.error || `Storefront request failed with status ${response.status}`);
   }
   return data as T;
 }
@@ -420,13 +435,13 @@ export const api = {
   },
   commerce: {
     calculateShipping: async (items: Array<{ productId: string; quantity: number }>, pincode: string): Promise<ShippingQuote> => {
-      const quote = await requestERP<ShippingQuote | {
+      const quote = await requestStorefront<ShippingQuote | {
         rate?: number;
         provider?: string;
         courier?: string;
         estimatedDays?: number;
         etd?: string;
-      }>('/commerce/shipping/calculate', {
+      }>('/shipping/quote', {
         method: 'POST',
         body: JSON.stringify({ items, pincode })
       });
