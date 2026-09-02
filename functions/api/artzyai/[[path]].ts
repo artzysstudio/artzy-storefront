@@ -36,10 +36,14 @@ export const onRequest = async ({ request, env, params }: Context): Promise<Resp
   try {
     // A service binding keeps the storefront-to-ArtzyAI request inside
     // Cloudflare's network. Retain the HTTPS fallback for local development.
-    const upstreamInit: RequestInit = { method: request.method, headers, body: ['GET', 'HEAD'].includes(request.method) ? undefined : request.body, redirect: 'error' };
+    const upstreamRequest = new Request(target, {
+      method: request.method,
+      headers,
+      body: ['GET', 'HEAD'].includes(request.method) ? undefined : request.body,
+    });
     const upstream = env.ARTZYAI_BACKEND
-      ? await env.ARTZYAI_BACKEND.fetch(target, upstreamInit)
-      : await fetch(target, upstreamInit);
+      ? await env.ARTZYAI_BACKEND.fetch(upstreamRequest)
+      : await fetch(upstreamRequest);
     const responseHeaders = new Headers(noStore);
     responseHeaders.set('Content-Type', upstream.headers.get('content-type') || 'application/json; charset=utf-8');
     return new Response(upstream.body, { status: upstream.status, headers: responseHeaders });
