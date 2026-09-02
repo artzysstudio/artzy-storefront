@@ -1,5 +1,54 @@
 [
   {
+    "id": "7e0de461-3b50-48d5-921f-ef76ca296e5c",
+    "sku": "ART-MSOFRE5R",
+    "name": "Blossom Treasure Jewelry Box",
+    "category": "Hand-painted Décor",
+    "sourceCategory": "Customized Gifts",
+    "price": 499,
+    "salePrice": null,
+    "quantity": 1,
+    "images": [],
+    "artworkStory": "Inspired by the intricate patterns of Indian art, the Blossom Treasure Jewelry Box is a stunning piece of craftsmanship that will add a touch of sophistication to your living room or bedroom. Each box is hand-painted with vibrant colors and delicate floral designs, making it a unique and thoughtful gift for any occasion.",
+    "artist": "Deepti J. Shah & Artzy's Studio",
+    "roomType": [
+      "Living Room",
+      "Dining Room"
+    ],
+    "availability": "in_stock",
+    "isSoldOut": false,
+    "seo": {
+      "title": "Blossom Treasure Jewelry Box",
+      "description": "Inspired by the intricate patterns of Indian art, the Blossom Treasure Jewelry Box is a stunning piece of craftsmanship that will add a touch of sophistication to your living room or bedroom. Each box is hand-painted with vibrant colors and delicate floral designs, making it a unique and thoughtful gift for any occasion.",
+      "keywords": []
+    },
+    "erpUpdatedAt": "2026-08-11T09:06:16.652438+00:00"
+  },
+  {
+    "id": "a244f970-f640-4503-ba07-da24873a7f75",
+    "sku": "ART-MSOGVRT8",
+    "name": "Hand-painted Treasure Keepsake Box",
+    "category": "Hand-painted Décor",
+    "sourceCategory": "Customized Gifts",
+    "price": 499,
+    "salePrice": null,
+    "quantity": 1,
+    "images": [],
+    "artist": "Deepti J. Shah & Artzy's Studio",
+    "roomType": [
+      "Living Room",
+      "Dining Room"
+    ],
+    "availability": "in_stock",
+    "isSoldOut": false,
+    "seo": {
+      "title": "Hand-painted Treasure Keepsake Box",
+      "description": "",
+      "keywords": []
+    },
+    "erpUpdatedAt": "2026-08-11T09:37:41.046882+00:00"
+  },
+  {
     "id": "84bc4346-4bd1-44b1-9c1e-ec36057c74ec",
     "sku": "BLK-966035",
     "name": "Elegant Jewelry Display",
@@ -231,7 +280,7 @@
       "description": "This exquisite handcrafted wooden mirror frame features a stunning green and orange color scheme, showcasing intricate hand-painted details. The frame's ornate design, adorned with small white dots and an arched top, adds a touch of elegance to any room. The mirror's reflection of a potted plant and window creates a sense of depth and visual interest. This handmade piece is perfect for adding a unique touch to your home decor.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:28.546+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "891f9dc0-baf6-406e-aac4-66decaff493a",
@@ -255,7 +304,7 @@
       "description": "",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:15.943+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "1d296023-73cf-4c44-9210-f6dae39bd2bc",
@@ -282,7 +331,7 @@
       "description": "Handpainted Wooden Fish Design Car Rear View Mirror Hanging brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:24.878+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "d1951f9c-47b5-4ef4-a534-c4df71a8a3a8",
@@ -309,7 +358,7 @@
       "description": "Handpainted Wooden Fish Design Car Rear View Mirror Hanging brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:28.239+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "4c121a53-d85e-44a6-85cc-ac11a8f546b8",
@@ -336,7 +385,7 @@
       "description": "Handpainted Wooden Fish Design Car Rear View Mirror Hanging brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:27.017+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "123f2414-a7c6-4e30-b6be-3eeacdc68f99",
@@ -363,7 +412,7 @@
       "description": "Handpainted Wooden Fish Design Car Rear View Mirror Hanging brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:26.09+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "f9966b34-75a8-4744-8958-5169c3df5f97",
@@ -390,7 +439,7 @@
       "description": "This handpainted wooden car rear view mirror hanging features a colorful fish design, adding a decorative touch to the interior of a vehicle. The hanging is made of wood and showcases a unique fish-shaped ornament with a blue and red color scheme, complemented by a blue tassel at the bottom. The design is further enhanced by small beads in various colors, including orange, red, and cream, which add a playful touch to the overall aesthetic. The hanging is likely used to decorate the rear view mirror of a car, providing a personalized and artistic element to the vehicle's interior. The handmade nature of the product adds a touch of uniqueness and craftsmanship, making it a special addition to any car's interior.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:19.546+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "19e14bab-8547-461a-97a9-01015ea04ed8",
@@ -417,7 +466,7 @@
       "description": "Handpainted Wooden Fish Design Car Rear View Mirror Hanging brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:27.942+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "1bcdb234-9bf4-4fb7-8e27-d7abc0c61364",
@@ -444,7 +493,7 @@
       "description": "Handpainted Wooden Fish Design Car Rear View Mirror Hanging brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:27.331+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "9acb572b-1d70-4abb-9b8d-43f7bf41114d",
@@ -471,7 +520,7 @@
       "description": "This unique handpainted wooden fish design car rear view mirror hanging adds a touch of personality and whimsy to your vehicle's interior. The wooden fish is intricately painted with vibrant colors and patterns, creating a visually appealing piece of art. The hanging design allows for easy attachment to your rearview mirror, making it a convenient and stylish accessory. The wooden material gives it a natural and earthy feel, while the fish design adds a playful and creative touch. This product is perfect for anyone looking to add a personal and artistic touch to their car's interior.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:25.782+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "6ae2d4ce-510f-423c-b5ee-b64057f76fc1",
@@ -498,7 +547,7 @@
       "description": "Handpainted Wooden Fish Design Car Rear View Mirror Hanging brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:24.563+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "fff13fef-8297-42d5-af9d-0118de87eaf4",
@@ -523,7 +572,7 @@
       "description": "Add a touch of handcrafted charm to your vehicle with this Handpainted Wooden Car Rear View Mirror Hanging by Artzy's Studio. Featuring a beautifully painted fish motif with vibrant colors, decorative beads, and soft tassels, this unique hanging brings personality and elegance to your car interior. Made from premium-quality wood and hand-finished by skilled artisans, it is lightweight, durable, and easy to hang from the rear-view mirror. Perfect for everyday use, it enhances your driving experience while reflecting traditional Indian craftsmanship. It also makes a thoughtful gift for car enthusiasts, new car owners, housewarming celebrations, and festive occasions. Every piece is handcrafted, making each hanging one of a kind.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:25.486+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "354b580b-7d52-46d2-86ff-bdcaa993561b",
@@ -547,7 +596,7 @@
       "description": "",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:29.161+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "77edfba6-d412-4e61-83a7-293548d0b8bb",
@@ -572,7 +621,7 @@
       "description": "This handpainted wooden mirror frame features a unique design with a green base, gold trim, and an orange floral motif at the top. The frame is adorned with a decorative tassel and has a rectangular shape with a pointed top. It is likely placed in a hallway or living room, adding a touch of elegance to the space. The frame's handmade character is evident in its intricate details and craftsmanship.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:28.861+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "532dfc9e-bd72-4a2d-b322-1c00176966f5",
@@ -840,7 +889,7 @@
       "description": "Elevate your interiors with this Handpainted Wooden Arch Mirror Frame by Artzy's Studio. Designed in a deep royal blue finish with elegant white handpainted detailing, this handcrafted mirror brings a perfect blend of traditional Indian artistry and contemporary style. Crafted from premium-quality wood, its sleek vertical design makes it ideal for bedrooms, dressing areas, entryways, hallways, or living rooms. The rich colors and intricate patterns create a sophisticated focal point while adding depth and brightness to your space. Whether you're decorating your home or gifting it for a housewarming, wedding, or festive celebration, this handcrafted mirror frame is a timeless décor piece that combines beauty, quality, and functionality.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:55:39.729+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "690dd84a-86de-4e19-a1f9-d5eba2b8dbaa",
@@ -864,7 +913,7 @@
       "description": "",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:55:37.583+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "bd710e0e-87a6-4e91-af98-38a10064da7d",
@@ -888,7 +937,7 @@
       "description": "",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:55:37.985+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "4641191a-ec74-4920-91a1-dd2027c90050",
@@ -913,7 +962,7 @@
       "description": "Elevate your interiors with this Handpainted Wooden Arch Mirror Frame by Artzy's Studio. Designed in a deep royal blue finish with elegant white handpainted detailing, this handcrafted mirror brings a perfect blend of traditional Indian artistry and contemporary style. Crafted from premium-quality wood, its sleek vertical design makes it ideal for bedrooms, dressing areas, entryways, hallways, or living rooms. The rich colors and intricate patterns create a sophisticated focal point while adding depth and brightness to your space. Whether you're decorating your home or gifting it for a housewarming, wedding, or festive celebration, this handcrafted mirror frame is a timeless décor piece that combines beauty, quality, and functionality.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:55:38.858+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "844a6179-3419-4d96-8b15-9ec98629ca06",
@@ -965,7 +1014,7 @@
       "description": "This Moroccan mirror features a unique, handmade design with an orange frame and a cutout in the shape of a traditional Mughal arch. The mirror's frame is made of wood and has a natural finish, while the arch is adorned with intricate, hand-painted designs in red and yellow hues. The mirror is likely to be placed in a living room or bedroom, adding a touch of exotic elegance to the space. Its handmade character makes it a one-of-a-kind piece that will stand out in any room.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:24.068+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "a754b220-66e0-467a-99d2-cdf9dd2765ec",
@@ -990,7 +1039,7 @@
       "description": "This handmade wooden mirror frame features a unique Moroccan-inspired design, crafted with intricate details and a rich, warm finish. The frame's shape is reminiscent of traditional Moroccan architecture, with a pointed arch and ornate carvings. The mirror's reflection is visible through the frame's cutout, adding depth and visual interest. The frame is made of natural wood, giving it a rustic and earthy feel. It is perfect for adding a touch of cultural flair to any room, and its handmade character makes it a truly one-of-a-kind piece.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:23.396+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "abc942b7-d774-49ff-8759-8db3b966efd6",
@@ -1040,7 +1089,7 @@
       "description": "Enhance your home with the timeless beauty of this Handpainted Wooden Mughal Mirror Frame by Artzy's Studio. Featuring a striking pink outer frame with a vibrant turquoise arch and delicate handpainted dot detailing, this mirror is inspired by classic Mughal architecture. Crafted from premium-quality wood, it combines traditional artistry with modern elegance, making it a perfect accent for living rooms, bedrooms, entryways, dressing areas, or hallways. The bold color combination adds warmth and character to any décor style, from contemporary to ethnic. Ideal for home decoration or as a thoughtful gift for housewarming, weddings, anniversaries, and festive occasions, this handcrafted mirror frame is both functional and artistic.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:24.068+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "0f6f03d3-976b-40d4-889e-b2d00718ab46",
@@ -1065,7 +1114,7 @@
       "description": "This exquisite mirror features a stunning blue frame with intricate white and green floral designs, showcasing the artisanal craftsmanship of Artzy's Studio. The frame is made from high-quality materials, ensuring durability and longevity. Its elegant design makes it a perfect addition to any room, adding a touch of sophistication and refinement. The mirror is carefully handmade, reflecting the dedication and attention to detail of the skilled artisans behind Artzy's Studio. Whether placed in a living room, bedroom, or hallway, this mirror is sure to be a beautiful focal point, reflecting light and adding warmth to any space.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:24.068+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "d7c5de33-ec7b-493c-ad58-4cc9958ce45e",
@@ -1090,7 +1139,7 @@
       "description": "This Rang Mahal Mirror by Artzy's Studio is a stunning piece of Indian-inspired home decor. It features a rich green frame with intricate gold paisley designs, adding an elegant touch to any room. The mirror is crafted from high-quality materials and boasts a beautiful finish, making it a perfect addition to any Indian-inspired interior. The design details, including the ornate frame and gold accents, showcase the skilled craftsmanship of the artisans behind this piece. This mirror is likely to be placed above a console table or dresser, adding a touch of sophistication and style to the space. The handmade character of this piece is evident in its unique design and attention to detail, making it a truly special addition to any home.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:24.068+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "46a543ef-bd17-45a3-9aed-998111637375",
@@ -1115,7 +1164,7 @@
       "description": "Bring timeless elegance to your home with this Handpainted Wooden Mirror Frame by Artzy's Studio. Inspired by traditional Indian arch designs, this handcrafted mirror features a vibrant green finish with delicate handpainted detailing that adds charm and character to any space. Made from premium-quality wood, it combines artistic craftsmanship with everyday functionality. Perfect for entryways, living rooms, bedrooms, dressing areas, or hallways, this decorative mirror enhances both modern and traditional interiors. Whether you're refreshing your home décor or searching for a thoughtful housewarming, wedding, or festive gift, this unique mirror frame is a beautiful choice that reflects creativity, culture, and handcrafted excellence.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:24.068+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "1057465e-9cc7-42ad-b80d-b5ff14b9a8e0",
@@ -1140,7 +1189,7 @@
       "description": "Bring timeless elegance to your home with this Handpainted Wooden Mirror Frame by Artzy's Studio. Inspired by traditional Indian arch designs, this handcrafted mirror features a vibrant green finish with delicate handpainted detailing that adds charm and character to any space. Made from premium-quality wood, it combines artistic craftsmanship with everyday functionality. Perfect for entryways, living rooms, bedrooms, dressing areas, or hallways, this decorative mirror enhances both modern and traditional interiors. Whether you're refreshing your home décor or searching for a thoughtful housewarming, wedding, or festive gift, this unique mirror frame is a beautiful choice that reflects creativity, culture, and handcrafted excellence.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:24.068+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "55258e48-4b9a-41e7-a6fa-460737482346",
@@ -1164,7 +1213,7 @@
       "description": "",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:23.396+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "a9c18dc4-2830-4abe-9760-81d87f15d69b",
@@ -1188,7 +1237,7 @@
       "description": "",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:23.396+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "2f06acb1-5648-4695-af84-39daa4dca74f",
@@ -1212,7 +1261,7 @@
       "description": "",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:24.068+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "f2a69139-126e-4abd-a528-863fb66989e9",
@@ -1236,7 +1285,7 @@
       "description": "",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:24.068+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "acab4d99-d77d-4711-9529-c09aff4be667",
@@ -1260,7 +1309,7 @@
       "description": "",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:26.202+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "1685d600-0d60-49db-ae9a-0b916b32ffa6",
@@ -1285,7 +1334,7 @@
       "description": "Handcrafted small mirror with a unique design, featuring a traditional Indian jharokha shape and a vibrant color scheme. Made from high-quality materials, this mirror is perfect for adding a touch of elegance to any room. The intricate details and handmade craftsmanship make it a one-of-a-kind piece that will stand out in any decor. Hang it on a wall or place it on a table to add a pop of color and style to your space.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:26.202+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "f61aff87-ea7c-4fda-9fe6-fe6b454f64d7",
@@ -1513,38 +1562,65 @@
     "images": [],
     "variants": [
       {
+        "id": "6663c0f6-b924-47b1-ba74-5d36e37b8278",
+        "sku": "ART-MSFTKLEF-ORANGE-COLOUR-WITH-RED-DESIGN",
+        "name": "Orange Colour with Red Design",
         "quantity": 0,
         "isAvailable": false
       },
       {
+        "id": "4dba233c-aa75-4578-8479-af94aa6f509a",
+        "sku": "ART-MSFTMSAF-RED-COLOUR-WITH-YELLOW-DESIGN",
+        "name": "Red Colour with Yellow Design",
         "quantity": 0,
         "isAvailable": false
       },
       {
+        "id": "dbdb1bad-01ec-4501-a3f6-2974ea5fe118",
+        "sku": "ART-MSFTO6QK-ORANGE-COLOUR-WITH-YELLOW-SQUARE-DESIGN",
+        "name": "Orange Colour with Yellow Square Design",
         "quantity": 0,
         "isAvailable": false
       },
       {
+        "id": "61acecba-9f2d-4ba0-9d04-d7aecea5f728",
+        "sku": "ART-MSFTQIZX-BLUE-COLOUR-WITH-ORANGE-DESIGN",
+        "name": "Blue Colour with Orange Design",
         "quantity": 0,
         "isAvailable": false
       },
       {
+        "id": "0cb25a46-f8fc-4d9f-ab93-b518a603314e",
+        "sku": "ART-MSFTSPHR-RED-COLOUR-WITH-YELLOW-FLOWER-DESIGN",
+        "name": "Red Colour with Yellow Flower Design",
         "quantity": 0,
         "isAvailable": false
       },
       {
+        "id": "6382b24e-b1a1-4b3a-8087-2dd1eacda0a5",
+        "sku": "ART-MSFTUV26-RED-COLOUR-WITH-GREEN-WAVE-DESIGN",
+        "name": "Red Colour with Green Wave Design",
         "quantity": 0,
         "isAvailable": false
       },
       {
+        "id": "7cbf8846-c8e8-4097-a484-7d77e9645b9a",
+        "sku": "ART-MSFU1IJY-RED-COLOUR-WITH-YELLOW-LINE-DESIGN",
+        "name": "Red Colour with Yellow Line Design",
         "quantity": 0,
         "isAvailable": false
       },
       {
+        "id": "aeeb9c80-7e9a-41a4-9d60-ca36898b93ba",
+        "sku": "ART-MSFTDYPW-ORANGE-COLOUR-WITH-YELLOW-GREEN-DESIGN",
+        "name": "Orange Colour with Yellow, Green Design",
         "quantity": 0,
         "isAvailable": false
       },
       {
+        "id": "420cc6d7-b3c3-4224-9c32-d80f55840074",
+        "sku": "ART-MSFTIFIJ-RED-COLOUR-WITH-GREEN-DESIGN",
+        "name": "Red Colour with Green Design",
         "quantity": 0,
         "isAvailable": false
       }
@@ -1562,7 +1638,7 @@
       "description": "Our dhup holder is handcrafted from high-quality wood, carefully selected for its durability and rich grain. Inspired by traditional Indian designs, this piece not only adds a touch of warmth to your home but also serves as a thoughtful reminder of our rich cultural heritage. With its sturdy base and elegant design, this dhup holder is the perfect addition to any home, be it traditional, modern, or a mix of both.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-05T08:44:58.244143+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "1b6ec90f-c3aa-4574-994e-014ad09658f2",
@@ -2318,7 +2394,7 @@
       "description": "A handmade wooden pen stand with a natural bamboo finish, featuring a unique blend of red, yellow, white, and black colors, adorned with intricate patterns and designs, perfect for adding a touch of elegance to any desk or workspace.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:15.943+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "e6ca7a18-333e-49ce-a1a4-06b8fe745b69",
@@ -2345,7 +2421,7 @@
       "description": "Bamboo Pen Stand 1 brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-07-30T13:22:15.943+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "bfb601b5-955a-4129-a740-318bc5a3d4de",
@@ -2400,168 +2476,6 @@
       "keywords": []
     },
     "erpUpdatedAt": "2026-07-30T13:22:15.144+00:00"
-  },
-  {
-    "id": "f40187df-a0f3-42bb-afd1-d548d0601285",
-    "sku": "BLK-711141",
-    "name": "Hand-painted Spoon Stand of 3",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Wooden Spoon Stand",
-    "price": 799,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784368818723_v2nnwnh.png"
-    ],
-    "artworkStory": "A beautifully handpainted spoon stand stand of 3, perfect for adding a touch of elegance to your kitchen",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Hand-painted Spoon Stand of 3",
-      "description": "A beautifully handpainted spoon stand stand of 3, perfect for adding a touch of elegance to your kitchen",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-04T05:40:42.812+00:00"
-  },
-  {
-    "id": "57b18fe9-699f-4655-a7eb-8d3ee0dad597",
-    "sku": "BLK-57611",
-    "name": "Hand-painted Spoon Stand of 3",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Wooden Spoon Stand",
-    "price": 799,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784368776660_zxl6kd.png"
-    ],
-    "artworkStory": "This handpainted spoon stand is a beautiful and functional addition to any kitchen. Made of high-quality materials, it features three compartments to keep your utensils organized and within reach.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Hand-painted Spoon Stand of 3",
-      "description": "This handpainted spoon stand is a beautiful and functional addition to any kitchen. Made of high-quality materials, it features three compartments to keep your utensils organized and within reach.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-04T05:40:43.741+00:00"
-  },
-  {
-    "id": "f42c4c7a-f10f-4009-ac2a-7977b9b3e096",
-    "sku": "BLK-98364",
-    "name": "Hand-painted Spoon Stand of 3 (2)",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Wooden Spoon Stand",
-    "price": 799,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784368785408_5aehv9.png"
-    ],
-    "artworkStory": "A beautifully handpainted wooden spoon stand with three compartments, perfect for organizing your utensils and adding a touch of elegance to your kitchen.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Hand-painted Spoon Stand of 3 (2)",
-      "description": "A beautifully handpainted wooden spoon stand with three compartments, perfect for organizing your utensils and adding a touch of elegance to your kitchen.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-04T05:40:41.556+00:00"
-  },
-  {
-    "id": "08479dad-d3a7-4172-800e-7dd2d5f8a94f",
-    "sku": "BLK-957401",
-    "name": "Hand-painted Spoon Stand of 3 (3)",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Wooden Spoon Stand",
-    "price": 799,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784368790891_zmn7gt.png"
-    ],
-    "artworkStory": "A beautifully hand-painted wooden spoon stand, perfect for adding a touch of elegance to your kitchen decor. The stand features three compartments, each with a unique design, and is made from high-quality wood that is both durable and easy to clean.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Hand-painted Spoon Stand of 3 (3)",
-      "description": "A beautifully hand-painted wooden spoon stand, perfect for adding a touch of elegance to your kitchen decor. The stand features three compartments, each with a unique design, and is made from high-quality wood that is both durable and easy to clean.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-04T05:40:41.877+00:00"
-  },
-  {
-    "id": "383cce45-10e2-4c00-a5c7-7a691a544bb8",
-    "sku": "BLK-617254",
-    "name": "Hand-painted Spoon Stand of 3 (4)",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Wooden Spoon Stand",
-    "price": 799,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784368797006_jdvjc.png"
-    ],
-    "artworkStory": "A beautifully hand-painted spoon stand stand of 3, perfect for adding a touch of elegance to your kitchen or dining table. This unique piece is crafted with attention to detail and features a beautiful design that will complement any home decor. Made from high-quality materials, this spoon stand is both durable and functional, making it a great addition to any home.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Hand-painted Spoon Stand of 3 (4)",
-      "description": "A beautifully hand-painted spoon stand stand of 3, perfect for adding a touch of elegance to your kitchen or dining table. This unique piece is crafted with attention to detail and features a beautiful design that will complement any home decor. Made from high-quality materials, this spoon stand is both durable and functional, making it a great addition to any home.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-04T05:40:42.186+00:00"
-  },
-  {
-    "id": "918859ef-b23f-443d-ba89-b7a0202d1176",
-    "sku": "BLK-752408",
-    "name": "Hand-painted Spoon Stand of 3 (5).png",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Wooden Spoon Stand",
-    "price": 799,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784368805578_mqcbz.png"
-    ],
-    "artworkStory": "A beautifully handpainted spoon stand, perfect for adding a touch of elegance to your kitchen. The stand features a unique design and is made of high-quality materials, making it both functional and decorative.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Hand-painted Spoon Stand of 3 (5).png",
-      "description": "A beautifully handpainted spoon stand, perfect for adding a touch of elegance to your kitchen. The stand features a unique design and is made of high-quality materials, making it both functional and decorative.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-04T05:40:42.505+00:00"
   },
   {
     "id": "1168e528-36ad-463b-818f-191e86f68166",
@@ -2692,61 +2606,7 @@
       "description": "This hand-painted wooden flower pot is a unique and beautiful piece of home decor. It features a natural wood finish with intricate white and blue designs, adding a touch of elegance to any room. The pot is designed to hold a bouquet of fresh flowers, creating a stunning centerpiece for any table or shelf. The handmade character of this piece makes it a one-of-a-kind addition to any home.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:55:40.055+00:00"
-  },
-  {
-    "id": "8c80721a-f0f0-461c-96ec-f76d905a09ab",
-    "sku": "BLK-91D8691FFCF6",
-    "name": "Hand-painted Wooden Key Holder Cabinet",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Home Decor",
-    "price": 999,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784703207227_trk2w.png"
-    ],
-    "artworkStory": "This is a hand-painted wooden key holder cupboard with a small window on the front, featuring a green and blue lattice design with yellow diamond-shaped accents. The cupboard has a brown wooden frame with a decorative top and is adorned with a small knob on the front. It is placed on a white wall, accompanied by a potted plant and a small vase with red flowers on a wooden table in front of it. The cupboard appears to be handmade and has a unique, artistic character.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Hand-painted Wooden Key Holder Cabinet",
-      "description": "This is a hand-painted wooden key holder cupboard with a small window on the front, featuring a green and blue lattice design with yellow diamond-shaped accents. The cupboard has a brown wooden frame with a decorative top and is adorned with a small knob on the front. It is placed on a white wall, accompanied by a potted plant and a small vase with red flowers on a wooden table in front of it. The cupboard appears to be handmade and has a unique, artistic character.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-03T11:46:26.708+00:00"
-  },
-  {
-    "id": "c2f62309-80dd-47df-bff4-18928a424c53",
-    "sku": "BLK-274322",
-    "name": "Hand-painted Wooden Spoon Stand of 3 (6)",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Wooden Spoon Stand",
-    "price": 799,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784368813053_izfff.png"
-    ],
-    "artworkStory": "A beautifully hand-painted wooden spoon stand, perfect for adding a touch of elegance to your kitchen. This unique piece features a sturdy design and a vibrant color scheme, making it a must-have for any home chef or food enthusiast. With its compact size and multiple compartments, this spoon stand is ideal for organizing your utensils and adding a decorative element to your countertop. Whether you're cooking up a storm or simply want to add a pop of color to your kitchen, this hand-painted spoon stand is sure to impress.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Hand-painted Wooden Spoon Stand of 3 (6)",
-      "description": "A beautifully hand-painted wooden spoon stand, perfect for adding a touch of elegance to your kitchen. This unique piece features a sturdy design and a vibrant color scheme, making it a must-have for any home chef or food enthusiast. With its compact size and multiple compartments, this spoon stand is ideal for organizing your utensils and adding a decorative element to your countertop. Whether you're cooking up a storm or simply want to add a pop of color to your kitchen, this hand-painted spoon stand is sure to impress.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-04T05:40:43.442+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "d9c7c43b-4aa3-43ec-a97f-e7dfd458d7d0",
@@ -2774,31 +2634,6 @@
       "keywords": []
     },
     "erpUpdatedAt": "2026-08-04T05:40:40.899+00:00"
-  },
-  {
-    "id": "552b6e0c-dbfd-433d-ad1c-3e129e79162b",
-    "sku": "ART-MS2W5V75",
-    "name": "Hand-painted Wooden Spoon Stand Set of 3",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Wooden Spoon Stand",
-    "price": 799,
-    "salePrice": null,
-    "quantity": 3,
-    "images": [],
-    "artworkStory": "Transform your kitchen counter and dining table into a canvas of Indian heritage. Handcrafted by skilled artisans at Artzy's Studio, this set of three wooden spoon stands showcases vibrant handpainted motifs inspired by traditional Indian folk art. Each piece is meticulously carved from sustainably sourced mango wood, ensuring durability and timeless charm.\n\nBeyond their eye-catching aesthetic, these holders bring effortless organization to your culinary space. Designed to accommodate spoons, ladles, or serving cutlery, the varying sizes offer versatile storage while protecting your surfaces from spills and heat.\n\nWhether hosting a festive dinner or refreshing your daily decor, this handcrafted set adds warmth, color, and artisanal luxury to any contemporary or traditional home setting.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Hand-painted Wooden Spoon Stand Set of 3",
-      "description": "Transform your kitchen counter and dining table into a canvas of Indian heritage. Handcrafted by skilled artisans at Artzy's Studio, this set of three wooden spoon stands showcases vibrant handpainted motifs inspired by traditional Indian folk art. Each piece is meticulously carved from sustainably sourced mango wood, ensuring durability and timeless charm.\n\nBeyond their eye-catching aesthetic, these holders bring effortless organization to your culinary space. Designed to accommodate spoons, ladles, or serving cutlery, the varying sizes offer versatile storage while protecting your surfaces from spills and heat.\n\nWhether hosting a festive dinner or refreshing your daily decor, this handcrafted set adds warmth, color, and artisanal luxury to any contemporary or traditional home setting.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-03T11:46:25.182+00:00"
   },
   {
     "id": "fee033dc-85ff-4f81-b345-28c0ba1f67d9",
@@ -3368,195 +3203,6 @@
     "erpUpdatedAt": "2026-07-30T13:22:25.242+00:00"
   },
   {
-    "id": "bd5a8ee7-e1b8-4fa1-b85d-cc6942b8cf4b",
-    "sku": "BLK-07A3C58BC70D",
-    "name": "Traditional Wooden Key Holder Cabinet",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Home Decor",
-    "price": 999,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784703214567_v8pao.png"
-    ],
-    "artworkStory": "This traditional wooden key holder cupboard features a beautiful hand-painted design, adding a touch of elegance to any entryway or hallway. The cupboard is made of high-quality wood and has a classic, timeless look that will complement any home decor style. The hand-painted design adds a unique and personal touch to the piece, making it a standout feature in any room. This key holder cupboard is perfect for keeping keys organized and within easy reach, while also serving as a decorative accent. Its compact size makes it ideal for small entryways or hallways, and its sturdy construction ensures it will last for years to come.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Traditional Wooden Key Holder Cabinet",
-      "description": "This traditional wooden key holder cupboard features a beautiful hand-painted design, adding a touch of elegance to any entryway or hallway. The cupboard is made of high-quality wood and has a classic, timeless look that will complement any home decor style. The hand-painted design adds a unique and personal touch to the piece, making it a standout feature in any room. This key holder cupboard is perfect for keeping keys organized and within easy reach, while also serving as a decorative accent. Its compact size makes it ideal for small entryways or hallways, and its sturdy construction ensures it will last for years to come.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-03T11:46:23.334+00:00"
-  },
-  {
-    "id": "018c02a3-7dbe-425a-9fff-6f6291fadaf4",
-    "sku": "BLK-C50B72B42AEA",
-    "name": "Wooden Hand-painted Key Holder Cabinet",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Home Decor",
-    "price": 999,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784703211557_x67g0j.png"
-    ],
-    "artworkStory": "Wooden Handpainted Key Holder CupBoard brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Wooden Hand-painted Key Holder Cabinet",
-      "description": "Wooden Handpainted Key Holder CupBoard brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-03T11:46:23.018+00:00"
-  },
-  {
-    "id": "7b95fcd5-d481-48e3-91c4-25a4f13a4c33",
-    "sku": "BLK-5B834EEC9A61",
-    "name": "Wooden Hand-painted Key Holder Cabinet",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Home Decor",
-    "price": 999,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784703201677_xdwxvo.png"
-    ],
-    "artworkStory": "Wooden Handpainted Key Holder CupBoard brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Wooden Hand-painted Key Holder Cabinet",
-      "description": "Wooden Handpainted Key Holder CupBoard brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-03T11:46:22.708+00:00"
-  },
-  {
-    "id": "a7b71606-882e-4fe9-a78a-92cf78597cb9",
-    "sku": "BLK-E40FB4F71752",
-    "name": "Wooden Hand-painted Key Holder Cabinet",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Home Decor",
-    "price": 999,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784703197817_lv2f5.png"
-    ],
-    "artworkStory": "Wooden Handpainted Key Holder CupBoard brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Wooden Hand-painted Key Holder Cabinet",
-      "description": "Wooden Handpainted Key Holder CupBoard brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-03T11:46:22.381+00:00"
-  },
-  {
-    "id": "3daac8f1-9874-455d-a964-be6c5537fc8f",
-    "sku": "BLK-5026E4EAC80D",
-    "name": "Wooden Hand-painted Key Holder Cabinet",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Home Decor",
-    "price": 999,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784703193129_z9ixua.png"
-    ],
-    "artworkStory": "Wooden Handpainted Key Holder CupBoard brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Wooden Hand-painted Key Holder Cabinet",
-      "description": "Wooden Handpainted Key Holder CupBoard brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-03T11:46:21.688+00:00"
-  },
-  {
-    "id": "fe8d5f54-98ff-42be-9266-462564b73466",
-    "sku": "BLK-D81C693E2F5A",
-    "name": "Wooden Hand-painted Key Holder Cabinet",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Home Decor",
-    "price": 999,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784703186904_sry91.png"
-    ],
-    "artworkStory": "Wooden Handpainted Key Holder CupBoard brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Wooden Hand-painted Key Holder Cabinet",
-      "description": "Wooden Handpainted Key Holder CupBoard brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-03T11:46:26.401+00:00"
-  },
-  {
-    "id": "878ec3d4-5f3d-49dd-8864-f2addcbae7d4",
-    "sku": "BLK-3359C9436C51",
-    "name": "Wooden Hand-painted Key Holder Cabinet",
-    "category": "Table & Utility Art",
-    "sourceCategory": "Home Decor",
-    "price": 999,
-    "salePrice": null,
-    "quantity": 1,
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784703180431_k39n29.png"
-    ],
-    "artworkStory": "Wooden Handpainted Key Holder CupBoard brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
-    "artist": "Deepti J. Shah & Artzy's Studio",
-    "roomType": [
-      "Living Room",
-      "Dining Room"
-    ],
-    "availability": "in_stock",
-    "isSoldOut": false,
-    "seo": {
-      "title": "Wooden Hand-painted Key Holder Cabinet",
-      "description": "Wooden Handpainted Key Holder CupBoard brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
-      "keywords": []
-    },
-    "erpUpdatedAt": "2026-08-03T11:46:27.632+00:00"
-  },
-  {
     "id": "124c2205-da27-449a-8a33-3f95ff1058f2",
     "sku": "BLK-327814",
     "name": "Wooden Sunglass Stand (2)",
@@ -3742,7 +3388,7 @@
       "description": "Hanpainted Wooden Colourful Clock Design Wall Hanger brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T12:02:00.378+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "c76fb9d6-e137-42d6-ae4d-bcd0695c667e",
@@ -3770,7 +3416,7 @@
       "description": "Hanpainted Wooden Colourful Clock Design Wall Hanger brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T12:02:01.164+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "b64d8652-1943-4d2d-bf6e-83ada853a5c1",
@@ -3798,7 +3444,7 @@
       "description": "Hanpainted Wooden Colourful Clock Design Wall Hanger brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T12:02:00.797+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "1faafb71-741c-42c6-bcef-1b233a0b5392",
@@ -4323,7 +3969,7 @@
       "description": "Wooden Handpainted Cow design Round wall hager brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:23.644+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "2cf57544-8142-4369-afe4-07bbe60dfb35",
@@ -4351,7 +3997,7 @@
       "description": "Wooden Handpainted Lotus design Round wall hager brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:23.954+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "135501b1-bf22-4177-9366-705465eb91b8",
@@ -4379,7 +4025,7 @@
       "description": "Wooden Handpainted Warli design Round wall hager brings distinctive handcrafted character to everyday interiors. The design is presented as an artisanal décor piece with carefully finished details and a warm, expressive appearance. Its versatile styling makes it suitable for an entrance, living space, bedroom, studio or thoughtful gifting. Each handmade piece may carry subtle variations that add to its individual charm. Pair it with complementary natural textures and decorative accents to create an inviting display. Please review the product image and confirm the material, dimensions and care instructions before publishing.",
       "keywords": []
     },
-    "erpUpdatedAt": "2026-08-03T11:46:24.251+00:00"
+    "erpUpdatedAt": "2026-08-08T13:38:02.782+00:00"
   },
   {
     "id": "7865a1bf-a340-4a98-9feb-df11941f186d",
