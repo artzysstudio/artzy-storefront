@@ -281,12 +281,12 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
             </div>
 
             {authMode === 'signup' && (
-              <input required type="text" placeholder="Full Name" value={authName} onChange={e => setAuthName(e.target.value)} style={{ padding: '0.8rem' }} />
+              <input required type="text" autoComplete="name" placeholder="Full Name" value={authName} onChange={e => setAuthName(e.target.value)} style={{ padding: '0.8rem' }} />
             )}
-            <input required type="email" placeholder="Email Address" value={authEmail} onChange={e => setAuthEmail(e.target.value)} style={{ padding: '0.8rem' }} />
+            <input required type="email" autoComplete="email" placeholder="Email Address" value={authEmail} onChange={e => setAuthEmail(e.target.value)} style={{ padding: '0.8rem' }} />
             
             {authMode !== 'guest' && (
-              <input required minLength={8} type="password" placeholder="Password (8+ characters)" value={authPassword} onChange={e => setAuthPassword(e.target.value)} style={{ padding: '0.8rem' }} />
+              <input required minLength={8} type="password" autoComplete={authMode === 'login' ? 'current-password' : 'new-password'} placeholder="Password (8+ characters)" value={authPassword} onChange={e => setAuthPassword(e.target.value)} style={{ padding: '0.8rem' }} />
             )}
             
             <button type="submit" className="btn" disabled={isProcessing} style={{ marginTop: '1rem' }}>
@@ -299,17 +299,17 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
           <form onSubmit={handleAddressContinue} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <h2>Delivery Address</h2>
             <div style={{ display: 'flex', gap: '1rem' }}>
-              <input required type="text" placeholder="Full Name" value={address.name} onChange={e => setAddress({...address, name: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
+              <input required type="text" autoComplete="name" placeholder="Full Name" value={address.name} onChange={e => setAddress({...address, name: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
             </div>
             <div style={{ display: 'flex', gap: '1rem' }}>
-              <input required type="email" placeholder="Email" value={address.email} onChange={e => setAddress({...address, email: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
+              <input required type="email" autoComplete="email" placeholder="Email" value={address.email} onChange={e => setAddress({...address, email: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
               <input required type="tel" inputMode="numeric" autoComplete="tel-national" pattern="[0-9]{10}" maxLength={10} placeholder="10-digit Phone" value={address.phone} onChange={e => setAddress({...address, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})} style={{ flex: 1, padding: '0.8rem' }} />
             </div>
-            <input required type="text" placeholder="Street Address" value={address.address} onChange={e => setAddress({...address, address: e.target.value})} style={{ padding: '0.8rem' }} />
+            <input required type="text" autoComplete="street-address" placeholder="Street Address" value={address.address} onChange={e => setAddress({...address, address: e.target.value})} style={{ padding: '0.8rem' }} />
             <div style={{ display: 'flex', gap: '1rem' }}>
-              <input required type="text" placeholder="City" value={address.city} onChange={e => setAddress({...address, city: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
-              <input required type="text" placeholder="State" value={address.state} onChange={e => setAddress({...address, state: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
-              <input required type="text" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} placeholder="6-digit PIN code" value={address.pincode} onChange={e => setAddress({...address, pincode: e.target.value.replace(/\D/g, '').slice(0, 6)})} style={{ flex: 1, padding: '0.8rem' }} />
+              <input required type="text" autoComplete="address-level2" placeholder="City" value={address.city} onChange={e => setAddress({...address, city: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
+              <input required type="text" autoComplete="address-level1" placeholder="State" value={address.state} onChange={e => setAddress({...address, state: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
+              <input required type="text" autoComplete="postal-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} placeholder="6-digit PIN code" value={address.pincode} onChange={e => setAddress({...address, pincode: e.target.value.replace(/\D/g, '').slice(0, 6)})} style={{ flex: 1, padding: '0.8rem' }} />
             </div>
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
               <button type="button" className="btn" style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }} onClick={() => setStep('auth')}>Back</button>

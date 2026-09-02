@@ -42,7 +42,7 @@ async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   headers.set('X-Artzy-Guest-ID', artzyGuestId());
   const response = await fetch(`/api/artzyai/${path}`, { ...init, headers });
   const result = await response.json().catch(() => ({ error: 'ArtzyAI returned an incomplete response.' })) as T & { error?: string; category?: string };
-  if (!response.ok) {
+  if (!response.ok || result.error) {
     const error = new Error(result.error || 'ArtzyAI is temporarily unavailable.') as Error & { category?: string };
     error.category = result.category;
     throw error;

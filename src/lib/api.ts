@@ -420,13 +420,50 @@ export const api = {
   },
   commerce: {
     calculateShipping: async (items: Array<{ productId: string; quantity: number }>, pincode: string): Promise<ShippingQuote> => {
-      return requestERP('/storefront/shipping/quote', {
+      const quote = await requestERP<ShippingQuote | {
+        rate?: number;
+        provider?: string;
+        courier?: string;
+        estimatedDays?: number;
+        etd?: string;
+      }>('/commerce/shipping/calculate', {
         method: 'POST',
         body: JSON.stringify({ items, pincode })
       });
+
+      if (Array.isArray((quote as ShippingQuote).options)) return quote as ShippingQuote;
+
+      const simpleQuote = quote as {
+        rate?: number;
+        provider?: string;
+        courier?: string;
+        estimatedDays?: number;
+        etd?: string;
+      };
+      const rate = Number(simpleQuote.rate);
+      if (!Number.isFinite(rate) || rate < 0) {
+        throw new Error('The courier service did not return a valid shipping rate. Please ask the studio to confirm delivery.');
+      }
+
+      return {
+        success: true,
+        subtotal: 0,
+        pincode,
+        defaultService: 'economical',
+        options: [{
+          id: 'erp-standard',
+          service: 'economical',
+          label: 'Standard delivery',
+          courier: simpleQuote.provider || simpleQuote.courier || 'Studio courier partner',
+          mode: 'surface',
+          rate,
+          etd: simpleQuote.etd || (simpleQuote.estimatedDays ? `${simpleQuote.estimatedDays} days` : 'Confirmed after booking'),
+          estimatedDays: simpleQuote.estimatedDays ?? null,
+        }],
+      };
     },
     initiatePayment: async (payload: any): Promise<any> => {
-      return requestERP('/storefront/payment/initiate', {
+      return requestERP('/commerce/payment/initiate', {
         method: 'POST',
         body: JSON.stringify(payload)
       });
@@ -437,12 +474,12 @@ export const api = {
       razorpay_payment_id: string;
       razorpay_signature: string;
     }): Promise<{ success: boolean; erpOrderId: string; orderNumber?: string }> => {
-      return requestERP('/storefront/payment/verify', {
+      return requestERP('/commerce/payment/verify', {
         method: 'POST',
         body: JSON.stringify(payload)
       });
     },
-    getOrder: async (id: string): Promise<StorefrontOrder | null> => fetchFromERP<StorefrontOrder | null>(`/orders/${encodeURIComponent(id)}`, null)
+    getOrder: async (id: string): Promise<StorefrontOrder | null> => fetchFromERP<StorefrontOrder | null>(`/commerce/order/${encodeURIComponent(id)}`, null)
   },
   customerAuth: {
     signup: async (name: string, email: string, password: string): Promise<any> => {

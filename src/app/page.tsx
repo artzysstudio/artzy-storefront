@@ -77,7 +77,7 @@ export default async function Home() {
         </section>
 
         <section className="home-artist" aria-labelledby="meet-deepti-home">
-          <img src="/images/deepti_portrait.png" alt="Artist Deepti J. Shah" loading="lazy" />
+          <img src="/images/deepti_portrait.jpg" alt="Artist Deepti J. Shah" loading="lazy" />
           <div>
             <span>Meet the artist</span>
             <h2 id="meet-deepti-home">Creativity that communicates beyond words.</h2>

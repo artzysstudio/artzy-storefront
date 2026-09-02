@@ -52,6 +52,16 @@ export const onRequest = async ({ request, env, params }: Context): Promise<Resp
       : await fetch(upstreamRequest);
     const responseHeaders = new Headers(noStore);
     responseHeaders.set('Content-Type', upstream.headers.get('content-type') || 'application/json; charset=utf-8');
+    // Insufficient preview credits are an expected customer-facing state, not
+    // a broken network resource. Preserve the structured error for the client
+    // while returning a successful transport response to avoid a noisy 402 in
+    // the browser console.
+    if (upstream.status === 402) {
+      const payload = await upstream.json().catch(() => ({
+        error: 'ArtzyAI preview credits are currently unavailable. Your choices remain here; please ask the studio for help.',
+      })) as Record<string, unknown>;
+      return Response.json({ ...payload, category: payload.category || 'credits_unavailable' }, { status: 200, headers: responseHeaders });
+    }
     return new Response(upstream.body, { status: upstream.status, headers: responseHeaders });
   } catch (error) {
     console.error(JSON.stringify({ message: 'ArtzyAI proxy failed', path, error: error instanceof Error ? error.message : String(error) }));
