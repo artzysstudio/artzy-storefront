@@ -5,3 +5,7 @@ pages_build_output_dir = ".vercel/output/static"
 
 [vars]
 ARTZYAI_API_ORIGIN = "https://artzyai.artzysstudio.in"
+
+[[services]]
+binding = "ARTZYAI_BACKEND"
+service = "artzyai-creative-consumer"
