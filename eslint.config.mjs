@@ -12,6 +12,7 @@ const eslintConfig = defineConfig([
       "react-hooks/set-state-in-effect": "off",
       "react-hooks/purity": "off",
       "@next/next/no-location-assign-relative-destination": "off",
+      "@next/next/no-html-link-for-pages": "off",
     },
   },
   // Override default ignores of eslint-config-next.
@@ -21,6 +22,7 @@ const eslintConfig = defineConfig([
     ".npm-cache/**",
     ".vercel/**",
     "public/artzy-world/preview-app/**",
+    "public/artzy-world/preview/**",
     "scripts/copy-output.js",
     "out/**",
     "build/**",

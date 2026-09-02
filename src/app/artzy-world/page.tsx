@@ -18,10 +18,10 @@ export default function ArtzyWorldPage() {
         <div className="story-hero__copy">
           <span className="world-eyebrow">Handmade · Personal · Imaginative</span>
           <h1>Welcome to<br/><em>Artzy World.</em></h1>
-          <p>A place where art begins with Deepti&apos;s hand, carries a human story and finds its right place in your everyday world.</p>
+          <p>Discover art created by Deepti and the Artzy&apos;s Studio team, personalise it around your story, and preview selected pieces in your own space before deciding.</p>
           <div className="story-hero__actions">
-            <a className="story-hero__primary" href="#purpose">Discover the idea</a>
-            <Link className="story-hero__secondary" href="/artzy-world/preview/">Try the room preview</Link>
+            <a className="story-hero__primary" href="/artzy-world/preview/">Preview art in my room</a>
+            <a className="story-hero__secondary" href="#journey">Understand how it works</a>
           </div>
           <div className="world-signature"><i aria-hidden="true">✿</i><span>From the studio<br/>to your space</span></div>
           <small>Artzy-style illustration · Preview features are separate from current ERP stock</small>
@@ -69,7 +69,7 @@ export default function ArtzyWorldPage() {
             <li><i>03</i><span><strong>Decide with confidence</strong>Understand placement and visual mood before ordering.</span></li>
           </ul>
           <div className="world-coming-soon world-preview-live" role="status"><span aria-hidden="true">✿</span><div><strong>Interactive room preview is live</strong><small>Use the workspace below. Camera access is requested only when you choose your own wall photo.</small></div></div>
-          <div className="world-actions"><Link className="world-primary" href="/artzy-world/preview/">Open full room preview</Link><Link className="world-secondary" href="/contact/">Discuss your space</Link></div>
+          <div className="world-actions"><a className="world-primary" href="/artzy-world/preview/">Open full room preview</a><Link className="world-secondary" href="/contact/">Discuss your space</Link></div>
         </div>
       </section>
 
@@ -81,7 +81,7 @@ export default function ArtzyWorldPage() {
         <div className="world-preview-launch">
           <span aria-hidden="true">✿</span>
           <div><strong>Full-page preview workspace</strong><small>ERP availability stays separate from Muse-made custom concepts.</small></div>
-          <Link className="world-primary" href="/artzy-world/preview/">Enter the preview</Link>
+          <a className="world-primary" href="/artzy-world/preview/">Enter the preview</a>
         </div>
       </section>
 

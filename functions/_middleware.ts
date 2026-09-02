@@ -19,6 +19,13 @@ export const onRequest = async (context: PagesContext): Promise<Response> => {
   const url = new URL(request.url);
   const acceptsHtml = request.headers.get('accept')?.includes('text/html');
 
+  if (url.pathname === '/artzy-world/preview-app' || url.pathname.startsWith('/artzy-world/preview-app/')) {
+    const target = new URL('/artzy-world/preview/', url.origin);
+    const source = url.searchParams.get('source');
+    if (source && /^[a-z0-9_-]{1,64}$/i.test(source)) target.searchParams.set('source', source);
+    return Response.redirect(target, 308);
+  }
+
   if (!PUBLIC_HOSTS.has(url.hostname.toLowerCase()) || !acceptsHtml) {
     return context.next();
   }
