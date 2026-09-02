@@ -99,7 +99,7 @@ export default function Header() {
     <div className="store-announcement">Complimentary shipping on orders above ₹1,499 <span>·</span> <em>Where intention meets canvas</em></div>
     <header className="store-header" ref={headerRef}>
       <div className="store-header__inner">
-        <Link href="/" className="store-brand" aria-label="Artzy's Studio home">
+        <Link href="/" prefetch={false} className="store-brand" aria-label="Artzy's Studio home">
           <img src={ARTZY_LOGO} alt="Artzy's Studio" width="88" height="81" />
           <span>By Deepti J. Shah</span>
         </Link>
@@ -111,7 +111,7 @@ export default function Header() {
             </button>
             <div id={`mega-${index}`} className={`mega-menu ${openGroup === index ? 'is-open' : ''}`}>
               <div className="mega-menu__intro"><small>Explore</small><strong>{group.label}</strong><p>{group.items[0].note}</p></div>
-              <div className="mega-menu__links">{group.items.map((item) => item.hardNavigate ? <a href={item.href} key={item.href + item.label}>{item.label}<span aria-hidden="true">→</span></a> : <Link href={item.href} key={item.href + item.label}>{item.label}<span aria-hidden="true">→</span></Link>)}</div>
+              <div className="mega-menu__links">{group.items.map((item) => item.hardNavigate ? <a href={item.href} key={item.href + item.label}>{item.label}<span aria-hidden="true">→</span></a> : <Link href={item.href} prefetch={false} key={item.href + item.label}>{item.label}<span aria-hidden="true">→</span></Link>)}</div>
             </div>
           </div>)}
         </nav>
@@ -119,8 +119,8 @@ export default function Header() {
         <div className="store-utilities">
           <a className="ask-studio" href="https://wa.me/919158680722" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">✿</span> Ask Studio</a>
           <button className="utility-icon" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button>
-          <Link className="utility-icon desktop-account" href="/account" aria-label="Your account"><Icon name="account" /></Link>
-          <Link className="utility-icon cart-link" href="/checkout" aria-label={`Cart with ${cartCount} items`}><Icon name="cart" />{cartCount > 0 && <b>{cartCount}</b>}</Link>
+          <Link className="utility-icon desktop-account" href="/account" prefetch={false} aria-label="Your account"><Icon name="account" /></Link>
+          <Link className="utility-icon cart-link" href="/checkout" prefetch={false} aria-label={`Cart with ${cartCount} items`}><Icon name="cart" />{cartCount > 0 && <b>{cartCount}</b>}</Link>
           <button className="menu-toggle" aria-label={mobileOpen ? 'Close menu' : 'Open menu'} aria-expanded={mobileOpen} aria-controls="mobile-navigation" onClick={() => setMobileOpen(!mobileOpen)}><i/><i/><i/></button>
         </div>
       </div>
@@ -131,10 +131,10 @@ export default function Header() {
       <nav className="mobile-navigation__panel" aria-label="Mobile navigation">
         <div className="mobile-navigation__head"><span>Explore Artzy's Studio</span><button aria-label="Close menu" onClick={() => setMobileOpen(false)}>×</button></div>
         {NAV.map((group, index) => <section className="mobile-accordion" key={group.label}>
-          <div className={`mobile-accordion__row ${isActive(group) ? 'is-active' : ''}`}><Link href={group.items[0].href}>{group.label}</Link><button aria-label={`${openGroup === index ? 'Hide' : 'Show'} ${group.label} choices`} aria-expanded={openGroup === index} aria-controls={`mobile-group-${index}`} onClick={() => setOpenGroup(openGroup === index ? null : index)}>{openGroup === index ? '−' : '+'}</button></div>
-          <div id={`mobile-group-${index}`} hidden={openGroup !== index}>{group.items.slice(1).map((item) => item.hardNavigate ? <a href={item.href} key={item.href + item.label}>{item.label}</a> : <Link href={item.href} key={item.href + item.label}>{item.label}</Link>)}</div>
+          <div className={`mobile-accordion__row ${isActive(group) ? 'is-active' : ''}`}><Link href={group.items[0].href} prefetch={false}>{group.label}</Link><button aria-label={`${openGroup === index ? 'Hide' : 'Show'} ${group.label} choices`} aria-expanded={openGroup === index} aria-controls={`mobile-group-${index}`} onClick={() => setOpenGroup(openGroup === index ? null : index)}>{openGroup === index ? '−' : '+'}</button></div>
+          <div id={`mobile-group-${index}`} hidden={openGroup !== index}>{group.items.slice(1).map((item) => item.hardNavigate ? <a href={item.href} key={item.href + item.label}>{item.label}</a> : <Link href={item.href} prefetch={false} key={item.href + item.label}>{item.label}</Link>)}</div>
         </section>)}
-        <div className="mobile-navigation__quick"><Link href="/account">Your account</Link><a href="https://wa.me/919158680722">WhatsApp the studio</a></div>
+        <div className="mobile-navigation__quick"><Link href="/account" prefetch={false}>Your account</Link><a href="https://wa.me/919158680722">WhatsApp the studio</a></div>
       </nav>
     </div>
     <SmartSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />

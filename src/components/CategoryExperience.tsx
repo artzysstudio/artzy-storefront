@@ -66,8 +66,8 @@ export default function CategoryExperience() {
         <div className="artzy-shop__grid">
           {categories.map((category, index) => (
             <article className="artzy-category" key={category.name}>
-              <Link href={category.href} className="artzy-category__image">
-                <img src={category.image} alt={category.name} />
+              <Link href={category.href} prefetch={false} className="artzy-category__image">
+                <img src={category.image} alt={category.name} loading="lazy" />
                 <span>0{index + 1}</span>
               </Link>
               <div className="artzy-category__copy">
@@ -75,7 +75,7 @@ export default function CategoryExperience() {
                   <h2>{category.name}</h2>
                   <p>{category.note}</p>
                 </div>
-                <Link href={category.href}>Shop now →</Link>
+                <Link href={category.href} prefetch={false}>Shop now →</Link>
               </div>
               {ARTZY_AI_ENABLED && <button
                 className="artzy-ai"

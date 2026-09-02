@@ -11,9 +11,9 @@ export default function PremiumHero({ imageUrl }: { imageUrl: string }) {
       <h1 id="handmade-hero-title">Art Made by Hand.<br/><em>Gifts Made Personal.</em></h1>
       <p>Discover original paintings, hand-painted décor and meaningful personalised gifts created at Artzy&apos;s Studio, Pune.</p>
       <div className="handmade-hero__actions">
-        <Link className="handmade-hero__primary" href="/shop/">Shop Handmade Art <span aria-hidden="true">→</span></Link>
-        <Link className="handmade-hero__secondary" href="/gifts/#gift-finder">Find a Gift</Link>
-        <Link className="handmade-hero__secondary" href="/personalised/#custom-artwork">Commission an Artwork</Link>
+        <Link className="handmade-hero__primary" href="/shop/" prefetch={false}>Shop Handmade Art <span aria-hidden="true">→</span></Link>
+        <Link className="handmade-hero__secondary" href="/gifts/#gift-finder" prefetch={false}>Find a Gift</Link>
+        <Link className="handmade-hero__secondary" href="/personalised/#custom-artwork" prefetch={false}>Commission an Artwork</Link>
       </div>
       <div className="handmade-hero__trust" aria-label="Artzy's Studio promises"><span>Artist-led</span><i/> <span>Handmade in Pune</span><i/> <span>Customisation available</span><i/> <span>Secure delivery</span></div>
     </div>
