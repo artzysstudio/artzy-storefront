@@ -25,7 +25,13 @@ export const onRequest = async ({ request, env, params }: Context): Promise<Resp
   if (Number(request.headers.get('content-length') || 0) > 8_500_000) return Response.json({ error: 'The request is too large.' }, { status: 413, headers: noStore });
   const guestId = (request.headers.get('x-artzy-guest-id') || '').replace(/[^a-zA-Z0-9-]/g, '').slice(0, 64);
   if (!guestId) return Response.json({ error: 'Refresh the page and try again.' }, { status: 400, headers: noStore });
-  const target = `${(env.ARTZYAI_API_ORIGIN || 'https://artzyai.artzysstudio.in').replace(/\/$/, '')}/v1/creative/${path}`;
+  // The bound Worker receives this request directly; an internal hostname
+  // avoids re-entering the public custom-domain route. The hostname is not
+  // resolved when a Service binding handles the request.
+  const upstreamOrigin = env.ARTZYAI_BACKEND
+    ? 'https://artzyai-backend.internal'
+    : (env.ARTZYAI_API_ORIGIN || 'https://artzyai.artzysstudio.in').replace(/\/$/, '');
+  const target = `${upstreamOrigin}/v1/creative/${path}`;
   const headers = new Headers();
   const contentType = request.headers.get('content-type');
   if (contentType) headers.set('Content-Type', contentType);
