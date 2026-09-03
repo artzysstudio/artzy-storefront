@@ -6,24 +6,18 @@ import { api, Product, ShippingOption } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { useCustomer } from '@/context/CustomerContext';
 
-type CheckoutStep = 'auth' | 'address' | 'gifting' | 'shipping' | 'payment';
+type CheckoutStep = 'address' | 'gifting' | 'shipping' | 'payment';
 
 export default function CheckoutClient({ initialProducts }: { initialProducts: Product[] }) {
   const { items, giftBundles, clearCart } = useCart();
-  const { isAuthenticated, user, login, signup } = useCustomer();
+  const { isAuthenticated, user } = useCustomer();
   const router = useRouter();
   
-  const [step, setStep] = useState<CheckoutStep>('auth');
+  const [step, setStep] = useState<CheckoutStep>('address');
   const [cartProducts, setCartProducts] = useState<(Product & { quantity: number })[]>([]);
   const [subtotal, setSubtotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   
-  // Auth State
-  const [authMode, setAuthMode] = useState<'guest' | 'login' | 'signup'>(isAuthenticated ? 'login' : 'guest');
-  const [authEmail, setAuthEmail] = useState('');
-  const [authPassword, setAuthPassword] = useState('');
-  const [authName, setAuthName] = useState('');
-
   // Form State
   const [address, setAddress] = useState({ name: '', email: '', phone: '', address: '', city: '', state: '', pincode: '' });
   const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
@@ -69,7 +63,6 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      setAuthEmail(user.email);
       setAddress((previous) => ({ ...previous, name: previous.name || user.name, email: user.email }));
     }
   }, [isAuthenticated, user]);
@@ -80,31 +73,6 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
       setOccasion((current) => current || giftBundles[0].occasion);
     }
   }, [giftBundles]);
-
-  const handleAuthContinue = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setIsProcessing(true);
-    try {
-      if (authMode === 'login' && !isAuthenticated) {
-        await login(authEmail, authPassword);
-      }
-      if (authMode === 'signup') {
-        const result = await signup(authName, authEmail, authPassword);
-        if (result.emailConfirmationRequired) {
-          setError('Account created. Confirm the email sent to you, or continue as a guest.');
-          setAuthMode('guest');
-          return;
-        }
-      }
-      setAddress(prev => ({ ...prev, name: prev.name || authName, email: authEmail }));
-      setStep('address');
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Sign in failed.');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
 
   const handleAddressContinue = (e: React.FormEvent) => {
     e.preventDefault();
@@ -204,7 +172,7 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
             if (verify.success) {
               razorpayFinished = true;
               clearCart();
-              router.push(`/checkout/success?orderId=${verify.erpOrderId}&guest=${authMode === 'guest'}`);
+              router.push(`/checkout/success?orderId=${verify.erpOrderId}&guest=${!isAuthenticated}`);
             } else {
               finishRazorpayAttempt('Payment verification failed. No inventory was changed. Please contact Artzy’s Studio with your order number.');
             }
@@ -250,13 +218,15 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
   };
 
   if (isLoading) return <div style={{ textAlign: 'center' }}>Loading Secure Checkout...</div>;
-  if (items.length === 0 && step === 'auth') {
+  if (items.length === 0) {
     return <div style={{ textAlign: 'center' }}><h2>Your Cart is Empty</h2><button className="btn" onClick={() => router.push('/shop')}>Return to Shop</button></div>;
   }
 
   const configuredGiftExtras = giftBundles.reduce((total, bundle) => total + bundle.packaging.total + bundle.personalisation.total, 0);
   const manualGiftWrap = giftBundles.length === 0 && giftWrapping ? 500 : 0;
   const finalTotal = subtotal + (shippingRate?.rate || 0) + configuredGiftExtras + manualGiftWrap;
+  const readyStockCount = cartProducts.filter((product) => product.availability === 'in_stock' && !product.madeToOrder).length;
+  const madeToOrderCount = cartProducts.filter((product) => product.availability === 'made_to_order' || product.madeToOrder).length;
 
   return (
     <div className="checkout-layout" style={{ display: 'flex', gap: '4rem', flexWrap: 'wrap' }}>
@@ -264,48 +234,17 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
       {/* Left Column: Flow */}
       <div className="checkout-flow" style={{ flex: '1 1 600px' }}>
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-          <span style={{ fontWeight: step === 'auth' ? 'bold' : 'normal', color: step === 'auth' ? 'var(--text-primary)' : '' }}>Auth</span> &gt;
-          <span style={{ fontWeight: step === 'address' ? 'bold' : 'normal', color: step === 'address' ? 'var(--text-primary)' : '' }}>Address</span> &gt;
-          <span style={{ fontWeight: step === 'gifting' ? 'bold' : 'normal', color: step === 'gifting' ? 'var(--text-primary)' : '' }}>Gifting</span> &gt;
-          <span style={{ fontWeight: step === 'shipping' ? 'bold' : 'normal', color: step === 'shipping' ? 'var(--text-primary)' : '' }}>Shipping</span> &gt;
+          <span style={{ fontWeight: step === 'address' || step === 'gifting' ? 'bold' : 'normal', color: step === 'address' || step === 'gifting' ? 'var(--text-primary)' : '' }}>Delivery details</span> &gt;
+          <span style={{ fontWeight: step === 'shipping' ? 'bold' : 'normal', color: step === 'shipping' ? 'var(--text-primary)' : '' }}>Shipping method</span> &gt;
           <span style={{ fontWeight: step === 'payment' ? 'bold' : 'normal', color: step === 'payment' ? 'var(--text-primary)' : '' }}>Payment</span>
         </div>
 
         {error && <div style={{ background: '#ffecec', color: '#cc0000', padding: '1rem', marginBottom: '1rem', borderRadius: '4px' }}>{error}</div>}
 
-        {step === 'auth' && (
-          <form onSubmit={handleAuthContinue} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h2>Welcome</h2>
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                <input type="radio" name="auth" checked={authMode === 'guest'} onChange={() => setAuthMode('guest')} /> Guest Checkout
-              </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                <input type="radio" name="auth" checked={authMode === 'login'} onChange={() => setAuthMode('login')} /> Login
-              </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                <input type="radio" name="auth" checked={authMode === 'signup'} onChange={() => setAuthMode('signup')} /> Create account
-              </label>
-            </div>
-
-            {authMode === 'signup' && (
-              <input required type="text" autoComplete="name" placeholder="Full Name" value={authName} onChange={e => setAuthName(e.target.value)} style={{ padding: '0.8rem' }} />
-            )}
-            <input required type="email" autoComplete="email" placeholder="Email Address" value={authEmail} onChange={e => setAuthEmail(e.target.value)} style={{ padding: '0.8rem' }} />
-            
-            {authMode !== 'guest' && (
-              <input required minLength={8} type="password" autoComplete={authMode === 'login' ? 'current-password' : 'new-password'} placeholder="Password (8+ characters)" value={authPassword} onChange={e => setAuthPassword(e.target.value)} style={{ padding: '0.8rem' }} />
-            )}
-            
-            <button type="submit" className="btn" disabled={isProcessing} style={{ marginTop: '1rem' }}>
-              {isProcessing ? 'Please wait…' : authMode === 'guest' ? 'Continue as Guest' : authMode === 'login' ? 'Login & Continue' : 'Create Account & Continue'}
-            </button>
-          </form>
-        )}
-
         {step === 'address' && (
           <form onSubmit={handleAddressContinue} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <h2>Delivery Address</h2>
+            {!isAuthenticated && <div style={{ padding: '1rem', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}><strong>Guest checkout is available.</strong><p style={{ margin: '.35rem 0 0' }}>Enter your delivery details below. Prefer an account? <a href="/account">Sign in with Google or a secure email link</a>; your bag stays saved on this device.</p></div>}
             <div style={{ display: 'flex', gap: '1rem' }}>
               <input required type="text" autoComplete="name" placeholder="Full Name" value={address.name} onChange={e => setAddress({...address, name: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
             </div>
@@ -320,7 +259,6 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
               <input required type="text" autoComplete="postal-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} placeholder="6-digit PIN code" value={address.pincode} onChange={e => setAddress({...address, pincode: e.target.value.replace(/\D/g, '').slice(0, 6)})} style={{ flex: 1, padding: '0.8rem' }} />
             </div>
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-              <button type="button" className="btn" style={{ background: 'transparent', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }} onClick={() => setStep('auth')}>Back</button>
               <button type="submit" className="btn" style={{ flex: 1 }}>Continue</button>
             </div>
           </form>
@@ -378,6 +316,12 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
         {step === 'shipping' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <h2>Shipping Method</h2>
+            <div style={{ display: 'grid', gap: '.45rem', padding: '1rem', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
+              <strong>How this order will be prepared</strong>
+              {readyStockCount > 0 && <span>{readyStockCount} ready-stock item{readyStockCount === 1 ? '' : 's'} can move to packing after payment confirmation.</span>}
+              {madeToOrderCount > 0 && <span>{madeToOrderCount} made-to-order item{madeToOrderCount === 1 ? '' : 's'} follow the production time confirmed by the studio.</span>}
+              {readyStockCount > 0 && madeToOrderCount > 0 && <small>These items may ship separately. Any separate shipment and its cost must be confirmed before payment.</small>}
+            </div>
             {!shippingNeedsConfirmation && <p style={{ marginTop: 0, color: 'var(--text-muted)' }}>
               Economical is selected by default. Express and urgent use available air services for PIN {address.pincode}.
             </p>}
@@ -478,6 +422,10 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span>Shipping</span>
             <span>{shippingRate ? (shippingRate.rate === 0 ? 'FREE' : `₹${shippingRate.rate}`) : 'Calculated at next step'}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', fontSize: '.82rem', color: 'var(--text-muted)' }}>
+            <span>Tax</span>
+            <span>ERP-confirmed before payment</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.2rem', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(0,0,0,0.1)' }}>
             <span>Total</span>

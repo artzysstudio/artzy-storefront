@@ -46,7 +46,7 @@ export default function ContactPage() {
 
         <CreativeConceptBuilder kind="contact"/>
 
-        <section className="contact-main">
+        <section className="contact-main" id="visit">
           <div className="contact-details">
             <span className="contact-kicker">THE STUDIO</span>
             <h2>Come say hello.</h2>

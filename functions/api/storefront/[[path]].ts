@@ -39,6 +39,37 @@ export const onRequest = async (context: RouteContext) => {
     );
   }
 
+  if (route === "auth/magic-link" && method === "POST") {
+    if (!(context.request.headers.get("content-type") ?? "").includes("application/json")) {
+      return json({ success: false, error: "JSON body required." }, 415);
+    }
+    const body = await context.request.text();
+    if (body.length > 4_000) return json({ success: false, error: "Sign-in request is too large." }, 413);
+    let payload: { email?: string };
+    try {
+      payload = JSON.parse(body);
+    } catch {
+      return json({ success: false, error: "Invalid sign-in request." }, 400);
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email ?? "")) {
+      return json({ success: false, error: "Enter a valid email address." }, 400);
+    }
+    return proxyErp(
+      context,
+      context.env.ERP_CUSTOMER_MAGIC_LINK_PATH ?? "/api/storefront/auth/magic-link",
+      { method: "POST", headers: { "content-type": "application/json" }, body },
+    );
+  }
+
+  if (route === "auth/google" && method === "GET") {
+    if (!context.env.ERP_CUSTOMER_GOOGLE_AUTH_URL) {
+      return json({ success: false, code: "GOOGLE_AUTH_NOT_CONFIGURED", error: "Google sign-in is not configured yet. Continue as a guest or use email." }, 503);
+    }
+    const target = new URL(context.env.ERP_CUSTOMER_GOOGLE_AUTH_URL);
+    target.searchParams.set("return_to", `${new URL(context.request.url).origin}/account/`);
+    return Response.redirect(target, 302);
+  }
+
   if (route === "shipping/quote" && method === "POST") {
     if (!(context.request.headers.get("content-type") ?? "").includes("application/json")) {
       return json({ success: false, error: "JSON body required." }, 415);
@@ -72,6 +103,27 @@ export const onRequest = async (context: RouteContext) => {
       { method: "POST", headers: { "content-type": "application/json" }, body },
     );
     return upstream.ok ? upstream : confirmationRequired();
+  }
+
+  if ((route === "payment/initiate" || route === "payment/verify") && method === "POST") {
+    if (!(context.request.headers.get("content-type") ?? "").includes("application/json")) {
+      return json({ success: false, error: "JSON body required." }, 415);
+    }
+    const body = await context.request.text();
+    if (body.length > 96_000) return json({ success: false, error: "Payment request is too large." }, 413);
+    try {
+      JSON.parse(body);
+    } catch {
+      return json({ success: false, error: "Invalid payment request." }, 400);
+    }
+    const path = route === "payment/initiate"
+      ? context.env.ERP_PAYMENT_INITIATE_PATH ?? "/api/commerce/payment/initiate"
+      : context.env.ERP_PAYMENT_VERIFY_PATH ?? "/api/commerce/payment/verify";
+    return proxyErp(context, path, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+    });
   }
 
   if (route === "orders" && method === "POST") {

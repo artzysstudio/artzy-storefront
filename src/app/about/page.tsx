@@ -11,7 +11,7 @@ export default function AboutPage() {
     <>
       <Header />
       <main className="about-page">
-        <section className="about-hero">
+        <section className="about-hero" id="deepti-story">
           <div className="about-hero__portrait">
             <img
               src={deeptiPhoto}
@@ -61,10 +61,10 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="about-story">
+        <section className="about-story" id="deaf-artist-team">
           <div className="about-story__lead">
             <span>01</span>
-            <h2>A studio built on expression.</h2>
+            <h2>A deaf-led studio built on expression.</h2>
           </div>
           <div className="about-story__body">
             <p>
@@ -74,7 +74,8 @@ export default function AboutPage() {
               extraordinary creative depth.
             </p>
             <p>
-              As a deaf-led enterprise, the studio champions visual
+              Deepti works with her artist team through a visual, detail-led
+              creative process. Together, the studio champions visual
               storytelling and meaningful craftsmanship. Every purchase
               supports independent artistry and a movement that proves talent
               is seen, felt and understood—even when it is not heard.

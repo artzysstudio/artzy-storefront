@@ -21,10 +21,11 @@ export default function Footer() {
             <h4>Shop Artzy</h4>
             <ul className="footer-links">
               <li><Link href="/shop">Hand-painted Art</Link></li>
-              <li><Link href="/digital-prints">Digital Art &amp; Caricatures</Link></li>
-              <li><Link href="/gifts">Personalised &amp; Occasion Gifts</Link></li>
+              <li><Link href="/digital-prints">Digital Art &amp; Prints</Link></li>
+              <li><Link href="/caricatures">Caricatures from Photos</Link></li>
+              <li><Link href="/gifts">Gifts &amp; Gift Finder</Link></li>
               <li><Link href="/name-plates">Custom Name Plates</Link></li>
-              <li><Link href="/custom-corporate">Custom &amp; Corporate</Link></li>
+              <li><Link href="/for-business">For Business</Link></li>
             </ul>
           </div>
           <div className="footer-col footer-location">
@@ -59,6 +60,8 @@ export default function Footer() {
           </div>
         </div>
         <nav className="footer-policy-links" aria-label="Customer information">
+          <Link href="/about">About the Studio</Link>
+          <Link href="/contact">Visit &amp; Contact</Link>
           <Link href="/shipping-policy">Shipping</Link>
           <Link href="/returns-policy">Returns &amp; damage</Link>
           <Link href="/customised-product-policy">Customised products</Link>

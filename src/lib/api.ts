@@ -478,7 +478,7 @@ export const api = {
       };
     },
     initiatePayment: async (payload: any): Promise<any> => {
-      return requestERP('/commerce/payment/initiate', {
+      return requestStorefront('/payment/initiate', {
         method: 'POST',
         body: JSON.stringify(payload)
       });
@@ -489,7 +489,7 @@ export const api = {
       razorpay_payment_id: string;
       razorpay_signature: string;
     }): Promise<{ success: boolean; erpOrderId: string; orderNumber?: string }> => {
-      return requestERP('/commerce/payment/verify', {
+      return requestStorefront('/payment/verify', {
         method: 'POST',
         body: JSON.stringify(payload)
       });
@@ -497,6 +497,13 @@ export const api = {
     getOrder: async (id: string): Promise<StorefrontOrder | null> => fetchFromERP<StorefrontOrder | null>(`/commerce/order/${encodeURIComponent(id)}`, null)
   },
   customerAuth: {
+    requestMagicLink: async (email: string): Promise<{ success: boolean; message?: string }> => {
+      return requestStorefront('/auth/magic-link', {
+        method: 'POST',
+        body: JSON.stringify({ email })
+      });
+    },
+    googleStartUrl: '/api/storefront/auth/google',
     signup: async (name: string, email: string, password: string): Promise<any> => {
       return requestERP('/storefront/auth/signup', {
         method: 'POST',

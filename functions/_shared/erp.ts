@@ -5,6 +5,10 @@ export interface StorefrontEnv {
   ERP_CATEGORIES_PATH?: string;
   ERP_ORDER_PATH?: string;
   ERP_SHIPPING_PATH?: string;
+  ERP_PAYMENT_INITIATE_PATH?: string;
+  ERP_PAYMENT_VERIFY_PATH?: string;
+  ERP_CUSTOMER_MAGIC_LINK_PATH?: string;
+  ERP_CUSTOMER_GOOGLE_AUTH_URL?: string;
 }
 
 export interface PagesContext {

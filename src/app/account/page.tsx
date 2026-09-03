@@ -4,14 +4,12 @@ import React, { useState } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { useCustomer } from '@/context/CustomerContext';
+import { api } from '@/lib/api';
 
 export default function AccountPage() {
-  const { isAuthenticated, user, isAuthLoading, login, signup, logout, wishlist, recentlyViewed, savedCollections } = useCustomer();
+  const { isAuthenticated, user, isAuthLoading, logout, wishlist, recentlyViewed, savedCollections } = useCustomer();
   const [activeTab, setActiveTab] = useState<'profile' | 'wishlist' | 'collections' | 'orders'>('profile');
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
   const [authMessage, setAuthMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -22,15 +20,8 @@ export default function AccountPage() {
     setAuthError('');
     setAuthMessage('');
     try {
-      if (authMode === 'signup') {
-        const result = await signup(name, email, password);
-        if (result.emailConfirmationRequired) {
-          setAuthMessage('Account created. Please confirm the email sent to you, then sign in.');
-          setAuthMode('login');
-        }
-      } else {
-        await login(email, password);
-      }
+      const result = await api.customerAuth.requestMagicLink(email);
+      setAuthMessage(result.message || 'Check your email for a secure one-time sign-in link. You can close this page safely.');
     } catch (error) {
       setAuthError(error instanceof Error ? error.message : 'Authentication failed.');
     } finally {
@@ -48,28 +39,21 @@ export default function AccountPage() {
         <Header />
         <main style={{ minHeight: '70vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-secondary)' }}>
           <div style={{ background: 'var(--bg-color)', padding: 'var(--spacing-xl)', textAlign: 'center', maxWidth: '400px', width: '100%', border: '1px solid rgba(0,0,0,0.05)' }}>
-            <h2 style={{ marginBottom: 'var(--spacing-md)' }}>{authMode === 'login' ? 'Welcome Back' : 'Create Your Account'}</h2>
+            <h2 style={{ marginBottom: 'var(--spacing-md)' }}>Your Artzy account</h2>
             <p style={{ color: 'var(--text-muted)', marginBottom: 'var(--spacing-lg)' }}>
-              {authMode === 'login' ? 'Sign in to view your bespoke orders, wishlist, and saved collections.' : 'Save delivery details and keep every Artzy order together.'}
+              Sign in without a password to view orders, approvals, saved pieces and delivery updates.
             </p>
+            <a className="btn btn-solid" href={api.customerAuth.googleStartUrl} style={{ marginBottom: '1rem' }}>Continue with Google</a>
+            <div aria-hidden="true" style={{ display: 'flex', alignItems: 'center', gap: '.75rem', marginBottom: '1rem', color: 'var(--text-muted)', fontSize: '.75rem' }}><span style={{ height: 1, flex: 1, background: 'var(--border-color)' }}/><span>OR</span><span style={{ height: 1, flex: 1, background: 'var(--border-color)' }}/></div>
             <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {authMode === 'signup' && (
-                <input required value={name} onChange={(event) => setName(event.target.value)} type="text" placeholder="Full Name" style={{ padding: '0.75rem', border: '1px solid rgba(0,0,0,0.1)' }} />
-              )}
               <input required value={email} onChange={(event) => setEmail(event.target.value)} type="email" placeholder="Email Address" autoComplete="email" style={{ padding: '0.75rem', border: '1px solid rgba(0,0,0,0.1)' }} />
-              <input required minLength={8} value={password} onChange={(event) => setPassword(event.target.value)} type="password" placeholder="Password (8+ characters)" autoComplete={authMode === 'login' ? 'current-password' : 'new-password'} style={{ padding: '0.75rem', border: '1px solid rgba(0,0,0,0.1)' }} />
               {authError && <p role="alert" style={{ color: '#a21d1d', margin: 0 }}>{authError}</p>}
               {authMessage && <p role="status" style={{ color: '#176b45', margin: 0 }}>{authMessage}</p>}
               <button className="btn btn-solid" type="submit" disabled={submitting}>
-                {submitting ? 'Please wait…' : authMode === 'login' ? 'Sign In' : 'Create Account'}
+                {submitting ? 'Sending secure link…' : 'Continue with email'}
               </button>
             </form>
-            <p style={{ marginTop: '1.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-              {authMode === 'login' ? "Don't have an account? " : 'Already registered? '}
-              <button type="button" onClick={() => { setAuthMode(authMode === 'login' ? 'signup' : 'login'); setAuthError(''); }} style={{ background: 'none', border: 0, padding: 0, color: 'var(--text-main)', textDecoration: 'underline', cursor: 'pointer' }}>
-                {authMode === 'login' ? 'Create one' : 'Sign in'}
-              </button>
-            </p>
+            <p style={{ marginTop: '1.25rem', fontSize: '0.82rem', color: 'var(--text-muted)' }}>No password to create or remember. The same verified email is used to keep your customer history together.</p>
           </div>
         </main>
         <Footer />
@@ -80,7 +64,7 @@ export default function AccountPage() {
   return (
     <>
       <Header />
-      <main className="container" style={{ minHeight: '80vh', paddingTop: 'var(--spacing-xl)', display: 'grid', gridTemplateColumns: '250px 1fr', gap: 'var(--spacing-xl)' }}>
+      <main className="container account-page" style={{ minHeight: '80vh', paddingTop: 'var(--spacing-xl)', display: 'grid', gridTemplateColumns: '250px 1fr', gap: 'var(--spacing-xl)' }}>
         <aside style={{ borderRight: '1px solid rgba(0,0,0,0.05)' }}>
           <h3 style={{ marginBottom: '2rem' }}>My Account</h3>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -173,6 +157,14 @@ export default function AccountPage() {
         </section>
       </main>
       <Footer />
+      <style jsx global>{`
+        @media (max-width: 760px) {
+          .account-page { grid-template-columns: 1fr !important; padding-inline: 18px; }
+          .account-page aside { border-right: 0 !important; border-bottom: 1px solid rgba(0,0,0,.08); padding-bottom: 20px; }
+          .account-page aside ul { display: grid !important; grid-template-columns: 1fr 1fr; gap: 8px !important; }
+          .account-page aside button { min-height: 44px; text-align: left; }
+        }
+      `}</style>
     </>
   );
 }

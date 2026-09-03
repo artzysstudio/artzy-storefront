@@ -37,12 +37,9 @@ function SuccessContent() {
 
       {searchParams.get('guest') === 'true' && (
         <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '2rem', textAlign: 'left' }}>
-          <h3 style={{ marginBottom: '1rem' }}>Save your details for next time</h3>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Create an account to track this order and speed up future checkouts.</p>
-          <form style={{ display: 'flex', gap: '1rem' }} onSubmit={(e) => { e.preventDefault(); alert('Mock registration successful!'); }}>
-            <input required type="password" autoComplete="new-password" placeholder="Choose a password" style={{ flex: 1, padding: '0.8rem' }} />
-            <button type="submit" className="btn">Create Account</button>
-          </form>
+          <h3 style={{ marginBottom: '1rem' }}>Keep this order easy to find</h3>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>Use the same verified email from checkout to link this order to your customer account—no password required.</p>
+          <Link href="/account" className="btn">Continue with Google or email</Link>
         </div>
       )}
     </div>

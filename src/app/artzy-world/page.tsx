@@ -86,7 +86,7 @@ export default function ArtzyWorldPage() {
         </div>
       </section>
 
-      <section className="world-live-preview" aria-label="Optional ArtzyAI wall-art direction">
+      <section className="world-live-preview" id="creative-experiences" aria-label="Optional ArtzyAI wall-art direction">
         <ArtzyAICreativeTool
           variant="artzyWorld"
           title="Imagine a custom wall-art direction"

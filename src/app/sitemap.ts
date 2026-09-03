@@ -79,12 +79,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${BASE_URL}/custom-corporate`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.75,
-    },
-    {
       url: `${BASE_URL}/artzy-world`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
