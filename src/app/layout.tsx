@@ -4,7 +4,7 @@ import LaunchGate from "@/components/LaunchGate";
 import ArtzyMuseFloater from "@/components/ArtzyMuseFloater";
 import MediaProtection from "@/components/MediaProtection";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://artzy-storefront.pages.dev';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.artzysstudio.in';
 const isIndexable = process.env.NEXT_PUBLIC_SITE_INDEXABLE === 'true';
 
 export const metadata: Metadata = {

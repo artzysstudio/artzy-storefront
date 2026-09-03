@@ -3,7 +3,7 @@ import { api } from '@/lib/api';
 
 export const dynamic = 'force-static';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://artzy-storefront.pages.dev';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.artzysstudio.in';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // We fetch dynamic pages and products from the ERP

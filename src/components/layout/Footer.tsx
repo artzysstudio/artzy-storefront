@@ -18,13 +18,14 @@ export default function Footer() {
             <SocialLinks location="footer" />
           </div>
           <div className="footer-col">
-            <h4>Shop Artzy</h4>
+            <h4>Explore Artzy</h4>
             <ul className="footer-links">
-              <li><Link href="/shop">Hand-painted Art</Link></li>
-              <li><Link href="/digital-prints">Digital Art &amp; Prints</Link></li>
-              <li><Link href="/caricatures">Caricatures from Photos</Link></li>
-              <li><Link href="/gifts">Gifts &amp; Gift Finder</Link></li>
-              <li><Link href="/name-plates">Custom Name Plates</Link></li>
+              <li><Link href="/shop">Shop</Link></li>
+              <li><Link href="/gifts">Gifts</Link></li>
+              <li><Link href="/original-art">Original Art</Link></li>
+              <li><Link href="/personalised">Customise</Link></li>
+              <li><Link href="/artzy-world">Artzy World</Link></li>
+              <li><Link href="/about">Our Story</Link></li>
               <li><Link href="/for-business">For Business</Link></li>
             </ul>
           </div>
