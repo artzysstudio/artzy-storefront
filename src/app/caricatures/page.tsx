@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -10,13 +11,18 @@ const occasions = [
   ['Corporate Gifts', 'Distinctive team, leadership and client gifts with thoughtful brand details.'],
 ];
 
+export const metadata: Metadata = {
+  title: "Personalised Caricatures from Photos | Artzy's Studio",
+  description: "Personalised photo caricatures for individuals, couples, families and pets—made for occasions with studio-confirmed digital, print, framed and canvas finishes.",
+};
+
 export default function CaricaturesPage() {
   return <><Header/><main className="service-page caricature-page">
     <nav className="creative-service-tabs" aria-label="Choose digital art or caricature service"><Link href="/digital-prints/">Digital Art &amp; Prints<small>Wall art, canvas and commercial work</small></Link><span aria-current="page">Caricatures<small>Upload a photo and build a portrait</small></span></nav>
-    <section className="story-hero story-hero--caricature"><img className="story-hero__image" src="/images/caricature-hero-v2.webp" alt="Three complete personalised caricature examples beside their reference photographs in an Artzy-style studio"/><div className="story-hero__shade" aria-hidden="true"/><div className="story-hero__copy"><span>Drawn from their story</span><h1>More than a portrait.<br/><em>A moment with personality.</em></h1><p>Choose the caricature type, style and occasion, then upload one clear customer photograph. Artzy&apos;s Studio will manage the creative process.</p><div className="story-hero__actions"><a className="story-hero__primary" href="#caricature-builder">Choose &amp; upload photo</a><a className="story-hero__secondary" href="#caricature-examples">See how it works</a></div><small>No AI generation · the studio creates and confirms the final artwork</small></div></section>
+    <section className="story-hero story-hero--caricature"><img className="story-hero__image" src="/images/caricature-hero-v2.webp" alt="Three complete personalised caricature examples beside their reference photographs in an Artzy-style studio"/><div className="story-hero__shade" aria-hidden="true"/><div className="story-hero__copy"><span>Drawn from their story</span><h1>More than a portrait.<br/><em>A moment with personality.</em></h1><p>Choose the caricature type, style and occasion, then upload one clear customer photograph. Artzy&apos;s Studio will manage the creative process.</p><div className="story-hero__actions"><a className="story-hero__primary" href="#caricature-builder">Choose &amp; upload photo</a><a className="story-hero__secondary" href="#caricature-examples">See how it works</a></div><small>Optional ArtzyAI concept · Final artwork confirmed by the studio</small></div></section>
 
     <section className="caricature-explainer" id="caricature-examples">
-      <div className="caricature-explainer__copy"><span className="service-eyebrow">Photo → caricature</span><h2>Still recognisably them.<br/><em>Now full of story.</em></h2><p>A caricature keeps the familiar face, pose and personality from a photograph, then adds expressive illustration, colour and meaningful details. It works beautifully when an ordinary photo needs to become a memorable, display-worthy gift.</p><div className="caricature-benefits"><p><b>Personal</b><span>Built around their face, interests and occasion.</span></p><p><b>Simple to start</b><span>Choose the details and share one clear photograph.</span></p><p><b>Studio-managed</b><span>Artzy&apos;s Studio handles the creative direction and final finish.</span></p></div></div>
+      <div className="caricature-explainer__copy"><span className="service-eyebrow">Photo → caricature</span><h2>Still recognisably them.<br/><em>Now full of story.</em></h2><p>A caricature keeps the familiar face, pose and personality from a photograph, then adds expressive illustration, colour and meaningful details. ArtzyAI can create an optional visual concept from your photograph and selected direction. Deepti and Artzy&apos;s Studio review the brief, confirm feasibility and manage the final studio artwork.</p><div className="caricature-benefits"><p><b>Personal</b><span>Built around their face, interests and occasion.</span></p><p><b>Simple to start</b><span>Choose the details and share one clear photograph.</span></p><p><b>Studio-managed</b><span>Artzy&apos;s Studio handles the creative direction and final finish.</span></p></div></div>
       <figure className="caricature-explainer__visual"><img src="/images/caricature-photo-to-art-demo.webp" alt="Reference photograph beside a matching watercolour caricature illustration"/><div><span>Reference photograph</span><span>Finished caricature direction</span></div><figcaption>Example shown to explain the service · final artwork is managed by Artzy&apos;s Studio</figcaption></figure>
     </section>
 

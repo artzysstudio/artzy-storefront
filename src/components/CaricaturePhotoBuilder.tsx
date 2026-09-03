@@ -1,116 +1,149 @@
 'use client';
 
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { createConsent, createCreativeJob, deleteCreativeAsset, uploadReference, waitForCreativeJob } from '@/lib/artzyai';
-import { aiReliable, CARICATURE_STYLES, COMPOSITIONS, OCCASIONS, OUTPUTS, SUBJECTS, validatePhotoFile, type CaricatureBrief, type CaricatureStyleId, type CompositionId, type SubjectId } from '@/features/caricatures/config';
+import { useCustomer } from '@/context/CustomerContext';
+import { aiReliable, CARICATURE_STYLES, OCCASIONS, SUBJECTS, validatePhotoFile, type CaricatureBrief, type CaricatureStyleId, type SubjectId } from '@/features/caricatures/config';
+import { calculateCaricatureEstimate } from '@/features/caricatures/pricing';
 
 const label = (value: string) => value.replaceAll('_', ' ').replace(/\b\w/g, character => character.toUpperCase());
-const steps = ['Photo', 'Subjects', 'Style', 'Purpose', 'Details', 'Review'];
+const steps = ['Photo', 'Subjects', 'Type & style', 'Occasion & story', 'Finish & price', 'Review & consent'];
+const types = [
+  { id: 'head', name: 'Head and shoulders', note: 'Focused portrait with expressive face and simple setting.', addition: 0 },
+  { id: 'full', name: 'Full body', note: 'Includes clothing, pose and more visual detail.', addition: 500 },
+  { id: 'big-head', name: 'Big-head caricature', note: 'Playful enlarged head with a compact body.', addition: 200 },
+  { id: 'scene', name: 'Scene/story caricature', note: 'Adds a meaningful place, activity or narrative.', addition: 800 },
+  { id: 'couple', name: 'Couple caricature', note: 'A connected composition for two people.', addition: 400 },
+  { id: 'family', name: 'Family caricature', note: 'Balanced multi-person composition.', addition: 650 },
+  { id: 'professional', name: 'Professional/workplace', note: 'Profession, uniform, tools or workplace context.', addition: 600 },
+  { id: 'pet', name: 'Pet caricature', note: 'A pet-led portrait or person-with-pet composition.', addition: 250 },
+];
+const finishes = [
+  { id: 'digital_file', name: 'Digital artwork', base: 1490, size: 'High-resolution digital file', frame: 'Not applicable', revisions: 'One minor studio-confirmed revision', time: '5–8 working days' },
+  { id: 'printed_artwork', name: 'Fine-art print', base: 2390, size: 'A4 starting size', frame: 'Not included', revisions: 'One minor studio-confirmed revision', time: '7–10 working days' },
+  { id: 'framed_artwork', name: 'Framed print', base: 3490, size: 'A4 starting size', frame: 'Standard frame included in estimate', revisions: 'One minor studio-confirmed revision', time: '8–12 working days' },
+  { id: 'canvas', name: 'Canvas', base: 3990, size: '12 × 16 in starting size', frame: 'Stretcher/frame confirmed by studio', revisions: 'One minor studio-confirmed revision', time: '9–14 working days' },
+  { id: 'gift_ready', name: 'Gift presentation', base: 4490, size: 'A4 framed starting presentation', frame: 'Presentation and frame included in estimate', revisions: 'One minor studio-confirmed revision', time: '10–15 working days' },
+];
+const visualStyles = [
+  { id: 'semi_realistic', name: 'Elegant' }, { id: 'classic_exaggerated', name: 'Playful' }, { id: 'watercolour', name: 'Watercolour' },
+  { id: 'pencil_sketch', name: 'Minimal' }, { id: 'cute_cartoon', name: 'Cartoon' }, { id: 'digital_painting', name: 'Detailed digital painting' },
+] as const;
+const draftKey = 'artzy_caricature_draft_v2';
+const inr = new Intl.NumberFormat('en-IN');
 
-async function preparePhoto(file: File): Promise<{ preview: string; file: File }> {
-  const source = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(new Error('Could not read this photo.')); reader.readAsDataURL(file);
-  });
-  const image = await new Promise<HTMLImageElement>((resolve, reject) => {
-    const element = new Image(); element.onload = () => resolve(element); element.onerror = () => reject(new Error('This image could not be opened.')); element.src = source;
-  });
+type PhotoState = { preview: string; file: File; width: number; height: number; source: 'customer' | 'fictional-sample' };
+
+async function preparePhoto(file: File, source: PhotoState['source']): Promise<PhotoState> {
+  const dataUrl = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(new Error('Could not read this photo.')); reader.readAsDataURL(file); });
+  const image = await new Promise<HTMLImageElement>((resolve, reject) => { const element = new Image(); element.onload = () => resolve(element); element.onerror = () => reject(new Error('This image could not be opened.')); element.src = dataUrl; });
   if (image.width < 320 || image.height < 320) throw new Error('Choose a clearer photo at least 320 × 320 pixels.');
-  const scale = Math.min(1, 512 / Math.max(image.width, image.height));
-  const canvas = document.createElement('canvas'); canvas.width = Math.max(256, Math.round(image.width * scale)); canvas.height = Math.max(256, Math.round(image.height * scale));
+  const scale = Math.min(1, 1024 / Math.max(image.width, image.height));
+  const canvas = document.createElement('canvas'); canvas.width = Math.round(image.width * scale); canvas.height = Math.round(image.height * scale);
   const context = canvas.getContext('2d'); if (!context) throw new Error('Your browser could not prepare this photo.');
   context.drawImage(image, 0, 0, canvas.width, canvas.height);
-  const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(value => value ? resolve(value) : reject(new Error('Could not prepare this photo.')), 'image/jpeg', .86));
-  return { preview: URL.createObjectURL(blob), file: new File([blob], 'artzy-caricature-reference.jpg', { type: 'image/jpeg' }) };
+  const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(value => value ? resolve(value) : reject(new Error('Could not prepare this photo.')), 'image/jpeg', .88));
+  return { preview: URL.createObjectURL(blob), file: new File([blob], 'artzy-caricature-reference.jpg', { type: 'image/jpeg' }), width: image.width, height: image.height, source };
 }
 
 export default function CaricaturePhotoBuilder() {
+  const { user } = useCustomer();
   const [step, setStep] = useState(0);
-  const [photo, setPhoto] = useState('');
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photo, setPhoto] = useState<PhotoState | null>(null);
   const [concept, setConcept] = useState('');
   const [assetId, setAssetId] = useState('');
+  const [jobReference, setJobReference] = useState('');
+  const [erpReference, setErpReference] = useState('');
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState('');
-  const [error, setError] = useState('');
-  const [reference, setReference] = useState('');
-  const [permissions, setPermissions] = useState({ process: false, ai: false, storage: false, people: false, childPresent: false, guardian: false, handoff: false });
-  const [brief, setBrief] = useState<CaricatureBrief>({ styleId: 'watercolour', occasion: 'birthday', composition: 'half_body', subject: 'one_person', people: 1, pets: 0, profession: '', hobbies: '', colours: '', clothing: '', background: '', props: '', notes: '', output: 'studio_guidance' });
+  const [status, setStatus] = useState('');
+  const [caricatureType, setCaricatureType] = useState(types[0]);
+  const [shortMessage, setShortMessage] = useState('');
+  const [requiredDate, setRequiredDate] = useState('');
+  const [commercialUsage, setCommercialUsage] = useState(false);
+  const [permissions, setPermissions] = useState({ process: false, ai: false, people: false, childPresent: false, guardian: false, retain: false, handoff: false, promotion: false, training: false });
+  const [brief, setBrief] = useState<CaricatureBrief>({ styleId: 'semi_realistic', occasion: 'birthday', composition: 'half_body', subject: 'one_person', people: 1, pets: 0, profession: '', hobbies: '', colours: '', clothing: '', background: '', props: '', notes: '', output: 'digital_file' });
   const patch = <K extends keyof CaricatureBrief>(key: K, value: CaricatureBrief[K]) => setBrief(current => ({ ...current, [key]: value }));
-  const manual = !aiReliable(brief);
   const style = CARICATURE_STYLES[brief.styleId];
-  const permissionsReady = permissions.process && permissions.ai && permissions.storage && (brief.people <= 1 || permissions.people) && (!permissions.childPresent || permissions.guardian);
-  const canNext = [Boolean(photo), brief.people + brief.pets > 0, Boolean(brief.styleId), Boolean(brief.occasion && brief.composition), true, permissionsReady][step];
-  const whatsapp = useMemo(() => `https://wa.me/919158680722?text=${encodeURIComponent([`Hello Artzy's Studio — Caricature brief ${reference || '(new)'}`, `Style: ${style.name}`, `Occasion: ${label(brief.occasion)}`, `Subjects: ${brief.people} people, ${brief.pets} pets`, `Composition: ${label(brief.composition)}`, `Background / props: ${brief.background || 'Studio guidance'} / ${brief.props || 'None'}`, `Requirement: ${label(brief.output)}`, `Notes: ${brief.notes || 'None'}`, 'AI concept—not the final studio caricature. Please confirm likeness review, feasibility, price and timeline.'].join('\n'))}`, [brief, reference, style.name]);
+  const finish = finishes.find(item => item.id === brief.output) ?? finishes[0];
+  const manual = !aiReliable(brief);
+  const permissionsReady = permissions.process && permissions.ai && (brief.people + brief.pets <= 1 || permissions.people) && (!permissions.childPresent || permissions.guardian);
+  const estimate = calculateCaricatureEstimate({ finishBase: finish.base, typeAddition: caricatureType.addition, people: brief.people, pets: brief.pets, commercialUsage });
+  const canContinue = [Boolean(photo), brief.people + brief.pets > 0, Boolean(caricatureType && style), Boolean(brief.occasion), Boolean(finish), true][step];
 
-  function changeStep(nextStep: number) {
-    const currentScroll = window.scrollY;
-    setError('');
-    setStep(Math.max(0, Math.min(5, nextStep)));
-    requestAnimationFrame(() => window.scrollTo({ top: currentScroll, behavior: 'auto' }));
-  }
+  const payload = useMemo(() => ({
+    type: 'custom_caricature', status: 'awaiting_studio_review', customer: user ? { id: user.id ?? null, email: user.email } : { guest: true },
+    configuration: { subjects: { kind: brief.subject, people: brief.people, pets: brief.pets }, caricatureType: caricatureType.name, style: style.name, occasion: label(brief.occasion), personalDetails: { profession: brief.profession, hobbies: brief.hobbies, colours: brief.colours, clothing: brief.clothing, background: brief.background, objects: brief.props, notes: brief.notes, exactMessage: shortMessage }, finish: finish.name, commercialUsage },
+    consent: { processing: permissions.process, aiGeneration: permissions.ai, photographPermission: permissions.people, temporaryActiveRequest: true, extendedRetention: permissions.retain, studioHandoff: permissions.handoff, promotion: permissions.promotion, modelTraining: permissions.training },
+    artzyAiAssetId: assetId || null, estimate: { currency: 'INR', amount: estimate, label: 'estimated', authority: 'ERP confirmation required' }, requiredDate: requiredDate || null,
+  }), [user, brief, caricatureType, style.name, finish.name, commercialUsage, permissions, shortMessage, assetId, estimate, requiredDate]);
 
-  async function onPhoto(event: ChangeEvent<HTMLInputElement>) {
-    setError('');
-    const file = event.target.files?.[0]; if (!file) return;
-    const invalid = validatePhotoFile(file); if (invalid) { setError(invalid); return; }
+  const whatsapp = useMemo(() => `https://wa.me/919158680722?text=${encodeURIComponent(["Hello Artzy's Studio, I would like a caricature review.", `ERP reference: ${erpReference || 'not created yet'}.`, `${brief.people} people; ${brief.pets} pets; ${caricatureType.name}; ${style.name}.`, `Occasion: ${label(brief.occasion)}. Finish: ${finish.name}.`, `Estimate: ₹${inr.format(estimate)} (ERP confirmation required).`, `Required date: ${requiredDate || 'Flexible'}.`, 'I will attach the approved photograph/concept separately after consent.'].join('\n'))}`, [erpReference, brief, caricatureType.name, style.name, finish.name, estimate, requiredDate]);
+
+  useEffect(() => {
+    if (window.location.hash !== '#caricature-builder') return;
+    const timer = window.setTimeout(() => { const root = document.documentElement; const previous = root.style.scrollBehavior; root.style.scrollBehavior = 'auto'; document.getElementById('caricature-builder')?.scrollIntoView({ block: 'start' }); requestAnimationFrame(() => { root.style.scrollBehavior = previous; }); }, 700);
+    return () => window.clearTimeout(timer);
+  }, []);
+  useEffect(() => {
     try {
-      if (photo.startsWith('blob:')) URL.revokeObjectURL(photo);
-      if (concept) await removeConcept();
-      const prepared = await preparePhoto(file); setPhoto(prepared.preview); setPhotoFile(prepared.file);
-    } catch (cause) { setError(cause instanceof Error ? cause.message : 'Could not prepare this photo.'); }
-  }
+      const saved = JSON.parse(localStorage.getItem(draftKey) ?? 'null') as { expiresAt?: number; state?: { brief?: CaricatureBrief; typeId?: string; shortMessage?: string; requiredDate?: string; commercialUsage?: boolean } } | null;
+      if (!saved?.state || !saved.expiresAt || saved.expiresAt < Date.now()) { if (saved) localStorage.removeItem(draftKey); return; }
+      if (saved.state.brief) setBrief(saved.state.brief);
+      const restoredType = types.find(item => item.id === saved.state?.typeId); if (restoredType) setCaricatureType(restoredType);
+      setShortMessage(saved.state.shortMessage ?? ''); setRequiredDate(saved.state.requiredDate ?? ''); setCommercialUsage(Boolean(saved.state.commercialUsage));
+      setStatus('Saved brief restored. Add the photograph again for privacy.');
+    } catch { localStorage.removeItem(draftKey); }
+  }, []);
 
-  function removePhoto() {
-    if (photo.startsWith('blob:')) URL.revokeObjectURL(photo);
-    setPhoto(''); setPhotoFile(null); setStep(0);
+  async function acceptPhoto(file: File, source: PhotoState['source']) {
+    const invalid = validatePhotoFile(file); if (invalid) { setStatus(invalid); return; }
+    try { if (photo?.preview) URL.revokeObjectURL(photo.preview); if (concept) await removeConcept(); setPhoto(await preparePhoto(file, source)); setStatus('Photo selected locally. It has not been sent to ArtzyAI.'); setPermissions(current => ({ ...current, process: false, ai: false, handoff: false })); }
+    catch (error) { setStatus((error as Error).message); }
   }
-
-  function chooseSubject(id: SubjectId) {
-    const item = SUBJECTS.find(subject => subject.id === id)!;
-    setBrief(current => ({ ...current, subject: id, people: item.people, pets: item.pets }));
-  }
+  async function onPhoto(event: ChangeEvent<HTMLInputElement>) { const file = event.target.files?.[0]; if (file) await acceptPhoto(file, 'customer'); }
+  async function trySample() { const response = await fetch('/images/caricature-style-semi-realistic.webp'); const blob = await response.blob(); await acceptPhoto(new File([blob], 'fictional-sample.webp', { type: 'image/webp' }), 'fictional-sample'); }
+  function removePhoto() { if (photo?.preview) URL.revokeObjectURL(photo.preview); setPhoto(null); setStep(0); setStatus('Photograph removed from this browser.'); }
+  function chooseSubject(id: SubjectId) { const item = SUBJECTS.find(subject => subject.id === id)!; setBrief(current => ({ ...current, subject: id, people: item.people, pets: item.pets })); }
+  function saveDraft() { localStorage.setItem(draftKey, JSON.stringify({ expiresAt: Date.now() + 7 * 86400000, state: { brief, typeId: caricatureType.id, shortMessage, requiredDate, commercialUsage } })); setStatus('Private brief saved on this device for 7 days. The photograph is not saved.'); }
 
   async function generate() {
-    if (busy || manual) return;
-    if (!photoFile) { setError('Add a reference photograph before generating.'); setStep(0); return; }
-    if (!permissionsReady) { setError('Complete the required permissions before generating your AI concept.'); return; }
-    setBusy(true); setError(''); setProgress('Sending your photograph securely to ArtzyAI');
+    if (!photo || busy || manual) return;
+    if (!permissionsReady) { setStatus('Complete the required photograph and ArtzyAI consent first.'); return; }
+    setBusy(true); setStatus(''); setProgress('Preparing your secure request');
     try {
-      const consent = await createConsent({ tool: 'caricature', imageProcessing: permissions.process, aiGeneration: permissions.ai, temporaryStorage: permissions.storage, studioHandoff: permissions.handoff, containsOtherPeople: brief.people > 1, otherPeoplePermission: permissions.people, containsChildren: permissions.childPresent, guardianConfirmation: permissions.guardian, trainingOptIn: false });
-      const uploaded = await uploadReference(photoFile, consent.consentId);
-      const queued = await createCreativeJob({
-        sourceApp: 'artzy-storefront', tool: 'caricature', mode: 'preview', purpose: `${brief.occasion}; ${brief.composition}; ${brief.people} people and ${brief.pets} pets; ${brief.profession}; ${brief.hobbies}; ${brief.background}; ${brief.props}; ${brief.notes}`,
-        style: style.name.toLowerCase(), palette: (brief.colours || 'warm terracotta, cream, muted rose').split(',').map(value => value.trim()).filter(Boolean), outputFormat: 'jpeg', aspectRatio: '1:1', referenceAssetIds: [uploaded.assetId], customerTextOverlay: '', storefrontContext: { page: '/caricatures/', composition: brief.composition, occasion: brief.occasion }, erpContext: {}, consentId: consent.consentId,
-      });
-      setReference(queued.jobId);
-      const completed = await waitForCreativeJob(queued.jobId, setProgress);
+      const consent = await createConsent({ tool: 'caricature', imageProcessing: true, aiGeneration: true, temporaryStorage: true, extendedRetention: permissions.retain, studioHandoff: permissions.handoff, promotionalUse: permissions.promotion, trainingOptIn: permissions.training, containsOtherPeople: brief.people + brief.pets > 1, otherPeoplePermission: permissions.people, containsChildren: permissions.childPresent, guardianConfirmation: permissions.guardian });
+      const uploaded = await uploadReference(photo.file, consent.consentId);
+      const queued = await createCreativeJob({ sourceApp: 'artzy-storefront', tool: 'caricature', mode: brief.people + brief.pets > 1 ? 'premium' : 'preview', purpose: `${brief.occasion}; ${caricatureType.name}; ${brief.people} people; ${brief.pets} pets; ${brief.profession}; ${brief.hobbies}; ${brief.background}; ${brief.props}; ${brief.notes}`, style: style.name.toLowerCase(), palette: (brief.colours || 'warm terracotta, cream, muted rose').split(',').map(value => value.trim()).filter(Boolean), outputFormat: 'jpeg', aspectRatio: '1:1', referenceAssetIds: [uploaded.assetId], customerTextOverlay: '', storefrontContext: { page: '/caricatures/', type: caricatureType.id, occasion: brief.occasion }, erpContext: {}, consentId: consent.consentId });
+      setJobReference(queued.jobId); const completed = await waitForCreativeJob(queued.jobId, setProgress);
       if (completed.status !== 'completed' || !completed.previewUrl || !completed.assetId) throw new Error(completed.customerMessage || 'The concept could not be generated.');
-      setConcept(completed.previewUrl); setAssetId(completed.assetId);
-    } catch (cause) { setError(cause instanceof Error ? cause.message : 'The concept could not be generated.'); }
-    finally { setBusy(false); setProgress(''); }
+      setConcept(completed.previewUrl); setAssetId(completed.assetId); setStatus('ArtzyAI concept ready. Compare it with the reference before studio handoff.');
+    } catch (error) { setStatus((error as Error).message); } finally { setBusy(false); setProgress(''); }
   }
-
-  async function removeConcept() {
-    if (assetId) await deleteCreativeAsset(assetId).catch(() => undefined);
-    setConcept(''); setAssetId('');
+  async function removeConcept() { if (assetId) await deleteCreativeAsset(assetId).catch(() => undefined); setConcept(''); setAssetId(''); setStatus('Generated concept deleted.'); }
+  async function submitDraft() {
+    if (!permissions.handoff) { setStatus('Confirm studio-handoff permission before creating an ERP enquiry.'); return; }
+    setStatus('Creating your studio-review request…');
+    try { const response = await fetch('/api/storefront/custom-orders', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) }); const result = await response.json() as { success?: boolean; reference?: string; draftId?: string; error?: string }; if (!response.ok || !result.success) throw new Error(result.error || 'The draft could not be created.'); const next = result.reference || result.draftId || ''; setErpReference(next); setStatus(`Request ${next} is awaiting studio review. Expected response: 1–2 studio working days.`); }
+    catch (error) { saveDraft(); setStatus(`${(error as Error).message} Your text brief is saved privately on this device.`); }
   }
 
   return <section className="caricature-builder caricature-wizard" id="caricature-builder" aria-labelledby="caricature-builder-title">
-    <div className="caricature-builder__intro"><span className="service-eyebrow">Powered by ArtzyAI · photo-to-caricature</span><h2 id="caricature-builder-title">Build the idea<br/><em>one clear step at a time.</em></h2><p>ArtzyAI helps you imagine the creative direction. Deepti and Artzy’s Studio confirm what can actually be made.</p><small>AI concept—not the final studio caricature. Facial likeness is not guaranteed; the studio reviews every final order.</small><ol className="caricature-stepper">{steps.map((name, index) => <li className={index === step ? 'is-current' : index < step ? 'is-done' : ''} key={name}><button type="button" onClick={() => changeStep(index)} aria-current={index === step ? 'step' : undefined}><span>{index + 1}</span>{name}</button></li>)}</ol></div>
-    <div className="caricature-builder__panel">
-      <div className="caricature-builder__pane-stage">
-      {step === 0 && <div className="wizard-pane"><header><b>Step 1</b><h3>Add one clear reference photograph</h3><p>Your photograph will be sent securely to ArtzyAI to create the requested concept.</p></header><label className="caricature-upload"><span>{photo ? 'Replace image' : 'Take or upload a photo'}</span><input type="file" accept="image/jpeg,image/png,image/webp" capture="user" onChange={onPhoto}/><small>JPG, PNG or WebP · 320 px minimum · 8 MB maximum</small></label>{photo && <><img className="wizard-photo" src={photo} alt="Uploaded reference preview"/><button type="button" className="text-button" onClick={removePhoto}>Remove image</button></>}</div>}
-      {step === 1 && <div className="wizard-pane"><header><b>Step 2</b><h3>Who is in the artwork?</h3><p>Choose the closest group, then correct the numbers.</p></header><div className="choice-chips">{SUBJECTS.map(item => <button type="button" className={brief.subject === item.id ? 'is-selected' : ''} onClick={() => chooseSubject(item.id)} key={item.id}>{item.label}</button>)}</div><div className="number-fields"><label>People<input type="number" min="0" max="12" value={brief.people} onChange={event => patch('people', Number(event.target.value))}/></label><label>Pets<input type="number" min="0" max="6" value={brief.pets} onChange={event => patch('pets', Number(event.target.value))}/></label></div>{manual && <p className="manual-note">AI preview supports up to 4 people and 2 pets. Larger groups go directly to the studio for a reliable manual review.</p>}</div>}
-      {step === 2 && <div className="wizard-pane"><header><b>Step 3</b><h3>Choose a caricature style</h3><p>Every example is fictional and AI-generated—not a real customer.</p></header><div className="caricature-style-grid">{Object.values(CARICATURE_STYLES).map(item => <button type="button" aria-pressed={brief.styleId === item.id} className={brief.styleId === item.id ? 'is-selected' : ''} onClick={() => patch('styleId', item.id as CaricatureStyleId)} key={item.id}><img src={item.image} loading="lazy" alt={`${item.name} fictional AI-generated style demonstration`}/><span><b>{item.name}</b><small>{item.summary}</small><em>Best for: {item.bestFor}</em></span></button>)}</div></div>}
-      {step === 3 && <div className="wizard-pane"><header><b>Step 4</b><h3>Purpose and composition</h3><p>These choices guide the mood and framing; the studio confirms the final result.</p></header><div className="wizard-selects"><label>Occasion<select value={brief.occasion} onChange={event => patch('occasion', event.target.value as CaricatureBrief['occasion'])}>{OCCASIONS.map(item => <option value={item} key={item}>{label(item)}</option>)}</select></label><label>Composition<select value={brief.composition} onChange={event => patch('composition', event.target.value as CompositionId)}>{COMPOSITIONS.filter(item => style.compositions.includes(item.id)).map(item => <option value={item.id} key={item.id}>{item.label}</option>)}</select></label><label>Final requirement<select value={brief.output} onChange={event => patch('output', event.target.value as CaricatureBrief['output'])}>{OUTPUTS.map(item => <option value={item} key={item}>{label(item)}</option>)}</select></label></div></div>}
-      {step === 4 && <div className="wizard-pane"><header><b>Step 5</b><h3>Add the details that make it personal</h3><p>Optional—leave anything blank when you want Deepti’s guidance.</p></header><div className="wizard-details">{(['profession', 'hobbies', 'colours', 'clothing', 'background', 'props'] as const).map(key => <label key={key}>{label(key)}<input value={brief[key]} maxLength={120} onChange={event => patch(key, event.target.value)} placeholder={`Add ${label(key).toLowerCase()}…`}/></label>)}<label className="wide">Customer notes<textarea rows={3} value={brief.notes} maxLength={240} onChange={event => patch('notes', event.target.value)} placeholder="Important expressions, relationship, mood or instructions…"/></label></div></div>}
-      {step === 5 && <div className="wizard-pane"><header><b>Step 6</b><h3>Review privacy and give permission</h3><p>Your photograph is temporarily stored for this concept and is not used for model training.</p></header><div className="brief-review"><span><b>Style</b>{style.name}</span><span><b>Occasion</b>{label(brief.occasion)}</span><span><b>Subjects</b>{brief.people} people · {brief.pets} pets</span><span><b>Composition</b>{label(brief.composition)}</span></div><div className="caricature-consent-list">{[
-        ['process', 'I consent to secure image processing by ArtzyAI.'], ['ai', 'I consent to AI generation for this requested concept.'], ['storage', 'I consent to temporary storage for up to 72 hours.'], ...(brief.people > 1 ? [['people', 'I have permission from every other person shown.']] : []), ['childPresent', 'This photograph contains a child.'], ...(permissions.childPresent ? [['guardian', 'I am the child’s parent or lawful guardian and give permission.']] : []), ['handoff', 'Optional: I allow the concept and brief to be shared with Artzy’s Studio when I request a studio review.'],
-      ].map(([key, text]) => <label key={key}><input type="checkbox" checked={permissions[key as keyof typeof permissions]} onChange={event => setPermissions(current => ({ ...current, [key]: event.target.checked }))}/><span>{text}</span></label>)}</div><p className="privacy-note">Training use is off and is not bundled with generation consent. You can remove the image, delete the concept, or withdraw before studio handoff.</p>{manual ? <a className="wizard-primary" href={whatsapp} target="_blank" rel="noreferrer">Send larger-group brief to studio</a> : <button className="wizard-primary" type="button" onClick={generate} disabled={busy || !permissionsReady}>{busy ? 'Creating your AI concept…' : 'Generate AI concept'}</button>}</div>}
-      </div>
-      {busy && <p className="wizard-progress" role="status">{progress}</p>}{error && <p className="caricature-builder__error" role="alert">{error}</p>}
-      <div className="wizard-controls"><button type="button" onClick={() => changeStep(step - 1)} disabled={step === 0}>Back</button>{step < 5 && <button type="button" onClick={() => changeStep(step + 1)} disabled={!canNext}>Continue</button>}</div>
-      {concept && <div className="caricature-result" aria-live="polite"><h3>Your ArtzyAI concept is ready</h3><p className="concept-review-note"><b>Compare the face, expression and selected style.</b> This is a direction preview—not guaranteed likeness or the final studio caricature.</p><div className="caricature-builder__comparison"><figure><img src={photo} alt="Uploaded reference photo"/><figcaption>Uploaded reference photo</figcaption></figure><span aria-hidden="true">→</span><figure><img src={concept} alt="ArtzyAI-generated caricature concept preview"/><figcaption>AI concept · not a production proof</figcaption></figure></div><p><b>{style.name} · {label(brief.occasion)} · {label(brief.composition)}</b><br/>Artzy’s Studio reviews feasibility, likeness, price and delivery time before final production. {reference && `Reference: ${reference}`}</p><div className="caricature-builder__actions"><button type="button" onClick={generate} disabled={busy}>Try another direction</button><a href={concept} download={`${reference || 'artzy-caricature'}-concept.jpg`}>Save concept</a><a href={whatsapp} target="_blank" rel="noreferrer">Send to Artzy’s Studio</a><button type="button" onClick={removeConcept}>Delete concept</button></div></div>}
+    <div className="caricature-builder__intro"><span className="service-eyebrow">Optional ArtzyAI concept · studio-confirmed artwork</span><h2 id="caricature-builder-title">Build the portrait<br/><em>one clear step at a time.</em></h2><p>ArtzyAI can create an optional visual concept from your photograph and selected direction. Deepti and Artzy’s Studio review the brief, confirm feasibility and manage the final studio artwork.</p><small>ArtzyAI concept—not the final studio caricature. Facial likeness is reviewed, never guaranteed.</small><ol className="caricature-stepper">{steps.map((name, index) => <li className={index === step ? 'is-current' : index < step ? 'is-done' : ''} key={name}><button type="button" onClick={() => setStep(index)} aria-current={index === step ? 'step' : undefined}><span>{index + 1}</span>{name}</button></li>)}</ol></div>
+    <div className="caricature-builder__panel"><div className="caricature-builder__pane-stage">
+      {step === 0 && <div className="wizard-pane caricature-photo-step"><header><b>Step 1 · Photo</b><h3>Start with a clear, permitted photograph</h3><p>Choosing a photograph does not immediately send it to ArtzyAI. Review or remove it before consent and generation.</p></header>{photo ? <div className="caricature-photo-selected"><img src={photo.preview} alt={photo.source === 'fictional-sample' ? 'Fictional sample portrait selected for demonstration' : 'Selected local reference photograph'}/><div><b>{photo.source === 'fictional-sample' ? 'Fictional demonstration sample' : 'Your selected photograph'}</b><span>{photo.width} × {photo.height} px · JPEG prepared locally</span><small>Faces are not identified. Confirm the intended subject count in Step 2.</small><div><label htmlFor="caricature-upload-replace">Replace photo</label><input id="caricature-upload-replace" className="visually-hidden-input" type="file" accept="image/jpeg,image/png,image/webp" onChange={onPhoto}/><button type="button" onClick={removePhoto}>Remove photo</button></div></div></div> : <div className="caricature-upload-state"><div className="caricature-photo-guide" aria-hidden="true"><span/><i/><b/></div><h4>A face at eye level works best</h4><p>Use natural light, keep the full face visible and avoid heavy filters or distant group shots.</p><div><label htmlFor="caricature-camera">Take a photo</label><input id="caricature-camera" className="visually-hidden-input" type="file" accept="image/jpeg,image/png,image/webp" capture="user" onChange={onPhoto}/><label htmlFor="caricature-upload">Upload a photo</label><input id="caricature-upload" className="visually-hidden-input" type="file" accept="image/jpeg,image/png,image/webp" onChange={onPhoto}/><button type="button" onClick={trySample}>Try with a fictional sample</button></div><small>JPG, PNG or WebP · Minimum 320 px · Maximum 8 MB</small><em>Private by design: selection stays in this browser until you explicitly consent and generate.</em></div>}</div>}
+      {step === 1 && <div className="wizard-pane"><header><b>Step 2 · Subjects</b><h3>Who should appear?</h3><p>The starting price includes one person or one pet. Extra person ₹650; extra pet ₹450. AI preview supports up to four people and two pets; larger groups receive studio review.</p></header><div className="choice-chips">{SUBJECTS.filter(item => ['one_person','couple','family','group','person_with_pet','pet_only'].includes(item.id)).map(item => <button type="button" aria-pressed={brief.subject === item.id} className={brief.subject === item.id ? 'is-selected' : ''} onClick={() => chooseSubject(item.id)} key={item.id}>{item.id === 'one_person' ? 'Individual' : item.id === 'pet_only' ? 'Pet portrait' : item.label}</button>)}</div><div className="number-fields"><label>People<input type="number" min="0" max="8" value={brief.people} onChange={event => patch('people', Number(event.target.value))}/></label><label>Pets<input type="number" min="0" max="4" value={brief.pets} onChange={event => patch('pets', Number(event.target.value))}/></label></div><p className="manual-note">Separate photographs may be combined after studio review. You must have permission to use every photograph.</p>{manual && <p className="manual-note">This group is beyond the reliable AI-preview range and will go directly to the studio.</p>}</div>}
+      {step === 2 && <div className="wizard-pane"><header><b>Step 3 · Type and style</b><h3>Choose the composition, then its visual mood</h3><p>Caricature type controls what is shown. Visual style controls how it feels.</p></header><h4>Caricature type</h4><div className="caricature-type-grid">{types.map(item => <button type="button" aria-pressed={caricatureType.id === item.id} onClick={() => setCaricatureType(item)} key={item.id}><b>{item.name}</b><span>{item.note}</span><small>{item.addition ? `Estimated +₹${inr.format(item.addition)}` : 'Included'}</small></button>)}</div><h4>Visual style</h4><div className="caricature-style-grid">{visualStyles.map(option => { const item = CARICATURE_STYLES[option.id]; return <button type="button" aria-pressed={brief.styleId === option.id} className={brief.styleId === option.id ? 'is-selected' : ''} onClick={() => patch('styleId', option.id as CaricatureStyleId)} key={option.id}><img src={item.image} loading="lazy" alt={`${option.name} fictional style demonstration`}/><span><b>{option.name}</b><small>{item.summary}</small><em>Fictional AI sample</em></span></button>; })}</div></div>}
+      {step === 3 && <div className="wizard-pane"><header><b>Step 4 · Occasion and story</b><h3>Add the details that make it personal</h3><p>Exact wording is kept as a separate deterministic text instruction—not trusted to generated pixels.</p></header><div className="wizard-details"><label>Occasion<select value={brief.occasion} onChange={event => patch('occasion', event.target.value as CaricatureBrief['occasion'])}>{OCCASIONS.map(item => <option value={item} key={item}>{label(item)}</option>)}</select></label>{(['profession','hobbies','clothing','colours','background','props'] as const).map(key => <label key={key}>{key === 'props' ? 'Pet or meaningful objects' : label(key)}<input value={brief[key]} maxLength={120} onChange={event => patch(key, event.target.value)} /></label>)}<label className="wide">Short exact message<input value={shortMessage} maxLength={80} onChange={event => setShortMessage(event.target.value)} placeholder="Rendered separately after generation"/></label><label className="wide">Other story details<textarea rows={3} value={brief.notes} maxLength={300} onChange={event => patch('notes', event.target.value)} /></label></div></div>}
+      {step === 4 && <div className="wizard-pane"><header><b>Step 5 · Finish and price</b><h3>Choose how the caricature should arrive</h3><p>Every amount below is an estimate until ERP and the studio confirm the quotation.</p></header><div className="caricature-finish-grid">{finishes.map(item => <button type="button" aria-pressed={finish.id === item.id} onClick={() => patch('output', item.id as CaricatureBrief['output'])} key={item.id}><b>{item.name}</b><strong>Starts ₹{inr.format(item.base)}</strong><span>{item.size}</span><small>{item.frame} · {item.revisions} · {item.time}</small></button>)}</div><label className="caricature-commercial"><input type="checkbox" checked={commercialUsage} onChange={e => setCommercialUsage(e.target.checked)}/><span>Commercial usage requested <small>Estimated +₹1,500; rights confirmed in writing.</small></span></label><label className="caricature-required-date">Required date<input type="date" value={requiredDate} onChange={e => setRequiredDate(e.target.value)}/></label><div className="caricature-price-summary" aria-live="polite"><span>Estimated brief total</span><strong>₹{inr.format(estimate)}</strong><small>Delivery is calculated separately · Studio quotation and availability required</small></div></div>}
+      {step === 5 && <div className="wizard-pane"><header><b>Step 6 · Review and consent</b><h3>Check the brief and choose each permission</h3><p>Generation, retention, studio handoff, promotion and model training are separate choices.</p></header><div className="brief-review"><span><b>Photograph</b>{photo?.source === 'fictional-sample' ? 'Fictional sample' : 'Customer-selected photo'}</span><span><b>Subjects</b>{brief.people} people · {brief.pets} pets</span><span><b>Type & style</b>{caricatureType.name} · {style.name}</span><span><b>Occasion</b>{label(brief.occasion)}</span><span><b>Finish</b>{finish.name}</span><span><b>Estimate</b>₹{inr.format(estimate)} · ERP confirmation required</span></div><div className="caricature-consent-list"><Consent checked={permissions.process} onChange={value => setPermissions(p => ({ ...p, process: value }))}>I confirm I have permission to use this photograph and consent to secure processing for this requested concept.</Consent><Consent checked={permissions.ai} onChange={value => setPermissions(p => ({ ...p, ai: value }))}>I consent to ArtzyAI processing it to create this requested concept.</Consent>{brief.people + brief.pets > 1 && <Consent checked={permissions.people} onChange={value => setPermissions(p => ({ ...p, people: value }))}>I have permission for every person or pet photograph included.</Consent>}<Consent checked={permissions.childPresent} onChange={value => setPermissions(p => ({ ...p, childPresent: value }))}>This photograph contains a child.</Consent>{permissions.childPresent && <Consent checked={permissions.guardian} onChange={value => setPermissions(p => ({ ...p, guardian: value }))}>I am the parent/lawful guardian and give permission.</Consent>}<Consent checked={permissions.retain} onChange={value => setPermissions(p => ({ ...p, retain: value }))} optional>Save the photograph beyond the active request.</Consent><Consent checked={permissions.handoff} onChange={value => setPermissions(p => ({ ...p, handoff: value }))} optional>Send the selected photograph, concept and brief to Artzy’s Studio for review.</Consent><Consent checked={permissions.promotion} onChange={value => setPermissions(p => ({ ...p, promotion: value }))} optional>Allow promotional use by Artzy’s Studio.</Consent><Consent checked={permissions.training} onChange={value => setPermissions(p => ({ ...p, training: value }))} optional>Allow model-training use.</Consent></div><p className="privacy-note">Optional retention, promotional and training permissions are off by default. You can remove the photograph, delete a concept or withdraw before handoff.</p>{manual ? <p className="manual-note">AI generation is disabled for this group size. Create the ERP draft for a careful studio review.</p> : <button className="wizard-primary" type="button" onClick={generate} disabled={busy || !permissionsReady}>{busy ? 'Creating your ArtzyAI concept…' : 'Generate optional ArtzyAI concept'}</button>}<div className="caricature-review-actions"><button type="button" onClick={submitDraft}>Request studio confirmation</button><button type="button" onClick={saveDraft}>Save and resume</button><a href={whatsapp} target="_blank" rel="noreferrer">Discuss on WhatsApp</a></div></div>}
+      </div>{busy && <p className="wizard-progress" role="status">{progress}</p>}{status && <p className="caricature-builder__status" role="status">{status}{erpReference && <> <Link href="/account">Track request →</Link></>}</p>}<div className="wizard-controls"><button type="button" onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0}>Previous</button>{step < 5 && <button type="button" onClick={() => setStep(Math.min(5, step + 1))} disabled={!canContinue}>Continue</button>}</div>
+      {concept && <div className="caricature-result" aria-live="polite"><h3>Your ArtzyAI concept is ready</h3><p className="concept-review-note"><b>Compare the face, expression and selected direction.</b> ArtzyAI concept—not the final studio caricature. Facial likeness is not guaranteed.</p><div className="caricature-builder__comparison"><figure><img src={photo?.preview} alt="Selected reference photograph"/><figcaption>Selected reference</figcaption></figure><span aria-hidden="true">→</span><figure><img src={concept} alt="ArtzyAI-generated caricature concept"/><figcaption>ArtzyAI concept · not final artwork</figcaption></figure></div>{shortMessage && <p className="caricature-exact-message"><b>Exact separate wording:</b> {shortMessage}</p>}<p>Job reference: {jobReference}. Deepti and the studio confirm feasibility, likeness review, final price and finish.</p><div className="caricature-builder__actions"><button type="button" onClick={generate} disabled={busy}>Try variation</button><a href={concept} download={`${jobReference || 'artzy-caricature'}-concept.jpg`}>Save concept</a><button type="button" onClick={() => setStatus('Please describe what felt unsuitable in the story notes before trying another variation.')}>Report unsuitable result</button><button type="button" onClick={removeConcept}>Delete concept</button>{permissions.handoff && <a href={whatsapp} target="_blank" rel="noreferrer">Send to studio</a>}</div></div>}
     </div>
   </section>;
+}
+
+function Consent({ checked, onChange, optional = false, children }: { checked: boolean; onChange: (value: boolean) => void; optional?: boolean; children: React.ReactNode }) {
+  return <label><input type="checkbox" checked={checked} onChange={event => onChange(event.target.checked)}/><span>{children}{optional && <small> Optional</small>}</span></label>;
 }

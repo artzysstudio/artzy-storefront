@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { createCreativeJob, deleteCreativeAsset, waitForCreativeJob, type CreativeJobRequest, type CreativeState, type CreativeTool } from '@/lib/artzyai';
+import { createConsent, createCreativeJob, deleteCreativeAsset, uploadReference, waitForCreativeJob, type CreativeJobRequest, type CreativeState, type CreativeTool } from '@/lib/artzyai';
 
 type Variant = 'personalised' | 'caricature' | 'namePlate' | 'digitalArt' | 'gift' | 'artzyWorld';
 type Props = {
@@ -15,6 +15,8 @@ type Props = {
   aspectRatio?: CreativeJobRequest['aspectRatio'];
   enabled?: boolean;
   disabledHint?: string;
+  referenceFiles?: File[];
+  referenceConsent?: boolean;
   studioMessage: string;
 };
 
@@ -27,7 +29,7 @@ function approvedStyle(variant: Variant, style: string): string {
   return tokens.find(token => lowered.includes(token)) || approvedFallback[variant];
 }
 
-export default function ArtzyAICreativeTool({ variant, title, purpose, style, palette, exactText = '', secondaryText = '', aspectRatio = '1:1', enabled = true, disabledHint = 'Complete the choices above first.', studioMessage }: Props) {
+export default function ArtzyAICreativeTool({ variant, title, purpose, style, palette, exactText = '', secondaryText = '', aspectRatio = '1:1', enabled = true, disabledHint = 'Complete the choices above first.', referenceFiles = [], referenceConsent = false, studioMessage }: Props) {
   const [state, setState] = useState<CreativeState>('introduction');
   const [progress, setProgress] = useState('');
   const [previewUrl, setPreviewUrl] = useState('');
@@ -38,7 +40,15 @@ export default function ArtzyAICreativeTool({ variant, title, purpose, style, pa
     if (!enabled) return;
     setState('generating'); setError(''); setPreviewUrl('');
     try {
-      const queued = await createCreativeJob({ sourceApp: 'artzy-storefront', tool: toolByVariant[variant], mode: 'preview', purpose: purpose.slice(0, 240), style: approvedStyle(variant, style), palette: palette.slice(0, 6), outputFormat: 'jpeg', aspectRatio, referenceAssetIds: [], customerTextOverlay: exactText, storefrontContext: { page: window.location.pathname, variant }, erpContext: {} });
+      if (referenceFiles.length && !referenceConsent) throw new Error('Confirm reference-image processing consent before generating.');
+      let consentId: string | undefined;
+      let referenceAssetIds: string[] = [];
+      if (referenceFiles.length) {
+        const consent = await createConsent({ tool: toolByVariant[variant], imageProcessing: true, aiGeneration: true, temporaryStorage: true, studioHandoff: false, trainingOptIn: false });
+        consentId = consent.consentId;
+        referenceAssetIds = await Promise.all(referenceFiles.map(async file => (await uploadReference(file, consent.consentId)).assetId));
+      }
+      const queued = await createCreativeJob({ sourceApp: 'artzy-storefront', tool: toolByVariant[variant], mode: 'preview', purpose: purpose.slice(0, 240), style: approvedStyle(variant, style), palette: palette.slice(0, 6), outputFormat: 'jpeg', aspectRatio, referenceAssetIds, customerTextOverlay: exactText, storefrontContext: { page: window.location.pathname, variant }, erpContext: {}, consentId });
       const completed = await waitForCreativeJob(queued.jobId, setProgress);
       if (completed.status === 'moderation_blocked') { setState('moderation_blocked'); setError(completed.customerMessage); return; }
       if (completed.status !== 'completed' || !completed.previewUrl || !completed.assetId) throw new Error(completed.customerMessage || 'The preview could not be created.');

@@ -38,7 +38,6 @@ export default function DigitalPrintsPage() {
         <span>Created to your brief</span><span>Preview before production</span><span>Digital file or physical print</span><span>Home &amp; commercial projects</span>
       </section>
 
-      <nav className="digital-page-nav" aria-label="Digital art page sections"><a href="#digital-planner"><b>01</b>Plan my artwork</a><a href="#create"><b>02</b>Explore services</a><a href="#formats"><b>03</b>Choose a finish</a><a href="#process"><b>04</b>Understand the process</a></nav>
 
       <DigitalArtPlanner />
 

@@ -155,10 +155,27 @@ export const onRequest = async (context: RouteContext) => {
     }
     const body = await context.request.text();
     if (body.length > 96_000) return json({ success: false, error: "Custom-order request is too large." }, 413);
-    let payload: { type?: string; status?: string; spellingConfirmed?: boolean; pincode?: string; configuration?: { exactWording?: { main?: string } } };
+    let payload: {
+      type?: string;
+      status?: string;
+      spellingConfirmed?: boolean;
+      pincode?: string;
+      configuration?: Record<string, unknown> & { exactWording?: { main?: string } };
+      consent?: { processing?: boolean; aiGeneration?: boolean; studioHandoff?: boolean };
+      artzyAiAssetId?: string | null;
+    };
     try { payload = JSON.parse(body); } catch { return json({ success: false, error: "Invalid custom-order request." }, 400); }
-    if (payload.type !== "custom_name_plate" || payload.status !== "awaiting_studio_review" || payload.spellingConfirmed !== true || !payload.configuration?.exactWording?.main?.trim() || !/^\d{6}$/.test(payload.pincode ?? "")) {
-      return json({ success: false, error: "Exact wording, spelling confirmation and a valid delivery PIN code are required." }, 400);
+    if (payload.status !== "awaiting_studio_review") return json({ success: false, error: "A valid studio-review status is required." }, 400);
+    const configuration = payload.configuration ?? {};
+    if (payload.type === "custom_name_plate") {
+      if (payload.spellingConfirmed !== true || !payload.configuration?.exactWording?.main?.trim() || !/^\d{6}$/.test(payload.pincode ?? "")) return json({ success: false, error: "Exact wording, spelling confirmation and a valid delivery PIN code are required." }, 400);
+    } else if (payload.type === "custom_digital_art") {
+      if (!configuration.purpose || !configuration.artDirection || !configuration.dimensions || !configuration.finish) return json({ success: false, error: "Purpose, art direction, dimensions and finish are required." }, 400);
+    } else if (payload.type === "custom_caricature") {
+      if (!configuration.subjects || !configuration.caricatureType || !configuration.style || !configuration.occasion || !configuration.finish || payload.consent?.studioHandoff !== true) return json({ success: false, error: "Subjects, type, style, occasion, finish and studio-handoff permission are required." }, 400);
+      if (payload.artzyAiAssetId && (payload.consent?.processing !== true || payload.consent?.aiGeneration !== true)) return json({ success: false, error: "AI processing consent is required for an attached ArtzyAI concept." }, 400);
+    } else {
+      return json({ success: false, error: "Unsupported custom-order type." }, 400);
     }
     return proxyErp(context, context.env.ERP_CUSTOM_ORDER_PATH ?? "/api/storefront/custom-orders", {
       method: "POST", headers: { "content-type": "application/json" }, body,

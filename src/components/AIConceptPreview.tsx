@@ -19,9 +19,11 @@ type Props = {
   studioMessage: string;
   enabled?: boolean;
   disabledHint?: string;
+  referenceFiles?: File[];
+  referenceConsent?: boolean;
 };
 
-export default function AIConceptPreview({ brief, title, primaryText = '', secondaryText = '', studioMessage, enabled = true, disabledHint }: Props) {
+export default function AIConceptPreview({ brief, title, primaryText = '', secondaryText = '', studioMessage, enabled = true, disabledHint, referenceFiles = [], referenceConsent = false }: Props) {
   const variant = brief.kind === 'name-plate' ? 'namePlate' : brief.kind === 'digital-art' ? 'digitalArt' : brief.kind === 'gift' ? 'gift' : 'personalised';
   return <ArtzyAICreativeTool
     variant={variant}
@@ -34,6 +36,8 @@ export default function AIConceptPreview({ brief, title, primaryText = '', secon
     secondaryText={secondaryText}
     enabled={enabled}
     disabledHint={disabledHint}
+    referenceFiles={referenceFiles}
+    referenceConsent={referenceConsent}
     studioMessage={studioMessage}
   />;
 }

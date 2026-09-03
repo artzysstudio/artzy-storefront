@@ -12,7 +12,8 @@
     "catalogue:import": "node scripts/import-erp-products.mjs",
     "test:gifts": "tsx --test tests/gift-engine.test.ts",
     "test:caricatures": "tsx --test tests/caricature-engine.test.ts",
-    "test:name-plates": "tsx --test tests/name-plate-pricing.test.ts"
+    "test:name-plates": "tsx --test tests/name-plate-pricing.test.ts",
+    "test:creative": "tsx --test tests/name-plate-pricing.test.ts tests/caricature-pricing.test.ts"
   },
   "dependencies": {
     "next": "16.3.2",
