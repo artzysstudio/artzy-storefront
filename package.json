@@ -11,7 +11,8 @@
     "pages:build": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\" && node node_modules/next/dist/bin/next build",
     "catalogue:import": "node scripts/import-erp-products.mjs",
     "test:gifts": "tsx --test tests/gift-engine.test.ts",
-    "test:caricatures": "tsx --test tests/caricature-engine.test.ts"
+    "test:caricatures": "tsx --test tests/caricature-engine.test.ts",
+    "test:name-plates": "tsx --test tests/name-plate-pricing.test.ts"
   },
   "dependencies": {
     "next": "16.3.2",

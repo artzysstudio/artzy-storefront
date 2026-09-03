@@ -60,13 +60,15 @@ function Icon({ name }: { name: 'search' | 'account' | 'cart' }) {
 export default function Header() {
   const pathname = usePathname();
   const { cartCount } = useCart();
-  const [openGroup, setOpenGroup] = useState<number | null>(null);
+  const [desktopGroup, setDesktopGroup] = useState<number | null>(null);
+  const [mobileGroup, setMobileGroup] = useState<number | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    setOpenGroup(null);
+    setDesktopGroup(null);
+    setMobileGroup(null);
     setMobileOpen(false);
   }, [pathname]);
 
@@ -84,7 +86,7 @@ export default function Header() {
 
   useEffect(() => {
     const close = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') { setOpenGroup(null); setMobileOpen(false); }
+      if (event.key === 'Escape') { setDesktopGroup(null); setMobileGroup(null); setMobileOpen(false); }
     };
     window.addEventListener('keydown', close);
     return () => window.removeEventListener('keydown', close);
@@ -102,11 +104,11 @@ export default function Header() {
         </Link>
 
         <nav className="desktop-nav" aria-label="Primary navigation">
-          {NAV.map((group, index) => <div className="desktop-nav__group" key={group.label}>
-            <button className={isActive(group) ? 'is-active' : ''} aria-expanded={openGroup === index} aria-controls={`mega-${index}`} onClick={() => setOpenGroup(openGroup === index ? null : index)}>
+          {NAV.map((group, index) => <div className="desktop-nav__group" key={group.label} onMouseEnter={() => setDesktopGroup(index)} onMouseLeave={() => setDesktopGroup(null)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setDesktopGroup(null); }}>
+            <button className={isActive(group) ? 'is-active' : ''} aria-expanded={desktopGroup === index} aria-controls={`mega-${index}`} onFocus={() => setDesktopGroup(index)} onClick={() => setDesktopGroup(desktopGroup === index ? null : index)}>
               {group.label}<span aria-hidden="true">⌄</span>
             </button>
-            <div id={`mega-${index}`} className={`mega-menu ${openGroup === index ? 'is-open' : ''}`}>
+            <div id={`mega-${index}`} className={`mega-menu ${desktopGroup === index ? 'is-open' : ''}`} hidden={desktopGroup !== index}>
               <div className="mega-menu__intro"><small>Explore</small><strong>{group.label}</strong><p>{group.items[0].note}</p></div>
               <div className="mega-menu__links">{group.items.map((item) => item.hardNavigate ? <a href={item.href} key={item.href + item.label}>{item.label}<span aria-hidden="true">→</span></a> : <Link href={item.href} prefetch={false} key={item.href + item.label}>{item.label}<span aria-hidden="true">→</span></Link>)}</div>
             </div>
@@ -129,8 +131,8 @@ export default function Header() {
       <nav className="mobile-navigation__panel" aria-label="Mobile navigation">
         <div className="mobile-navigation__head"><span>Explore Artzy's Studio</span><button aria-label="Close menu" onClick={() => setMobileOpen(false)}>×</button></div>
         {NAV.map((group, index) => <section className="mobile-accordion" key={group.label}>
-          <div className={`mobile-accordion__row ${isActive(group) ? 'is-active' : ''}`}><Link href={group.items[0].href} prefetch={false}>{group.label}</Link><button aria-label={`${openGroup === index ? 'Hide' : 'Show'} ${group.label} choices`} aria-expanded={openGroup === index} aria-controls={`mobile-group-${index}`} onClick={() => setOpenGroup(openGroup === index ? null : index)}>{openGroup === index ? '−' : '+'}</button></div>
-          <div id={`mobile-group-${index}`} hidden={openGroup !== index}>{group.items.slice(1).map((item) => item.hardNavigate ? <a href={item.href} key={item.href + item.label}>{item.label}</a> : <Link href={item.href} prefetch={false} key={item.href + item.label}>{item.label}</Link>)}</div>
+          <div className={`mobile-accordion__row ${isActive(group) ? 'is-active' : ''}`}><Link href={group.items[0].href} prefetch={false}>{group.label}</Link><button aria-label={`${mobileGroup === index ? 'Hide' : 'Show'} ${group.label} choices`} aria-expanded={mobileGroup === index} aria-controls={`mobile-group-${index}`} onClick={() => setMobileGroup(mobileGroup === index ? null : index)}>{mobileGroup === index ? '−' : '+'}</button></div>
+          <div id={`mobile-group-${index}`} hidden={mobileGroup !== index}>{group.items.slice(1).map((item) => item.hardNavigate ? <a href={item.href} key={item.href + item.label}>{item.label}</a> : <Link href={item.href} prefetch={false} key={item.href + item.label}>{item.label}</Link>)}</div>
         </section>)}
         <div className="mobile-navigation__quick"><Link href="/for-business" prefetch={false}>For Business</Link><Link href="/account" prefetch={false}>Your account</Link><a href="https://wa.me/919158680722">WhatsApp the studio</a></div>
       </nav>
@@ -141,5 +143,6 @@ export default function Header() {
       .mobile-accordion__row{min-height:58px;display:grid!important;grid-template-columns:1fr 48px;align-items:center;padding:0!important}.mobile-accordion__row>a{font:500 1.35rem var(--font-serif),Georgia,serif;color:#41332c}.mobile-accordion__row.is-active>a{color:#a3464c}.mobile-accordion__row>button{width:44px;height:44px;border:0;background:transparent;color:#a3464c;font-size:1.35rem;cursor:pointer}@media(min-width:901px){.mobile-navigation{display:none!important}}
       .business-cta{padding:9px 10px;border-bottom:2px solid transparent;color:#493933;font-size:.65rem;font-weight:750;letter-spacing:.045em;text-decoration:none;text-transform:uppercase;white-space:nowrap}.business-cta:hover,.business-cta.is-active{border-color:#b25156;color:#a3464c}.mobile-navigation__quick{grid-template-columns:1fr 1fr}.mobile-navigation__quick a{padding-inline:8px;text-align:center}.mobile-navigation__quick a:last-child{grid-column:1/-1}@media(max-width:1220px){.business-cta{display:none}.store-header__inner{padding-inline:16px}.desktop-nav__group>button{padding-inline:8px;font-size:.65rem}}
     `}</style>
+    <style jsx global>{`.mega-menu[hidden],.mobile-navigation[aria-hidden=true]{display:none!important}`}</style>
   </>;
 }

@@ -9,6 +9,7 @@ export interface StorefrontEnv {
   ERP_PAYMENT_VERIFY_PATH?: string;
   ERP_CUSTOMER_MAGIC_LINK_PATH?: string;
   ERP_CUSTOMER_GOOGLE_AUTH_URL?: string;
+  ERP_CUSTOM_ORDER_PATH?: string;
 }
 
 export interface PagesContext {

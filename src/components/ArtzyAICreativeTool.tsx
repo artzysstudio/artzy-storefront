@@ -43,6 +43,7 @@ export default function ArtzyAICreativeTool({ variant, title, purpose, style, pa
       if (completed.status === 'moderation_blocked') { setState('moderation_blocked'); setError(completed.customerMessage); return; }
       if (completed.status !== 'completed' || !completed.previewUrl || !completed.assetId) throw new Error(completed.customerMessage || 'The preview could not be created.');
       setPreviewUrl(completed.previewUrl); setAssetId(completed.assetId); setState('completed');
+      window.dispatchEvent(new CustomEvent('artzy:concept-asset', { detail: { tool: toolByVariant[variant], assetId: completed.assetId } }));
     } catch (reason) {
       const typed = reason as Error & { category?: string };
       setState(typed.category === 'credits_unavailable' ? 'credits_unavailable' : 'failed');
@@ -53,6 +54,7 @@ export default function ArtzyAICreativeTool({ variant, title, purpose, style, pa
   async function remove() {
     if (assetId) await deleteCreativeAsset(assetId).catch(() => undefined);
     setPreviewUrl(''); setAssetId(''); setState('introduction');
+    window.dispatchEvent(new CustomEvent('artzy:concept-asset', { detail: { tool: toolByVariant[variant], assetId: null } }));
   }
 
   async function share() {
@@ -68,7 +70,7 @@ export default function ArtzyAICreativeTool({ variant, title, purpose, style, pa
     <header className="artzyai-tool__intro"><span>Powered by ArtzyAI</span><h3 id={`artzyai-${variant}-title`}>{title}</h3><p>ArtzyAI helps you imagine the creative direction. Deepti and Artzy’s Studio confirm what can actually be made.</p><small>AI concept—not stock, completed artwork, Deepti’s final artwork or a production proof.</small></header>
     <div className="artzyai-tool__stage" aria-live="polite" aria-busy={state === 'generating'}>
       {!previewUrl && <div className="artzyai-tool__empty"><span aria-hidden="true">✿</span><strong>{state === 'generating' ? progress : 'Your imaginative direction appears here'}</strong><p>{state === 'generating' ? 'Please keep this page open while ArtzyAI prepares the concept.' : enabled ? 'Generate one clearly labelled concept from your completed choices.' : disabledHint}</p>{state !== 'generating' && <button type="button" onClick={generate} disabled={!enabled}>Imagine with ArtzyAI</button>}{error && <p className="artzyai-tool__error" role="alert">{error}</p>}</div>}
-      {previewUrl && <><figure className="artzyai-tool__result"><img src={previewUrl} alt={`ArtzyAI-generated ${variant} concept based on the selected creative direction`}/>{exactText && <div className="artzyai-tool__wording"><strong>{exactText}</strong>{secondaryText && <small>{secondaryText}</small>}</div>}<figcaption>AI concept · not stock · not a production proof</figcaption></figure><div className="artzyai-tool__actions"><button type="button" onClick={share}>Save or share concept</button><button type="button" onClick={generate}>Try another direction</button><a href={whatsapp} target="_blank" rel="noreferrer">Send to Artzy’s Studio</a><button type="button" onClick={remove}>Delete concept</button></div></>}
+      {previewUrl && <><figure className="artzyai-tool__result"><img src={previewUrl} alt={`ArtzyAI-generated ${variant} concept based on the selected creative direction`}/>{exactText && <div className="artzyai-tool__wording"><strong>{exactText}</strong>{secondaryText && <small>{secondaryText}</small>}</div>}<figcaption>AI concept · not stock · not a production proof</figcaption></figure><div className="artzyai-tool__actions"><button type="button" onClick={share}>Save concept</button><button type="button" onClick={generate}>Try another variation</button>{variant === 'namePlate' && <a href="#name-plate-live-preview">Compare with live preview</a>}<a href={whatsapp} target="_blank" rel="noreferrer">Send selected direction for studio review</a><button type="button" onClick={remove}>Delete concept</button></div></>}
     </div>
   </section>;
 }

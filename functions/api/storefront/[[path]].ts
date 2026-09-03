@@ -149,5 +149,21 @@ export const onRequest = async (context: RouteContext) => {
     );
   }
 
+  if (route === "custom-orders" && method === "POST") {
+    if (!(context.request.headers.get("content-type") ?? "").includes("application/json")) {
+      return json({ success: false, error: "JSON body required." }, 415);
+    }
+    const body = await context.request.text();
+    if (body.length > 96_000) return json({ success: false, error: "Custom-order request is too large." }, 413);
+    let payload: { type?: string; status?: string; spellingConfirmed?: boolean; pincode?: string; configuration?: { exactWording?: { main?: string } } };
+    try { payload = JSON.parse(body); } catch { return json({ success: false, error: "Invalid custom-order request." }, 400); }
+    if (payload.type !== "custom_name_plate" || payload.status !== "awaiting_studio_review" || payload.spellingConfirmed !== true || !payload.configuration?.exactWording?.main?.trim() || !/^\d{6}$/.test(payload.pincode ?? "")) {
+      return json({ success: false, error: "Exact wording, spelling confirmation and a valid delivery PIN code are required." }, 400);
+    }
+    return proxyErp(context, context.env.ERP_CUSTOM_ORDER_PATH ?? "/api/storefront/custom-orders", {
+      method: "POST", headers: { "content-type": "application/json" }, body,
+    });
+  }
+
   return json({ success: false, error: "Storefront endpoint not found." }, 404);
 };
