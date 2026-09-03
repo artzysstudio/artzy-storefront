@@ -1,5 +1,4 @@
 import PremiumHero from '@/components/PremiumHero';
-import CategoryExperience from '@/components/CategoryExperience';
 import StudioSignature from '@/components/StudioSignature';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -8,7 +7,9 @@ import ArtzyMuse from '@/components/muse/ArtzyMuse';
 import { isStorefrontInventoryProduct, type Product } from '@/lib/api';
 import erpProductSnapshot from '@/data/erp-products.json';
 import Link from 'next/link';
-import HomeIntentCards from '@/components/HomeIntentCards';
+import HomeDiscovery from '@/components/HomeDiscovery';
+import HomeGiftHamper from '@/components/HomeGiftHamper';
+import CustomerStories from '@/components/CustomerStories';
 
 const ARTZY_AI_ENABLED = false;
 
@@ -39,21 +40,13 @@ function getFreshERPProducts(): Product[] {
 
 export default async function Home() {
   const products = getFreshERPProducts();
-  const available = (erpProductSnapshot as Product[]).filter(isStorefrontInventoryProduct);
-  const imageFor = (category: string) => available.find((product) => product.category === category)?.images[0] || products[0]?.images[0] || '/images/homepage-handmade-hero.webp';
-  const intents = [
-    { title: 'Decorate My Space', copy: 'Find wall, table and utility art for the rooms you live and work in.', href: '/shop/?category=wall-art-and-frames', image: imageFor('Wall Art & Frames'), cta: 'Explore décor' },
-    { title: 'Find the Perfect Gift', copy: 'Choose by person, occasion and budget with help from the Gift Finder.', href: '/gifts/#gift-finder', image: imageFor('Table & Utility Art'), cta: 'Find a gift' },
-    { title: 'Create Something Personal', copy: 'Begin a painting, caricature, name plate or meaningful custom brief.', href: '/personalised/', image: imageFor('Mirrors & Decorative Hangings'), cta: 'Start creating' },
-  ];
 
   return (
     <>
       <Header />
       <main>
-        <PremiumHero imageUrl={products[0]?.images[0] || '/images/homepage-handmade-hero.webp'} />
-        <HomeIntentCards intents={intents} />
-        <CategoryExperience />
+        <PremiumHero imageUrl="/images/homepage-handmade-hero.webp" />
+        <HomeDiscovery />
 
         <section className="section container" aria-labelledby="fresh-from-studio">
           <div className="home-section-heading">
@@ -75,6 +68,10 @@ export default async function Home() {
             <a href="https://wa.me/919158680722">Ask the studio on WhatsApp →</a>
           </div>}
         </section>
+
+        <HomeGiftHamper />
+
+        <CustomerStories />
 
         <section className="home-artist" aria-labelledby="meet-deepti-home">
           <img src="/images/deepti_portrait.jpg" alt="Artist Deepti J. Shah" loading="lazy" />
