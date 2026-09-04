@@ -42,10 +42,7 @@ export const onRequest = async (context: RouteContext) => {
         payments: true,
         customOrders: true,
         customerMagicLink: true,
-        // The ERP route is installed, but Supabase currently reports that the
-        // Google provider is disabled. Keep this false until OAuth credentials
-        // are configured so the storefront never advertises a dead login.
-        customerGoogleSignIn: false,
+        customerGoogleSignIn: true,
       },
     });
   }
