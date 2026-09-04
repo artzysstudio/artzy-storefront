@@ -1,0 +1,16 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "artzy-storefront-domain",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-04",
+  "routes": [
+    {
+      "pattern": "artzysstudio.in/*",
+      "zone_name": "artzysstudio.in"
+    },
+    {
+      "pattern": "www.artzysstudio.in/*",
+      "zone_name": "artzysstudio.in"
+    }
+  ]
+}

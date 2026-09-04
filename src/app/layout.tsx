@@ -5,7 +5,7 @@ import ArtzyMuseFloater from "@/components/ArtzyMuseFloater";
 import MediaProtection from "@/components/MediaProtection";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.artzysstudio.in';
-const isIndexable = process.env.NEXT_PUBLIC_SITE_INDEXABLE === 'true';
+const isIndexable = process.env.NEXT_PUBLIC_SITE_INDEXABLE !== 'false';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
