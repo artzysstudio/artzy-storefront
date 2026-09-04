@@ -34,6 +34,14 @@ test('accepts the configured public storefront origin through the Pages router',
   assert.equal(mock.forwarded?.headers.get('X-ArtzyAI-Service-Key'), 'test-service-token');
 });
 
+test('accepts the canonical public origin without optional dashboard configuration', async () => {
+  const mock = context(publicOrigin);
+  delete (mock.value.env as { STOREFRONT_PUBLIC_ORIGIN?: string }).STOREFRONT_PUBLIC_ORIGIN;
+  const response = await onRequest(mock.value);
+  assert.equal(response.status, 200);
+  assert.equal(mock.forwarded?.headers.get('X-ArtzyAI-Service-Key'), 'test-service-token');
+});
+
 test('rejects an untrusted cross-origin generation request', async () => {
   const mock = context('https://attacker.example');
   const response = await onRequest(mock.value);

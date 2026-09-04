@@ -301,11 +301,14 @@ async function requestERP<T>(endpoint: string, init: RequestInit = {}): Promise<
 }
 
 async function requestStorefront<T>(endpoint: string, init: RequestInit = {}): Promise<T> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8_000);
   const response = await fetch(`/api/storefront${endpoint}`, {
     ...init,
     cache: 'no-store',
+    signal: init.signal ?? controller.signal,
     headers: { 'Content-Type': 'application/json', ...(init.headers || {}) },
-  });
+  }).finally(() => clearTimeout(timeoutId));
   const data = await response.json().catch(() => ({}));
   if (!response.ok || data?.success === false) {
     throw new Error(data?.error || `Storefront request failed with status ${response.status}`);

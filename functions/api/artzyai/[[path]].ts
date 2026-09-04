@@ -9,6 +9,10 @@ type Env = {
 type Context = { request: Request; env: Env; params: { path?: string | string[] } };
 const noStore = { 'Cache-Control': 'no-store, max-age=0', 'X-Content-Type-Options': 'nosniff' };
 const deviceCookieName = 'artzy_creative_device';
+const productionStorefrontOrigins = [
+  'https://www.artzysstudio.in',
+  'https://artzysstudio.in',
+];
 const allowed = [
   /^consents$/,
   /^assets$/,
@@ -21,7 +25,11 @@ const allowed = [
 
 export const onRequest = async ({ request, env, params }: Context): Promise<Response> => {
   const origin = request.headers.get('origin');
-  const allowedOrigins = new Set([new URL(request.url).origin]);
+  // Pages may expose the internal pages.dev origin to a Function even when
+  // the browser is on the public custom domain. Keep the two canonical Artzy
+  // origins explicit so legitimate builder requests never depend on an
+  // optional dashboard variable, while still rejecting every other origin.
+  const allowedOrigins = new Set([new URL(request.url).origin, ...productionStorefrontOrigins]);
   if (env.STOREFRONT_PUBLIC_ORIGIN) {
     try { allowedOrigins.add(new URL(env.STOREFRONT_PUBLIC_ORIGIN).origin); } catch { /* Ignore invalid optional configuration. */ }
   }
