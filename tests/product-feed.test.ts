@@ -18,9 +18,9 @@ test('normalizes a relative ERP product image to the Artzy media origin', () => 
   assert.equal(isStorefrontInventoryProduct(normalized), true);
 });
 
-test('accepts products hosted on the Artzy CDN', () => {
+test('rewrites legacy Artzy CDN images to the live media origin', () => {
   const normalized = normalizeStorefrontProduct(product('https://cdn.artzysstudio.in/products/legacy-piece.png'));
-  assert.equal(normalized.images[0], 'https://cdn.artzysstudio.in/products/legacy-piece.png');
+  assert.equal(normalized.images[0], 'https://media.artzysstudio.in/products/legacy-piece.png');
   assert.equal(isStorefrontInventoryProduct(normalized), true);
 });
 

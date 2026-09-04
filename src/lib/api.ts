@@ -128,9 +128,13 @@ function storefrontMediaUrl(value: unknown): string | null {
 
   try {
     const absolute = new URL(candidate);
-    return absolute.protocol === 'https:' && ARTZY_MEDIA_HOSTS.has(absolute.hostname)
-      ? absolute.toString()
-      : null;
+    if (absolute.protocol !== 'https:' || !ARTZY_MEDIA_HOSTS.has(absolute.hostname)) return null;
+
+    // Older ERP records use cdn.artzysstudio.in, which is no longer a live
+    // hostname. The object keys are still available on the canonical Artzy
+    // media origin, so rewrite the host without changing the stored key.
+    absolute.hostname = new URL(ARTZY_MEDIA_ORIGIN).hostname;
+    return absolute.toString();
   } catch {
     const relative = candidate.replace(/^\/+/, '');
     if (!relative || relative.includes('..') || relative.includes(':')) return null;
@@ -169,7 +173,7 @@ export function isStorefrontInventoryProduct(product: Product): boolean {
   let isArtzyMedia = false;
 
   try {
-    isArtzyMedia = ARTZY_MEDIA_HOSTS.has(new URL(primaryImage).hostname);
+    isArtzyMedia = new URL(primaryImage).hostname === new URL(ARTZY_MEDIA_ORIGIN).hostname;
   } catch {
     isArtzyMedia = false;
   }
