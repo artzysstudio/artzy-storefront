@@ -54,13 +54,24 @@ export default async function DynamicPage({ params }: { params: Promise<{ slug: 
     switch (section.type) {
       case 'standard_text':
       case 'hero':
+        const policyItems = Array.isArray(content.items)
+          ? content.items as Array<{ heading?: string; paragraphs?: string[]; bullets?: string[] }>
+          : [];
         return (
-          <section key={section.id} className={`section container ${bgClass}`} style={{ textAlign: 'center' }}>
-            <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-              <h1 style={{ marginBottom: 'var(--spacing-md)' }}>{content.title}</h1>
+          <section key={section.id} className={`section container policy-page ${bgClass}`}>
+            <header className="policy-page__header">
+              <span>Customer information · Artzy&apos;s Studio</span>
+              <h1>{content.title}</h1>
               {content.subtitle && <h4>{content.subtitle}</h4>}
-              {content.body && <p style={{ fontSize: '1.1rem', lineHeight: '1.8' }}>{content.body}</p>}
-            </div>
+              {content.body && <p>{content.body}</p>}
+            </header>
+            {policyItems.length > 0 && <div className="policy-page__content">
+              {policyItems.map((item, index) => <article key={`${item.heading}-${index}`}>
+                <h2>{item.heading}</h2>
+                {item.paragraphs?.map((paragraph, paragraphIndex) => <p key={paragraphIndex}>{paragraph}</p>)}
+                {item.bullets && <ul>{item.bullets.map((bullet, bulletIndex) => <li key={bulletIndex}>{bullet}</li>)}</ul>}
+              </article>)}
+            </div>}
           </section>
         );
       

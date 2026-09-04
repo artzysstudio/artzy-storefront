@@ -1,3 +1,5 @@
+import { legalPolicyPages } from '@/data/legalPolicies';
+
 const getEnv = (key: string) => {
   try { return typeof process !== 'undefined' && process.env ? process.env[key] : undefined; } catch (e) { return undefined; }
 };
@@ -428,7 +430,7 @@ const policyPage = (slug: string, title: string, body: string): PageDefinition =
   sections: [{ id: `${slug}-content`, type: 'standard_text', isEnabled: true, sortOrder: 1, themeVariant: 'light', backgroundStyle: 'none', content: { title, body } }],
 });
 
-const policyPages: Record<string, PageDefinition> = {
+const legacyPolicyPages: Record<string, PageDefinition> = {
   'shipping-policy': policyPage('shipping-policy', 'Shipping information', 'Shipping cost, serviceability and any delivery estimate are shown only when the studio and shipping service can confirm them. For help before ordering, contact the studio with the product and delivery PIN code.'),
   'returns-policy': policyPage('returns-policy', 'Returns and damage', 'Please inspect your order on arrival. If an item is damaged, keep the product and packaging and contact the studio promptly with clear photographs. Eligibility for a return or replacement depends on the item and the confirmed order details.'),
   'customised-product-policy': policyPage('customised-product-policy', 'Customised products', 'A customised product begins only after the studio confirms the brief, price and timeline. Custom work may not be returnable unless it arrives damaged or differs materially from the approved brief. Ask the studio before payment if anything is unclear.'),
@@ -437,6 +439,10 @@ const policyPages: Record<string, PageDefinition> = {
   'terms-and-conditions': policyPage('terms-and-conditions', 'Terms and conditions', 'Product availability, price, customisation and delivery are confirmed through the storefront and Artzy ERP. AI-generated previews are concepts only and are not stock, production proofs or confirmed orders.'),
   'ai-concept-disclosure': policyPage('ai-concept-disclosure', 'AI concept disclosure', 'Artzy Muse previews are imaginative concepts to help discuss a direction. They are clearly separate from ERP stock, Deepti’s original artworks and final production proofs. The studio confirms feasibility, materials, price and delivery before work begins.'),
 };
+
+// The full launch-ready policies are maintained separately from fallback page
+// copy so legal/customer information remains readable and auditable.
+const policyPages: Record<string, PageDefinition> = legalPolicyPages;
 
 // ------------------------------------------------------------------
 // EXPORTED API CLIENT
