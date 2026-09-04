@@ -394,6 +394,10 @@ export const api = {
     // Fail closed: only the current ERP published feed may supply products.
     // A bundled snapshot could expose an item after an administrator drafts it.
     list: async (): Promise<Product[]> => {
+      // This project is statically exported. Never bake a point-in-time ERP
+      // catalogue into HTML; the browser replaces it from the authenticated
+      // Pages proxy so an ERP Draft change takes effect without a redeploy.
+      if (typeof window === 'undefined') return [];
       const payload = await fetchFromERP<unknown>('/products/featured', []);
       const records = Array.isArray(payload)
         ? payload

@@ -28,7 +28,7 @@ export const onRequest = async (context: RouteContext) => {
 
   if (route === "products" && method === "GET") {
     const url = new URL(context.request.url);
-    const path = context.env.ERP_PRODUCTS_PATH ?? "/api/storefront/products";
+    const path = context.env.ERP_PRODUCTS_PATH ?? "/api/products/featured";
     return proxyErp(context, `${path}${url.search}`);
   }
 

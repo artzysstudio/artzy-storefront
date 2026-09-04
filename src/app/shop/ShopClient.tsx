@@ -60,8 +60,7 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
         const status = statusResponse.ok
           ? await statusResponse.json() as { configured?: boolean }
           : { configured: false };
-        // The committed ERP snapshot remains the authoritative continuity
-        // catalogue until a dedicated read-only ERP API token is configured.
+        // Without the authenticated ERP proxy, do not attempt a public fetch.
         if (!status.configured) return;
 
         const response = await fetch(`${ERP_PRODUCT_FEED}?ts=${Date.now()}`, {
@@ -73,10 +72,12 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
 
         const payload = await response.json();
         const records = Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : Array.isArray(payload?.products) ? payload.products : [];
-        if (isCurrent && records.length > 0) setProducts(records.filter(inScope));
+        // Replace the catalogue even when the live feed is empty. Retaining old
+        // products here could leave a newly drafted item visible indefinitely.
+        if (isCurrent) setProducts(records.filter(inScope));
       } catch (error) {
         if (isCurrent && !(error instanceof DOMException && error.name === 'AbortError')) {
-          console.warn('Live ERP refresh is unavailable; retaining the ERP catalogue snapshot.', error);
+          console.warn('Live ERP refresh is unavailable.', error);
         }
       }
     };
