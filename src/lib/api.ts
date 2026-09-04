@@ -120,6 +120,7 @@ export interface Product {
 }
 
 const ARTZY_MEDIA_ORIGIN = 'https://media.artzysstudio.in';
+const ARTZY_MEDIA_HOSTS = new Set(['media.artzysstudio.in', 'cdn.artzysstudio.in']);
 
 function storefrontMediaUrl(value: unknown): string | null {
   if (typeof value !== 'string' || !value.trim()) return null;
@@ -127,7 +128,7 @@ function storefrontMediaUrl(value: unknown): string | null {
 
   try {
     const absolute = new URL(candidate);
-    return absolute.protocol === 'https:' && absolute.hostname === 'media.artzysstudio.in'
+    return absolute.protocol === 'https:' && ARTZY_MEDIA_HOSTS.has(absolute.hostname)
       ? absolute.toString()
       : null;
   } catch {
@@ -168,7 +169,7 @@ export function isStorefrontInventoryProduct(product: Product): boolean {
   let isArtzyMedia = false;
 
   try {
-    isArtzyMedia = new URL(primaryImage).hostname === 'media.artzysstudio.in';
+    isArtzyMedia = ARTZY_MEDIA_HOSTS.has(new URL(primaryImage).hostname);
   } catch {
     isArtzyMedia = false;
   }
