@@ -78,6 +78,11 @@ export const onRequest = async (context: RouteContext) => {
           !category.image_url.startsWith("data:")
             ? category.image_url
             : null,
+        banner_url:
+          typeof category.banner_url === "string" &&
+          !category.banner_url.startsWith("data:")
+            ? category.banner_url
+            : null,
       })),
     });
   }

@@ -42,7 +42,7 @@ test('categories use the deployed ERP route and remove inline image blobs', { co
     return Response.json({
       success: true,
       data: [
-        { id: 'one', name: 'Wall Art', image_url: 'data:image/png;base64,large' },
+        { id: 'one', name: 'Wall Art', image_url: 'data:image/png;base64,large', banner_url: 'data:image/jpeg;base64,large' },
         { id: 'two', name: 'Gifts', image_url: 'https://media.artzysstudio.in/categories/gifts.webp' },
       ],
     });
@@ -50,9 +50,10 @@ test('categories use the deployed ERP route and remove inline image blobs', { co
 
   try {
     const response = await onRequest(context('categories'));
-    const payload = await response.json() as { data: Array<{ image_url: string | null }> };
+    const payload = await response.json() as { data: Array<{ image_url: string | null; banner_url?: string | null }> };
     assert.equal(response.status, 200);
     assert.equal(payload.data[0].image_url, null);
+    assert.equal(payload.data[0].banner_url, null);
     assert.equal(payload.data[1].image_url, 'https://media.artzysstudio.in/categories/gifts.webp');
   } finally {
     globalThis.fetch = originalFetch;
