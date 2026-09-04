@@ -4,6 +4,24 @@ import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
 type MuseMessage = { id: number; role: "assistant" | "customer"; text: string; action?: { href: string; label: string } };
+type MuseLanguage = "en" | "hi" | "mr";
+
+const greetings: Record<MuseLanguage, string> = {
+  en: "Namaste. I’m Artzy Muse, your senior studio guide. Tell me who or what you are choosing for, your budget, or the feeling you want to create. I’ll stay with you and suggest the clearest next step.",
+  hi: "नमस्ते। मैं Artzy Muse हूँ, आपकी स्टूडियो गाइड। बताइए आप किसके लिए चुन रहे हैं, आपका बजट क्या है और आप कैसा एहसास चाहते हैं। मैं हर कदम पर सरल मार्गदर्शन दूँगी।",
+  mr: "नमस्कार। मी Artzy Muse, तुमची स्टुडिओ गाइड आहे. तुम्ही कोणासाठी निवडत आहात, बजेट आणि अपेक्षित भावना सांगा. मी प्रत्येक टप्प्यावर सोपे मार्गदर्शन करेन.",
+};
+
+const pageContext = (pathname: string) => {
+  if (pathname.startsWith("/shop")) return "I can help you compare current ERP products, stock, variants and delivery questions.";
+  if (pathname.startsWith("/gifts")) return "Tell me the recipient, occasion, budget and required date, and I’ll help narrow the gift direction.";
+  if (pathname.startsWith("/name-plates")) return "I can help you choose wording, size, shape, lettering and an Indian art direction for the entrance.";
+  if (pathname.startsWith("/caricatures")) return "I can help turn a photo, personality and occasion into a clear caricature brief.";
+  if (pathname.startsWith("/digital-prints")) return "Tell me about the room, wall size, colours and mood, and I’ll help shape the art direction.";
+  if (pathname.startsWith("/for-business")) return "I can help organise your business purpose, audience, setting, quantity, budget and deadline into a useful brief.";
+  if (pathname.startsWith("/artzy-world")) return "I can help you preview art in a room and understand scale, placement and colour mood.";
+  return "I can help you discover handmade pieces, meaningful gifts, personalised art and studio services.";
+};
 
 const quickQuestions = [
   "Help me choose the right product",
@@ -89,12 +107,42 @@ function MuseMark() {
 
 export default function ArtzyMuseFloater() {
   const [isOpen, setIsOpen] = useState(false);
+  const [language, setLanguage] = useState<MuseLanguage>("en");
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<MuseMessage[]>([
-    { id: 1, role: "assistant", text: "Namaste. I’m Artzy Muse, your senior studio guide. Tell me what you are choosing, who it is for, your budget or where the artwork will live, and I’ll help you find the clearest next step." },
+    { id: 1, role: "assistant", text: greetings.en },
   ]);
   const nextId = useRef(2);
   const conversationEnd = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const savedLanguage = sessionStorage.getItem("artzy-muse-language") as MuseLanguage | null;
+    const selectedLanguage = savedLanguage && savedLanguage in greetings ? savedLanguage : "en";
+    setLanguage(selectedLanguage);
+    const savedConversation = sessionStorage.getItem("artzy-muse-conversation");
+    if (savedConversation) {
+      try {
+        const parsed = JSON.parse(savedConversation) as MuseMessage[];
+        if (Array.isArray(parsed) && parsed.length) {
+          setMessages(parsed.slice(-12));
+          nextId.current = Math.max(...parsed.map((item) => item.id), 1) + 1;
+        }
+      } catch { /* Start a fresh, safe conversation. */ }
+    } else {
+      setMessages([{ id: 1, role: "assistant", text: `${greetings[selectedLanguage]} ${pageContext(window.location.pathname)}` }]);
+    }
+    if (!sessionStorage.getItem("artzy-muse-welcomed")) {
+      const welcomeTimer = window.setTimeout(() => {
+        setIsOpen(true);
+        sessionStorage.setItem("artzy-muse-welcomed", "yes");
+      }, 2800);
+      return () => window.clearTimeout(welcomeTimer);
+    }
+  }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem("artzy-muse-conversation", JSON.stringify(messages.slice(-12)));
+  }, [messages]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -107,6 +155,21 @@ export default function ArtzyMuseFloater() {
   useEffect(() => {
     if (isOpen) conversationEnd.current?.scrollIntoView({ behavior: "smooth" });
   }, [isOpen, messages]);
+
+  const changeLanguage = (nextLanguage: MuseLanguage) => {
+    setLanguage(nextLanguage);
+    sessionStorage.setItem("artzy-muse-language", nextLanguage);
+    setMessages((current) => [...current, { id: nextId.current++, role: "assistant", text: greetings[nextLanguage] }]);
+  };
+
+  const speakGreeting = () => {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(greetings[language]);
+    utterance.lang = language === "hi" ? "hi-IN" : language === "mr" ? "mr-IN" : "en-IN";
+    utterance.rate = 0.92;
+    window.speechSynthesis.speak(utterance);
+  };
 
   const ask = (text: string) => {
     const clean = text.trim();
@@ -154,6 +217,7 @@ export default function ArtzyMuseFloater() {
             <span>ASK • DISCOVER • CREATE</span>
             <h2 id="muse-guide-title">How may I help?</h2>
             <p>Get relevant guidance about the collection, customisation, gifting, delivery and the studio.</p>
+            <div className="muse-language-row"><label htmlFor="muse-language">Captions</label><select id="muse-language" value={language} onChange={(event) => changeLanguage(event.target.value as MuseLanguage)}><option value="en">English</option><option value="hi">हिन्दी</option><option value="mr">मराठी</option></select><button type="button" onClick={speakGreeting} aria-label="Listen to Artzy Muse greeting">Listen <span aria-hidden="true">♪</span></button></div>
           </div>
 
           <div className="muse-conversation" aria-live="polite">

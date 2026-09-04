@@ -643,6 +643,12 @@ em, i { font-style: italic; color: var(--accent-terracotta); }
 .muse-chat-intro > span { color: #a64e52; font-size: .62rem; font-weight: 800; letter-spacing: .14em; }
 .muse-chat-intro h2 { margin: 7px 0 6px; font: 500 2rem/1.05 var(--font-serif), serif; }
 .muse-chat-intro p { color: #68564c; font-size: .82rem; line-height: 1.5; }
+.muse-language-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.muse-language-row label { color: #765f54; font-size: .66rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; }
+.muse-language-row select, .muse-language-row button { min-height: 40px; border: 1px solid #cfbbb0; border-radius: 999px; background: #fffaf5; color: #4b3931; font: 700 .7rem var(--font-sans), sans-serif; }
+.muse-language-row select { min-width: 100px; padding: 7px 28px 7px 11px; }
+.muse-language-row button { margin-left: auto; padding: 7px 13px; cursor: pointer; }
+.muse-language-row button:focus-visible, .muse-language-row select:focus-visible { outline: 3px solid rgba(166,78,82,.3); outline-offset: 2px; }
 .muse-conversation {
   flex: 1 1 auto;
   min-height: 190px;
