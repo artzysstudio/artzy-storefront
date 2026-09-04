@@ -312,7 +312,7 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
         </div>}
 
         <div className="shop-toolbar">
-          <div className="results-count"><strong>{filteredProducts.length}</strong> pieces</div>
+          <div className="results-count">Explore the studio collection</div>
           <div className="shop-toolbar-actions">
             <button
               className="mobile-filter-button"
@@ -350,9 +350,9 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
               </div>
               {remainingProducts > 0 && (
                 <div className="shop-load-more">
-                  <p>Showing {visibleProducts.length} of {filteredProducts.length} pieces</p>
+                  <p>More studio pieces are ready to explore</p>
                   <button type="button" onClick={() => setVisibleCount((count) => count + PRODUCT_BATCH_SIZE)}>
-                    View {PRODUCT_BATCH_SIZE} more <span>{remainingProducts} remaining</span>
+                    View more pieces
                   </button>
                 </div>
               )}
@@ -388,7 +388,7 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
             <div className="filter-drawer-actions">
               <button className="btn" onClick={clearFilters}>Clear</button>
               <button className="btn btn-solid" onClick={() => setMobileFiltersOpen(false)}>
-                View {filteredProducts.length} pieces
+                View products
               </button>
             </div>
           </aside>
