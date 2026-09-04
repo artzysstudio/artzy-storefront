@@ -5,8 +5,41 @@ import { useCart } from '@/context/CartContext';
 import { api, Product, ShippingOption } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { useCustomer } from '@/context/CustomerContext';
+import Image from 'next/image';
+import Link from 'next/link';
+import { RichProductName } from '@/components/RichProductText';
 
 type CheckoutStep = 'address' | 'gifting' | 'shipping' | 'payment';
+
+function CartThumbnail({ product }: { product: Product }) {
+  const [failed, setFailed] = useState(false);
+  const image = product.images?.[0];
+
+  return (
+    <span className="checkout-item__image" aria-hidden="true">
+      {!failed && image ? (
+        <Image
+          src={image}
+          alt=""
+          fill
+          sizes="(max-width: 640px) 72px, 88px"
+          style={{ objectFit: 'cover' }}
+          unoptimized
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <Image
+          src="/images/artzy-studio-logo.png"
+          alt=""
+          width={54}
+          height={54}
+          className="checkout-item__fallback"
+          unoptimized
+        />
+      )}
+    </span>
+  );
+}
 
 export default function CheckoutClient({ initialProducts }: { initialProducts: Product[] }) {
   const { items, giftBundles, clearCart } = useCart();
@@ -37,28 +70,41 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadCartDetails = () => {
+    let cancelled = false;
+
+    const loadCartDetails = async () => {
       if (items.length === 0) {
         setIsLoading(false);
         return;
       }
-      
+
+      setIsLoading(true);
+      let availableProducts = initialProducts;
+      try {
+        availableProducts = await api.products.listLive();
+      } catch {
+        // A bundled list is only a resilience fallback; ERP validates the
+        // current price and stock again before payment.
+      }
+
       const loadedProducts = [];
       let total = 0;
       for (const item of items) {
-        const product = initialProducts.find((candidate) => candidate.id === item.productId);
+        const product = availableProducts.find((candidate) => candidate.id === item.productId);
         if (product) {
           const effectivePrice = product.salePrice && product.salePrice > 0 ? product.salePrice : product.price;
           loadedProducts.push({ ...product, price: effectivePrice, quantity: item.quantity });
           total += effectivePrice * item.quantity;
         }
       }
+      if (cancelled) return;
       setCartProducts(loadedProducts);
       setSubtotal(total);
       setIsLoading(false);
     };
-    
-    loadCartDetails();
+
+    void loadCartDetails();
+    return () => { cancelled = true; };
   }, [initialProducts, items]);
 
   useEffect(() => {
@@ -387,22 +433,32 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
       </div>
 
       {/* Right Column: Order Summary */}
-      <div className="checkout-summary" style={{ flex: '1 1 350px', background: 'var(--bg-secondary)', padding: '2rem', borderRadius: '4px', height: 'fit-content' }}>
-        <h3 style={{ marginTop: 0, marginBottom: '2rem' }}>Order Summary</h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
+      <aside className="checkout-summary" aria-labelledby="order-summary-title">
+        <div className="checkout-summary__head">
+          <div>
+            <span>Review before ordering</span>
+            <h3 id="order-summary-title">Your bag</h3>
+          </div>
+          <Link href="/shop/">Continue shopping</Link>
+        </div>
+        <div className="checkout-items">
           {cartProducts.map(p => (
-            <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ width: '50px', height: '50px', background: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem' }}>
-                  Img
-                </div>
-                <div>
-                  <div style={{ fontWeight: '500' }}>{p.name}</div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Qty: {p.quantity}</div>
+            <article key={p.id} className="checkout-item">
+              <Link href={`/shop/?product=${encodeURIComponent(String(p.id))}`} className="checkout-item__preview" aria-label={`View ${p.name}`}>
+                <CartThumbnail product={p} />
+                <span className="checkout-item__quantity" aria-label={`Quantity ${p.quantity}`}>{p.quantity}</span>
+              </Link>
+              <div className="checkout-item__details">
+                <Link href={`/shop/?product=${encodeURIComponent(String(p.id))}`} className="checkout-item__name">
+                  <RichProductName name={p.name} />
+                </Link>
+                <div className="checkout-item__meta">
+                  <span>{p.category}</span>
+                  <span>Quantity: {p.quantity}</span>
                 </div>
               </div>
-              <div>₹{(p.price * p.quantity).toLocaleString('en-IN')}</div>
-            </div>
+              <strong className="checkout-item__price">₹{(p.price * p.quantity).toLocaleString('en-IN')}</strong>
+            </article>
           ))}
         </div>
         {giftBundles.map((bundle) => <div key={bundle.id} style={{ border: '1px solid rgba(181,79,85,.35)', background: '#fff8f5', padding: '1rem', borderRadius: '8px', marginBottom: '1rem' }}><strong>Artzy Gift Plan · {bundle.occasion}</strong><div style={{ fontSize: '.85rem', marginTop: '.35rem' }}>{bundle.quantity} gift{bundle.quantity === 1 ? '' : 's'} · {bundle.packaging.name}</div><div style={{ fontSize: '.8rem', color: 'var(--text-muted)', marginTop: '.35rem' }}>{bundle.museReason}</div></div>)}
@@ -432,7 +488,7 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
             <span>₹{finalTotal.toLocaleString('en-IN')}</span>
           </div>
         </div>
-      </div>
+      </aside>
 
     </div>
   );

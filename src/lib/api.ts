@@ -144,6 +144,18 @@ export function isStorefrontInventoryProduct(product: Product): boolean {
   );
 }
 
+function normalizeProductList(payload: unknown): Product[] {
+  const records = Array.isArray(payload)
+    ? payload
+    : payload && typeof payload === 'object' && Array.isArray((payload as { data?: unknown }).data)
+      ? (payload as { data: Product[] }).data
+      : payload && typeof payload === 'object' && Array.isArray((payload as { products?: unknown }).products)
+        ? (payload as { products: Product[] }).products
+        : [];
+
+  return records.filter(isStorefrontInventoryProduct);
+}
+
 export interface CollectionSEO {
   title: string;
   description: string;
@@ -399,15 +411,13 @@ export const api = {
       // Pages proxy so an ERP Draft change takes effect without a redeploy.
       if (typeof window === 'undefined') return [];
       const payload = await fetchFromERP<unknown>('/products/featured', []);
-      const records = Array.isArray(payload)
-        ? payload
-        : payload && typeof payload === 'object' && Array.isArray((payload as { data?: unknown }).data)
-          ? (payload as { data: Product[] }).data
-          : payload && typeof payload === 'object' && Array.isArray((payload as { products?: unknown }).products)
-            ? (payload as { products: Product[] }).products
-            : [];
-      return records.filter(isStorefrontInventoryProduct);
+      return normalizeProductList(payload);
     },
+    // Checkout is statically exported, so it refreshes product names, images,
+    // prices and availability through the same-origin Pages proxy at runtime.
+    listLive: async (): Promise<Product[]> => normalizeProductList(
+      await requestStorefront<unknown>('/products')
+    ),
     get: async (id: string): Promise<Product | undefined> => fetchFromERP(`/products/${id}`, undefined)
   },
   pages: {
