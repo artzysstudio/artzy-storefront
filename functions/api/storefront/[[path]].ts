@@ -116,7 +116,8 @@ export const onRequest = async (context: RouteContext) => {
         "/api/storefront/auth/google",
       context.env.ERP_API_BASE_URL,
     );
-    target.searchParams.set("return_to", `${new URL(context.request.url).origin}/account/`);
+    const storefrontOrigin = context.env.STOREFRONT_PUBLIC_ORIGIN ?? new URL(context.request.url).origin;
+    target.searchParams.set("return_to", `${storefrontOrigin.replace(/\/$/, "")}/account/`);
     return Response.redirect(target, 302);
   }
 

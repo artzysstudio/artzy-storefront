@@ -9,6 +9,7 @@ ERP_API_BASE_URL = "https://erp.artzysstudio.in"
 ERP_HEALTH_PATH = "/api/health"
 ERP_CATEGORIES_PATH = "/api/categories"
 ERP_SHIPPING_PATH = "/api/shipping/quote"
+STOREFRONT_PUBLIC_ORIGIN = "https://www.artzysstudio.in"
 
 [[services]]
 binding = "ARTZYAI_BACKEND"

@@ -11,6 +11,7 @@ export interface StorefrontEnv {
   ERP_CUSTOMER_MAGIC_LINK_PATH?: string;
   ERP_CUSTOMER_GOOGLE_AUTH_URL?: string;
   ERP_CUSTOM_ORDER_PATH?: string;
+  STOREFRONT_PUBLIC_ORIGIN?: string;
 }
 
 export interface PagesContext {
