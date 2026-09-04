@@ -4,8 +4,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/ProductCard';
 import ArtzyMuse from '@/components/muse/ArtzyMuse';
-import { isStorefrontInventoryProduct, type Product } from '@/lib/api';
-import erpProductSnapshot from '@/data/erp-products.json';
+import { api, isStorefrontInventoryProduct, type Product } from '@/lib/api';
 import Link from 'next/link';
 import HomeDiscovery from '@/components/HomeDiscovery';
 import HomeGiftHamper from '@/components/HomeGiftHamper';
@@ -24,8 +23,8 @@ const freshStudioPriorities = [
   'Wooden Hand-painted Warli design Round wall hager',
 ];
 
-function getFreshERPProducts(): Product[] {
-  const available = (erpProductSnapshot as Product[]).filter(isStorefrontInventoryProduct);
+function getFreshERPProducts(products: Product[]): Product[] {
+  const available = products.filter(isStorefrontInventoryProduct);
   const chosen: Product[] = [];
   for (const name of freshStudioPriorities) {
     const match = available.find((product) => product.name === name && !chosen.some((item) => item.id === product.id));
@@ -39,7 +38,7 @@ function getFreshERPProducts(): Product[] {
 }
 
 export default async function Home() {
-  const products = getFreshERPProducts();
+  const products = getFreshERPProducts(await api.products.list());
 
   return (
     <>

@@ -2,10 +2,13 @@ const getEnv = (key: string) => {
   try { return typeof process !== 'undefined' && process.env ? process.env[key] : undefined; } catch (e) { return undefined; }
 };
 const ERP_BASE_URL = getEnv('NEXT_PUBLIC_ERP_API_URL') || 'https://erp.artzysstudio.in/api';
-import erpProductSnapshot from '@/data/erp-products.json';
 
 // Fallback helper with Exponential Backoff Retry Logic
 async function fetchFromERP<T>(endpoint: string, fallback: T, retries = 0, delay = 500): Promise<T> {
+  // Static exports must not bake a point-in-time inventory copy into public
+  // HTML. Runtime requests obtain the current publication state from ERP.
+  if (getEnv('ARTZY_STATIC_BUILD') === '1') return fallback;
+
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // Keep the storefront responsive if ERP is unavailable
@@ -388,19 +391,18 @@ const policyPages: Record<string, PageDefinition> = {
 
 export const api = {
   products: {
-    // The committed ERP snapshot keeps the static storefront complete. A live
-    // feed replaces it automatically whenever the dedicated proxy is enabled.
+    // Fail closed: only the current ERP published feed may supply products.
+    // A bundled snapshot could expose an item after an administrator drafts it.
     list: async (): Promise<Product[]> => {
-      const payload = await fetchFromERP<unknown>('/products/featured', erpProductSnapshot as Product[]);
+      const payload = await fetchFromERP<unknown>('/products/featured', []);
       const records = Array.isArray(payload)
         ? payload
         : payload && typeof payload === 'object' && Array.isArray((payload as { data?: unknown }).data)
           ? (payload as { data: Product[] }).data
           : payload && typeof payload === 'object' && Array.isArray((payload as { products?: unknown }).products)
             ? (payload as { products: Product[] }).products
-            : erpProductSnapshot as Product[];
-      const continuityRecords = records.length > 0 ? records : erpProductSnapshot as Product[];
-      return continuityRecords.filter(isStorefrontInventoryProduct);
+            : [];
+      return records.filter(isStorefrontInventoryProduct);
     },
     get: async (id: string): Promise<Product | undefined> => fetchFromERP(`/products/${id}`, undefined)
   },
