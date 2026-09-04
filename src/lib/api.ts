@@ -571,8 +571,8 @@ export const api = {
       });
     },
     me: async (accessToken: string): Promise<any> => {
-      return requestERP('/storefront/auth/me', {
-        headers: { Authorization: `Bearer ${accessToken}` }
+      return requestStorefront('/auth/me', {
+        headers: { 'X-Customer-Token': accessToken }
       });
     }
   }

@@ -39,7 +39,8 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<{ id?: string; name: string; email: string } | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
-  // Load from LocalStorage on mount (Fallback until ERP auth is live)
+  // Accept the one-time Supabase Auth callback, then validate the session
+  // through the ERP before treating the visitor as signed in.
   useEffect(() => {
     try {
       const storedWishlist = localStorage.getItem('artzy_wishlist');
@@ -49,7 +50,15 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
       if (storedWishlist) setWishlist(JSON.parse(storedWishlist));
       if (storedRecent) setRecentlyViewed(JSON.parse(storedRecent));
       if (storedCollections) setSavedCollections(JSON.parse(storedCollections));
-      const accessToken = localStorage.getItem('artzy_customer_access_token');
+      const callback = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+      const callbackToken = callback.get('access_token');
+      const callbackRefresh = callback.get('refresh_token');
+      if (callbackToken) {
+        localStorage.setItem('artzy_customer_access_token', callbackToken);
+        if (callbackRefresh) localStorage.setItem('artzy_customer_refresh_token', callbackRefresh);
+        window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+      }
+      const accessToken = callbackToken || localStorage.getItem('artzy_customer_access_token');
       if (accessToken) {
         api.customerAuth.me(accessToken)
           .then((result) => {

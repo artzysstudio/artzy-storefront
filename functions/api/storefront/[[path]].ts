@@ -40,9 +40,9 @@ export const onRequest = async (context: RouteContext) => {
         categories: true,
         shipping: true,
         payments: true,
-        customOrders: Boolean(context.env.ERP_CUSTOM_ORDER_PATH),
-        customerMagicLink: Boolean(context.env.ERP_CUSTOMER_MAGIC_LINK_PATH),
-        customerGoogleSignIn: Boolean(context.env.ERP_CUSTOMER_GOOGLE_AUTH_URL),
+        customOrders: true,
+        customerMagicLink: true,
+        customerGoogleSignIn: true,
       },
     });
   }
@@ -110,12 +110,18 @@ export const onRequest = async (context: RouteContext) => {
   }
 
   if (route === "auth/google" && method === "GET") {
-    if (!context.env.ERP_CUSTOMER_GOOGLE_AUTH_URL) {
-      return json({ success: false, code: "GOOGLE_AUTH_NOT_CONFIGURED", error: "Google sign-in is not configured yet. Continue as a guest or use email." }, 503);
-    }
-    const target = new URL(context.env.ERP_CUSTOMER_GOOGLE_AUTH_URL);
+    if (!context.env.ERP_API_BASE_URL) return json({ success: false, error: "The ERP connection is not configured yet." }, 503);
+    const target = new URL(
+      context.env.ERP_CUSTOMER_GOOGLE_AUTH_URL ??
+        "/api/storefront/auth/google",
+      context.env.ERP_API_BASE_URL,
+    );
     target.searchParams.set("return_to", `${new URL(context.request.url).origin}/account/`);
     return Response.redirect(target, 302);
+  }
+
+  if (route === "auth/me" && method === "GET") {
+    return proxyErp(context, "/api/storefront/auth/me");
   }
 
   if (route === "shipping/quote" && method === "POST") {
