@@ -188,7 +188,7 @@ export default function NamePlateBuilder() {
     setPhotoPosition({ x: Math.max(8, Math.min(92, ((event.clientX - rect.left) / rect.width) * 100)), y: Math.max(8, Math.min(86, ((event.clientY - rect.top) / rect.height) * 100)) });
   }
   async function submitDraft() {
-    if (!canSubmit) { setSubmitStatus('error'); setSubmitMessage('Confirm the exact spelling and enter a valid 6-digit delivery PIN code.'); return; }
+    if (!canSubmit) { setSubmitStatus('error'); setSubmitMessage('Almost ready: please tick the spelling confirmation and enter your 6-digit delivery PIN code. Your design choices are safe.'); return; }
     setSubmitStatus('submitting'); setSubmitMessage('Creating your studio-review request…');
     try {
       const token = localStorage.getItem('artzy_customer_access_token');
@@ -211,8 +211,8 @@ export default function NamePlateBuilder() {
   </>;
 
   return <section className="plate-builder" id="name-plate-builder" aria-labelledby="plate-builder-title">
-    <header className="plate-builder__heading"><span>Guided name-plate configurator</span><h2 id="plate-builder-title">Five clear decisions.<br/><em>One confident studio brief.</em></h2><p>Your estimate and visual direction update immediately. The studio still confirms spelling, feasibility, material, final price and production time.</p></header>
-    <ol className="plate-builder__steps" aria-label="Name-plate configuration progress">{stepNames.map((name, index) => <li className={step === index ? 'is-current' : index < step ? 'is-complete' : ''} aria-current={step === index ? 'step' : undefined} key={name}><button type="button" onClick={() => setStep(index)}><b>{index + 1}</b><span>{name}</span></button></li>)}</ol>
+    <header className="plate-builder__heading"><span>Guided name-plate configurator</span><h2 id="plate-builder-title">Five clear decisions.<br/><em>One confident studio brief.</em></h2><p>Choose one step at a time. Your estimate and preview update immediately, every answer can be changed, and nothing is ordered or charged until the studio confirms it with you.</p></header>
+    <ol className="plate-builder__steps" aria-label={`Name-plate configuration: step ${step + 1} of ${stepNames.length}`}>{stepNames.map((name, index) => <li className={step === index ? 'is-current' : index < step ? 'is-complete' : ''} aria-current={step === index ? 'step' : undefined} key={name}><button type="button" disabled={index > step} onClick={() => setStep(index)} aria-label={`${name}${index > step ? '—complete the current step first' : ''}`}><b>{index + 1}</b><span>{name}</span></button></li>)}</ol>
     <div className="plate-builder__workspace">
       <aside className={`plate-builder__preview-panel ${previewExpanded ? 'is-expanded' : ''}`} aria-label="Live name-plate preview">{preview}</aside>
       <form className="plate-builder__controls" onSubmit={(event) => event.preventDefault()}>

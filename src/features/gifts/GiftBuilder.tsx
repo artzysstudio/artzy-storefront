@@ -9,15 +9,12 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 import { defaultGiftIntent, type GiftCartBundle, type GiftIntent, type GiftRecommendation } from './types';
 import { GIFT_PACKAGING, parseGiftIntent, recommendGifts } from './giftEngine';
 
-const steps = ['Occasion', 'Recipient', 'Budget', 'Style', 'Personalise', 'Packaging', 'Delivery'];
+const steps = ['Who & occasion', 'Budget', 'Look & wrapping', 'Delivery'];
 const stepHelp = [
-  'What are you celebrating? Pick the closest answer.',
-  'Who should feel special? Choose one person or group.',
-  'Set a comfortable amount. We will never recommend above it.',
-  'Optional: choose any moods that feel like them.',
-  'Optional: current personalisation support is shown honestly.',
-  'Optional: select how the gift should arrive.',
-  'When do you need it? We only show safely eligible pieces.',
+  'Choose the person and the moment. Pick the closest answers—there is no wrong choice.',
+  'Tell us the quantity and a comfortable limit. Recommendations stay within it.',
+  'Style is optional. Choose any moods you like and one available wrapping finish.',
+  'Choose a comfortable delivery window. The studio confirms the final date before payment.',
 ];
 const quickStarts: Array<{ label: string; note: string; intent: Partial<GiftIntent> }> = [
   { label: 'Birthday delight', note: 'Colourful · under ₹1,500', intent: { occasion: 'birthday', recipient: 'friend', budget: 1500, styles: ['colourful', 'artistic'] } },
@@ -55,12 +52,23 @@ export default function GiftBuilder({ products }: { products: Product[] }) {
     const requestedMode = params.get('mode');
     if (requestedOccasion) {
       setIntent((current) => ({ ...current, occasion: requestedOccasion }));
-      setStep(1);
+      setStep(0);
     } else if (requestedMode === 'personalised') {
-      setStep(4);
+      setStep(2);
     } else if (requestedMode === 'hampers') {
-      setStep(5);
+      setStep(2);
     }
+  }, []);
+
+  useEffect(() => {
+    if (window.location.hash !== '#gift-finder') return;
+    const align = () => document.getElementById('gift-finder')?.scrollIntoView({ block: 'start' });
+    const initialAlignment = window.setTimeout(align, 120);
+    const settledAlignment = window.setTimeout(align, 900);
+    return () => {
+      window.clearTimeout(initialAlignment);
+      window.clearTimeout(settledAlignment);
+    };
   }, []);
 
   const showRecommendations = () => {
@@ -74,7 +82,11 @@ export default function GiftBuilder({ products }: { products: Product[] }) {
     if (step === steps.length - 1) showRecommendations();
     else setStep((value) => value + 1);
   };
-  const canContinue = step === 0 ? Boolean(intent.occasion) : step === 1 ? Boolean(intent.recipient) : step === 2 ? intent.budget > 0 && intent.quantity > 0 : true;
+  const canContinue = step === 0
+    ? Boolean(intent.occasion && intent.recipient)
+    : step === 1
+      ? intent.budget > 0 && intent.quantity > 0
+      : true;
 
   const addPlan = (recommendation: GiftRecommendation, withAddition = false) => {
     const addition = withAddition ? recommendation.additions[0] : undefined;
@@ -105,13 +117,13 @@ export default function GiftBuilder({ products }: { products: Product[] }) {
   const useMuse = () => {
     const parsed = parseGiftIntent(intent.naturalLanguage, intent);
     setIntent(parsed);
-    setStep(parsed.occasion ? (parsed.recipient ? 2 : 1) : 0);
+    setStep(parsed.occasion && parsed.recipient ? 1 : 0);
     trackEvent({ eventName: 'gift_muse_prompt_submitted', properties: { promptLength: intent.naturalLanguage.length } });
   };
 
   const applyQuickStart = (preset: (typeof quickStarts)[number]) => {
     setIntent((current) => ({ ...current, ...preset.intent }));
-    setStep(2);
+    setStep(1);
     setShowResults(false);
     trackEvent({ eventName: 'gift_quick_start_selected', properties: { preset: preset.label } });
     requestAnimationFrame(() => document.querySelector('.gift-builder__shell')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
@@ -121,7 +133,7 @@ export default function GiftBuilder({ products }: { products: Product[] }) {
     <div className="gift-quick-start" id="gift-quick-start">
       <div className="gift-quick-start__heading"><span className="gift-kicker">A simple place to begin</span><h2>What kind of help do you need?</h2><p>Choose a popular path and we&apos;ll prepare the details for you. You can change every answer before adding anything to your bag.</p></div>
       <div className="gift-quick-start__options">{quickStarts.map((preset, index) => <button type="button" key={preset.label} onClick={() => applyQuickStart(preset)}><span>{String(index + 1).padStart(2, '0')}</span><b>{preset.label}</b><small>{preset.note}</small><i>Start here →</i></button>)}</div>
-      <div className="gift-how-it-works"><span><b>1</b> Choose a starting point</span><span><b>2</b> Confirm budget and quantity</span><span><b>3</b> See real in-stock gift plans</span></div>
+      <div className="gift-how-it-works"><span><b>1</b> Choose who and why</span><span><b>2</b> Set a comfortable budget</span><span><b>3</b> See real in-stock gift plans</span></div>
     </div>
     <div className="gift-builder__intro">
       <div><span className="gift-kicker">Artzy Gift Concierge</span><h2 id="gift-builder-title">A thoughtful gift plan,<br/><em>built around your person.</em></h2><p>Tell us the moment, budget and mood. We check real ERP stock first, then rank practical ideas from Deepti&apos;s studio.</p></div>
@@ -135,22 +147,14 @@ export default function GiftBuilder({ products }: { products: Product[] }) {
 
     <div className="gift-progress" aria-label={`Step ${step + 1} of ${steps.length}`}><span style={{ width: `${((step + 1) / steps.length) * 100}%` }}/></div>
     <div className="gift-builder__shell">
-      <nav className="gift-steps" aria-label="Gift builder steps">{steps.map((label, index) => <button key={label} type="button" className={index === step ? 'active' : index < step ? 'complete' : ''} onClick={() => setStep(index)}><b>{String(index + 1).padStart(2, '0')}</b>{label}</button>)}</nav>
+      <nav className="gift-steps" aria-label="Gift builder steps">{steps.map((label, index) => <button key={label} type="button" disabled={index > step} aria-current={index === step ? 'step' : undefined} className={index === step ? 'active' : index < step ? 'complete' : ''} onClick={() => setStep(index)}><b>{String(index + 1).padStart(2, '0')}</b>{label}</button>)}</nav>
       <div className="gift-step-panel">
         <div className="gift-step-heading"><span>Step {step + 1} of {steps.length}</span><h3>{steps[step]}</h3><p>{stepHelp[step]}</p></div>
-        {step === 0 && <ChoiceGrid values={occasions} selected={[intent.occasion]} onSelect={(value) => set('occasion', slug(value))}/>}
-        {step === 1 && <ChoiceGrid values={recipients} selected={[intent.recipient]} onSelect={(value) => set('recipient', slug(value))}/>}
-        {step === 2 && <div className="gift-form-grid"><label>How many gifts?<input type="number" min="1" max="500" value={intent.quantity} onChange={(e) => set('quantity', Math.max(1, Number(e.target.value)))}/></label><label>Budget<input type="number" min="100" step="100" value={intent.budget} onChange={(e) => set('budget', Math.max(0, Number(e.target.value)))}/></label><fieldset><legend>Budget means</legend><label><input type="radio" checked={intent.budgetMode === 'total'} onChange={() => set('budgetMode', 'total')}/> Total budget</label><label><input type="radio" checked={intent.budgetMode === 'per-gift'} onChange={() => set('budgetMode', 'per-gift')}/> Per gift</label></fieldset></div>}
-        {step === 3 && (
-          <ChoiceGrid values={styles} selected={intent.styles} multiple onSelect={(value) => {
-            const id = slug(value);
-            set('styles', intent.styles.includes(id) ? intent.styles.filter((item) => item !== id) : [...intent.styles, id]);
-          }}/>
-        )}
-        {step === 4 && <div className="gift-capability-note"><b>Ready-stock catalogue</b><p>No product in the current ERP feed confirms personalisation yet, so the builder will not promise it. Choose the ready piece now, or send Deepti&apos;s studio a custom brief.</p><label className="gift-radio-card"><input type="radio" checked={intent.personalisation === 'none'} onChange={() => set('personalisation', 'none')}/><span><b>No personalisation</b><small>Proceed with verified product stock.</small></span></label><Link href="/personalised">Explore personalised services →</Link></div>}
-        {step === 5 && <div className="gift-packaging-grid">{GIFT_PACKAGING.map((pack) => <label className={pack.availability !== 'available' ? 'unavailable' : ''} key={pack.id}><input type="radio" name="packaging" disabled={pack.availability !== 'available'} checked={intent.packagingId === pack.id} onChange={() => set('packagingId', pack.id)}/><span className={`gift-wrap-swatch ${pack.imageStyle}`}>✿</span><b>{pack.name}</b><small>{pack.description}</small><em>{pack.availability === 'available' ? pack.unitPrice ? `${money(pack.unitPrice)} per gift` : 'Included' : 'Studio confirmation required'}</em></label>)}</div>}
-        {step === 6 && <div className="gift-delivery-grid">{deliveryOptions.map(([id, title, copy]) => <label key={id}><input type="radio" checked={intent.deliveryWindow === id} onChange={() => set('deliveryWindow', id)}/><span><b>{title}</b><small>{copy}</small></span></label>)}{intent.deliveryWindow === 'date' && <label className="gift-date">Required date<input type="date" value={intent.requiredDate} min={new Date().toISOString().slice(0, 10)} onChange={(event) => set('requiredDate', event.target.value)}/></label>}</div>}
-        <div className="gift-step-actions">{step > 0 && <button type="button" className="secondary" onClick={() => setStep((value) => value - 1)}>Back</button>}{step >= 2 && step < steps.length - 1 && <button type="button" className="quick-result" onClick={showRecommendations}>Show suitable gifts now</button>}<button type="button" className="primary" disabled={!canContinue} onClick={next}>{step === steps.length - 1 ? 'Find my gifts' : 'Continue'}</button></div>
+        {step === 0 && <div className="gift-who-fields"><label>What is the occasion?<select value={intent.occasion} onChange={(event) => set('occasion', event.target.value)}><option value="">Choose the closest occasion</option>{occasions.map((value) => <option value={slug(value)} key={value}>{value}</option>)}</select></label><label>Who is it for?<select value={intent.recipient} onChange={(event) => set('recipient', event.target.value)}><option value="">Choose a person or group</option>{recipients.map((value) => <option value={slug(value)} key={value}>{value}</option>)}</select></label><p>You can change both answers later. If nothing fits exactly, choose the closest option and the studio can refine it with you.</p></div>}
+        {step === 1 && <div className="gift-form-grid"><label>How many gifts?<input type="number" min="1" max="500" value={intent.quantity} onChange={(e) => set('quantity', Math.max(1, Number(e.target.value)))}/></label><label>Comfortable budget<input type="number" min="100" step="100" value={intent.budget} onChange={(e) => set('budget', Math.max(0, Number(e.target.value)))}/></label><fieldset><legend>This budget is</legend><label><input type="radio" checked={intent.budgetMode === 'total'} onChange={() => set('budgetMode', 'total')}/> Total for all gifts</label><label><input type="radio" checked={intent.budgetMode === 'per-gift'} onChange={() => set('budgetMode', 'per-gift')}/> For each gift</label></fieldset></div>}
+        {step === 2 && <div className="gift-combined-step"><section><h4>Choose a look <small>Optional—skip if unsure</small></h4><ChoiceGrid values={styles} selected={intent.styles} multiple onSelect={(value) => { const id = slug(value); set('styles', intent.styles.includes(id) ? intent.styles.filter((item) => item !== id) : [...intent.styles, id]); }}/></section><section><h4>How should it arrive?</h4><div className="gift-packaging-grid">{GIFT_PACKAGING.map((pack) => <label className={pack.availability !== 'available' ? 'unavailable' : ''} key={pack.id}><input type="radio" name="packaging" disabled={pack.availability !== 'available'} checked={intent.packagingId === pack.id} onChange={() => set('packagingId', pack.id)}/><span className={`gift-wrap-swatch ${pack.imageStyle}`}>✿</span><b>{pack.name}</b><small>{pack.description}</small><em>{pack.availability === 'available' ? pack.unitPrice ? `${money(pack.unitPrice)} per gift` : 'Included' : 'Ask the studio after choosing a gift'}</em></label>)}</div></section><p className="gift-capability-note"><b>Want a name, message or custom artwork?</b> First choose a suitable real product. The studio will confirm what can be personalised before you pay. <Link href="/personalised">See personalised options →</Link></p></div>}
+        {step === 3 && <div className="gift-delivery-grid">{deliveryOptions.map(([id, title, copy]) => <label key={id}><input type="radio" checked={intent.deliveryWindow === id} onChange={() => set('deliveryWindow', id)}/><span><b>{title}</b><small>{copy}</small></span></label>)}{intent.deliveryWindow === 'date' && <label className="gift-date">Preferred date<input type="date" value={intent.requiredDate} min={new Date().toISOString().slice(0, 10)} onChange={(event) => set('requiredDate', event.target.value)}/><small>The studio confirms feasibility before payment.</small></label>}</div>}
+        <div className="gift-step-actions">{step > 0 && <button type="button" className="secondary" onClick={() => setStep((value) => value - 1)}>Back</button>}{step >= 1 && step < steps.length - 1 && <button type="button" className="quick-result" onClick={showRecommendations}>Show suitable gifts now</button>}<button type="button" className="primary" disabled={!canContinue} onClick={next}>{step === steps.length - 1 ? 'Show my gift ideas' : step === 2 ? 'Continue—style can be skipped' : 'Continue'}</button></div>
       </div>
       <aside className="gift-live-summary"><span>Your gift brief</span><dl><div><dt>For</dt><dd>{intent.recipient || 'Choose recipient'}</dd></div><div><dt>Moment</dt><dd>{intent.occasion || 'Choose occasion'}</dd></div><div><dt>Quantity</dt><dd>{intent.quantity}</dd></div><div><dt>Budget</dt><dd>{money(intent.budget)} {intent.budgetMode === 'per-gift' ? 'each' : 'total'}</dd></div></dl><p>Recommendations only use photographed products with verified current stock.</p></aside>
     </div>
