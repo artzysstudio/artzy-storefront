@@ -25,6 +25,7 @@ export const SUBJECTS: {id:SubjectId;label:string;people:number;pets:number}[] =
 export const OUTPUTS = ['digital_file','printed_artwork','framed_artwork','gift_ready','studio_guidance'] as const;
 
 export type CaricatureBrief = {styleId:CaricatureStyleId;occasion:typeof OCCASIONS[number];composition:CompositionId;subject:SubjectId;people:number;pets:number;profession:string;hobbies:string;colours:string;clothing:string;background:string;props:string;notes:string;output:typeof OUTPUTS[number]};
+export type CaricatureExaggeration = 'soft' | 'classic' | 'funny';
 const plain=(v:unknown,max=120)=>typeof v==='string'?v.replace(/[<>\r\n{}\[\]`]/g,' ').replace(/\s+/g,' ').trim().slice(0,max):'';
 export function parseCaricatureBrief(body:Record<string,unknown>):CaricatureBrief|null{
   const styleId=plain(body.styleId,30) as CaricatureStyleId, occasion=plain(body.occasion,40) as CaricatureBrief['occasion'], composition=plain(body.composition,20) as CompositionId, subject=plain(body.subject,30) as SubjectId, output=plain(body.output,30) as CaricatureBrief['output'];
@@ -36,4 +37,16 @@ export function parseCaricatureBrief(body:Record<string,unknown>):CaricatureBrie
 export const aiReliable=(brief:Pick<CaricatureBrief,'people'|'pets'>)=>brief.people<=4&&brief.pets<=2&&(brief.people+brief.pets)>0;
 export const hasExplicitConsent=(value:unknown)=>value===true;
 export function validatePhotoFile(file:{type:string;size:number}){if(!/^image\/(jpeg|png|webp)$/.test(file.type))return 'Choose a JPG, PNG or WebP photo.';if(file.size>8*1024*1024)return 'Choose a photo up to 8 MB.';return ''}
+export function buildCustomerCaricaturePrompt(brief:CaricatureBrief, typeName:string, exaggeration:CaricatureExaggeration){
+  const style=CARICATURE_STYLES[brief.styleId];
+  return [
+    `Create a ${exaggeration} ${style.name.toLowerCase()} ${typeName.toLowerCase()} for ${brief.occasion.replaceAll('_',' ')}.`,
+    'Keep the person clearly recognisable: preserve their face shape, skin tone, age appearance, hairstyle, spectacles, facial hair and distinguishing features.',
+    `Show exactly ${brief.people} ${brief.people===1?'person':'people'}${brief.pets?` and ${brief.pets} ${brief.pets===1?'pet':'pets'}`:''}.`,
+    brief.profession?`Profession or role: ${brief.profession}.`:'', brief.hobbies?`Include these interests: ${brief.hobbies}.`:'',
+    brief.clothing?`Clothing: ${brief.clothing}.`:'Keep clothing close to the reference photo.', brief.background?`Background: ${brief.background}.`:'Use a warm, uncluttered background.',
+    brief.colours?`Favourite colours: ${brief.colours}.`:'', brief.props?`Pets or meaningful accessories: ${brief.props}.`:'', brief.notes?`Special instructions: ${brief.notes}.`:'',
+    'Make it warm, dignified and gift-worthy. Do not exaggerate disability, ethnicity, body condition, age or any sensitive characteristic. Keep the complete head and important details inside the picture.'
+  ].filter(Boolean).join(' ');
+}
 export function buildCaricaturePrompt(brief:CaricatureBrief){const style=CARICATURE_STYLES[brief.styleId];return {prompt:[`Transform the supplied reference photograph into the selected ${style.name} artwork—not a different person and not a generic portrait. Style: ${style.positive}.`,`Identity lock: preserve the same recognisable face, apparent age, skin tone, facial hair, hairstyle, glasses shape, smile, pose and clothing colour from the photograph. Keep both eyes aligned and natural. Show exactly ${brief.people} people and ${brief.pets} pets.`,`Composition: ${brief.composition.replace('_',' ')}. Occasion: ${brief.occasion.replaceAll('_',' ')}.`,`Profession: ${brief.profession||'not specified'}. Hobbies: ${brief.hobbies||'not specified'}. Preferred colours: ${brief.colours||'from reference'}. Clothing: ${brief.clothing||'from reference'}. Background: ${brief.background||'simple warm neutral'}. Props: ${brief.props||'none'}. Notes: ${brief.notes||'none'}.`,'The result must visibly match the selected style. Create a positive, dignified, gift-worthy concept. Do not exaggerate disability, race, religion, body type, age or any sensitive characteristic. No words unless separately approved.'].join(' '),negative_prompt:[style.negative,'different person, identity drift, aged face, old person, changed ethnicity, changed age, crossed eyes, uneven eyes, deformed face, malformed hands, duplicate subject, extra person, extra pet, missing subject, cropped head, text, letters, logo, watermark, copyrighted character, offensive stereotype'].join(', '),strength:style.strength,guidance:style.guidance};}

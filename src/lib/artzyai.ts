@@ -27,6 +27,7 @@ export type CreativeJobResponse = {
   isAiConcept: true;
   customerMessage: string;
   failureCategory?: string | null;
+  freeSamplesRemaining?: number | null;
   usage: { creditsUsed: number };
 };
 
@@ -40,6 +41,8 @@ export function artzyGuestId(): string {
 async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   headers.set('X-Artzy-Guest-ID', artzyGuestId());
+  const customerToken = localStorage.getItem('artzy_customer_access_token');
+  if (customerToken) headers.set('X-Artzy-Customer-Token', customerToken);
   const response = await fetch(`/api/artzyai/${path}`, { ...init, headers });
   const result = await response.json().catch(() => ({ error: 'ArtzyAI returned an incomplete response.' })) as T & { error?: string; category?: string };
   if (!response.ok || result.error) {
@@ -81,4 +84,8 @@ export async function waitForCreativeJob(jobId: string, onProgress?: (message: s
 
 export async function deleteCreativeAsset(assetId: string): Promise<void> {
   await api(`assets/${assetId}`, { method: 'DELETE' });
+}
+
+export async function getCreativeUsage(): Promise<{ caricatureFreeSamplesRemaining: number; generations: number; completed: number }> {
+  return api('usage');
 }

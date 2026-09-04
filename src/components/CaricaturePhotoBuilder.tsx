@@ -1,11 +1,13 @@
 'use client';
 
-import { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { createConsent, createCreativeJob, deleteCreativeAsset, uploadReference, waitForCreativeJob } from '@/lib/artzyai';
+import CaricatureArtzyAiPanel, { type CaricatureSample } from '@/components/CaricatureArtzyAiPanel';
+import { createConsent, createCreativeJob, deleteCreativeAsset, getCreativeUsage, uploadReference, waitForCreativeJob } from '@/lib/artzyai';
 import { useCustomer } from '@/context/CustomerContext';
-import { aiReliable, CARICATURE_STYLES, OCCASIONS, SUBJECTS, validatePhotoFile, type CaricatureBrief, type CaricatureStyleId, type SubjectId } from '@/features/caricatures/config';
+import { aiReliable, buildCustomerCaricaturePrompt, CARICATURE_STYLES, OCCASIONS, SUBJECTS, validatePhotoFile, type CaricatureBrief, type CaricatureExaggeration, type CaricatureStyleId, type SubjectId } from '@/features/caricatures/config';
 import { calculateCaricatureEstimate } from '@/features/caricatures/pricing';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const label = (value: string) => value.replaceAll('_', ' ').replace(/\b\w/g, character => character.toUpperCase());
 const steps = ['Photo', 'Subjects', 'Type & style', 'Occasion & story', 'Finish & price', 'Review & consent'];
@@ -39,7 +41,7 @@ async function preparePhoto(file: File, source: PhotoState['source']): Promise<P
   const dataUrl = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(new Error('Could not read this photo.')); reader.readAsDataURL(file); });
   const image = await new Promise<HTMLImageElement>((resolve, reject) => { const element = new Image(); element.onload = () => resolve(element); element.onerror = () => reject(new Error('This image could not be opened.')); element.src = dataUrl; });
   if (image.width < 320 || image.height < 320) throw new Error('Choose a clearer photo at least 320 × 320 pixels.');
-  const scale = Math.min(1, 1024 / Math.max(image.width, image.height));
+  const scale = Math.min(1, 512 / Math.max(image.width, image.height));
   const canvas = document.createElement('canvas'); canvas.width = Math.round(image.width * scale); canvas.height = Math.round(image.height * scale);
   const context = canvas.getContext('2d'); if (!context) throw new Error('Your browser could not prepare this photo.');
   context.drawImage(image, 0, 0, canvas.width, canvas.height);
@@ -49,11 +51,18 @@ async function preparePhoto(file: File, source: PhotoState['source']): Promise<P
 
 export default function CaricaturePhotoBuilder() {
   const { user } = useCustomer();
+  const { trackEvent } = useAnalytics();
+  const formTracked = useRef(false);
   const [step, setStep] = useState(0);
   const [photo, setPhoto] = useState<PhotoState | null>(null);
-  const [concept, setConcept] = useState('');
-  const [assetId, setAssetId] = useState('');
-  const [jobReference, setJobReference] = useState('');
+  const [samples, setSamples] = useState<CaricatureSample[]>([]);
+  const [selectedAssetId, setSelectedAssetId] = useState('');
+  const [referenceAssetId, setReferenceAssetId] = useState('');
+  const [consentId, setConsentId] = useState('');
+  const [remaining, setRemaining] = useState(2);
+  const [exaggeration, setExaggeration] = useState<CaricatureExaggeration>('classic');
+  const [customerPrompt, setCustomerPrompt] = useState('');
+  const [promptEdited, setPromptEdited] = useState(false);
   const [erpReference, setErpReference] = useState('');
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState('');
@@ -76,16 +85,30 @@ export default function CaricaturePhotoBuilder() {
     type: 'custom_caricature', status: 'awaiting_studio_review', customer: user ? { id: user.id ?? null, email: user.email } : { guest: true },
     configuration: { subjects: { kind: brief.subject, people: brief.people, pets: brief.pets }, caricatureType: caricatureType.name, style: style.name, occasion: label(brief.occasion), personalDetails: { profession: brief.profession, hobbies: brief.hobbies, colours: brief.colours, clothing: brief.clothing, background: brief.background, objects: brief.props, notes: brief.notes, exactMessage: shortMessage }, finish: finish.name, commercialUsage },
     consent: { processing: permissions.process, aiGeneration: permissions.ai, photographPermission: permissions.people, temporaryActiveRequest: true, extendedRetention: permissions.retain, studioHandoff: permissions.handoff, promotion: permissions.promotion, modelTraining: permissions.training },
-    artzyAiAssetId: assetId || null, estimate: { currency: 'INR', amount: estimate, label: 'estimated', authority: 'ERP confirmation required' }, requiredDate: requiredDate || null,
-  }), [user, brief, caricatureType, style.name, finish.name, commercialUsage, permissions, shortMessage, assetId, estimate, requiredDate]);
+    artzyAiAssetId: selectedAssetId || null,
+    artzyAi: { referenceAssetId: referenceAssetId || null, generatedSampleAssetIds: samples.map(sample => sample.assetId), selectedSampleAssetId: selectedAssetId || null, finalEditedPrompt: customerPrompt, exaggeration },
+    estimate: { currency: 'INR', amount: estimate, label: 'estimated', authority: 'ERP confirmation required' }, requiredDate: requiredDate || null,
+  }), [user, brief, caricatureType, style.name, finish.name, commercialUsage, permissions, shortMessage, selectedAssetId, referenceAssetId, samples, customerPrompt, exaggeration, estimate, requiredDate]);
 
-  const whatsapp = useMemo(() => `https://wa.me/919158680722?text=${encodeURIComponent(["Hello Artzy's Studio, I would like a caricature review.", `ERP reference: ${erpReference || 'not created yet'}.`, `${brief.people} people; ${brief.pets} pets; ${caricatureType.name}; ${style.name}.`, `Occasion: ${label(brief.occasion)}. Finish: ${finish.name}.`, `Estimate: ₹${inr.format(estimate)} (ERP confirmation required).`, `Required date: ${requiredDate || 'Flexible'}.`, 'I will attach the approved photograph/concept separately after consent.'].join('\n'))}`, [erpReference, brief, caricatureType.name, style.name, finish.name, estimate, requiredDate]);
+  const whatsappFor = (reference: string) => `https://wa.me/919158680722?text=${encodeURIComponent(`Hello Artzy's Studio. Please guide my caricature enquiry ${reference}. The private photo, samples and completed brief are attached securely to this ERP reference.`)}`;
 
   useEffect(() => {
     if (window.location.hash !== '#caricature-builder') return;
     const timer = window.setTimeout(() => { const root = document.documentElement; const previous = root.style.scrollBehavior; root.style.scrollBehavior = 'auto'; document.getElementById('caricature-builder')?.scrollIntoView({ block: 'start' }); requestAnimationFrame(() => { root.style.scrollBehavior = previous; }); }, 700);
     return () => window.clearTimeout(timer);
   }, []);
+  useEffect(() => {
+    getCreativeUsage().then(usage => setRemaining(usage.caricatureFreeSamplesRemaining)).catch(() => undefined);
+  }, []);
+  useEffect(() => {
+    if (!promptEdited) setCustomerPrompt(buildCustomerCaricaturePrompt(brief, caricatureType.name, exaggeration));
+  }, [brief, caricatureType.name, exaggeration, promptEdited]);
+  useEffect(() => {
+    if (step === 5 && !formTracked.current) {
+      formTracked.current = true;
+      trackEvent({ eventName: 'caricature_form_completed', properties: { tool: 'caricature', page: '/caricatures/' } });
+    }
+  }, [step, trackEvent]);
   useEffect(() => {
     try {
       const saved = JSON.parse(localStorage.getItem(draftKey) ?? 'null') as { expiresAt?: number; state?: { brief?: CaricatureBrief; typeId?: string; shortMessage?: string; requiredDate?: string; commercialUsage?: boolean } } | null;
@@ -99,33 +122,55 @@ export default function CaricaturePhotoBuilder() {
 
   async function acceptPhoto(file: File, source: PhotoState['source']) {
     const invalid = validatePhotoFile(file); if (invalid) { setStatus(invalid); return; }
-    try { if (photo?.preview) URL.revokeObjectURL(photo.preview); if (concept) await removeConcept(); setPhoto(await preparePhoto(file, source)); setStatus('Photo selected locally. It has not been sent to ArtzyAI.'); setPermissions(current => ({ ...current, process: false, ai: false, handoff: false })); }
+    try { if (photo?.preview) URL.revokeObjectURL(photo.preview); await clearGeneratedAssets(); setPhoto(await preparePhoto(file, source)); setReferenceAssetId(''); setConsentId(''); setStatus('Photo selected locally. It has not been sent to ArtzyAI.'); setPermissions(current => ({ ...current, process: false, ai: false, handoff: false })); }
     catch (error) { setStatus((error as Error).message); }
   }
   async function onPhoto(event: ChangeEvent<HTMLInputElement>) { const file = event.target.files?.[0]; if (file) await acceptPhoto(file, 'customer'); }
   async function trySample() { const response = await fetch('/images/caricature-style-semi-realistic.webp'); const blob = await response.blob(); await acceptPhoto(new File([blob], 'fictional-sample.webp', { type: 'image/webp' }), 'fictional-sample'); }
-  function removePhoto() { if (photo?.preview) URL.revokeObjectURL(photo.preview); setPhoto(null); setStep(0); setStatus('Photograph removed from this browser.'); }
+  async function removePhoto() { if (photo?.preview) URL.revokeObjectURL(photo.preview); await clearGeneratedAssets(); setPhoto(null); setReferenceAssetId(''); setConsentId(''); setStep(0); setStatus('Photograph and generated samples removed.'); }
   function chooseSubject(id: SubjectId) { const item = SUBJECTS.find(subject => subject.id === id)!; setBrief(current => ({ ...current, subject: id, people: item.people, pets: item.pets })); }
   function saveDraft() { localStorage.setItem(draftKey, JSON.stringify({ expiresAt: Date.now() + 7 * 86400000, state: { brief, typeId: caricatureType.id, shortMessage, requiredDate, commercialUsage } })); setStatus('Private brief saved on this device for 7 days. The photograph is not saved.'); }
 
   async function generate() {
-    if (!photo || busy || manual) return;
+    if (!photo || busy || manual || remaining <= 0) return;
     if (!permissionsReady) { setStatus('Complete the required photograph and ArtzyAI consent first.'); return; }
+    if (customerPrompt.trim().length < 30) { setStatus('Add a little more direction before generating.'); return; }
     setBusy(true); setStatus(''); setProgress('Preparing your secure request');
     try {
-      const consent = await createConsent({ tool: 'caricature', imageProcessing: true, aiGeneration: true, temporaryStorage: true, extendedRetention: permissions.retain, studioHandoff: permissions.handoff, promotionalUse: permissions.promotion, trainingOptIn: permissions.training, containsOtherPeople: brief.people + brief.pets > 1, otherPeoplePermission: permissions.people, containsChildren: permissions.childPresent, guardianConfirmation: permissions.guardian });
-      const uploaded = await uploadReference(photo.file, consent.consentId);
-      const queued = await createCreativeJob({ sourceApp: 'artzy-storefront', tool: 'caricature', mode: brief.people + brief.pets > 1 ? 'premium' : 'preview', purpose: `${brief.occasion}; ${caricatureType.name}; ${brief.people} people; ${brief.pets} pets; ${brief.profession}; ${brief.hobbies}; ${brief.background}; ${brief.props}; ${brief.notes}`, style: style.name.toLowerCase(), palette: (brief.colours || 'warm terracotta, cream, muted rose').split(',').map(value => value.trim()).filter(Boolean), outputFormat: 'jpeg', aspectRatio: '1:1', referenceAssetIds: [uploaded.assetId], customerTextOverlay: '', storefrontContext: { page: '/caricatures/', type: caricatureType.id, occasion: brief.occasion }, erpContext: {}, consentId: consent.consentId });
-      setJobReference(queued.jobId); const completed = await waitForCreativeJob(queued.jobId, setProgress);
+      let activeConsentId = consentId;
+      let activeReferenceId = referenceAssetId;
+      if (!activeConsentId) {
+        const consent = await createConsent({ tool: 'caricature', imageProcessing: true, aiGeneration: true, temporaryStorage: true, extendedRetention: permissions.retain, studioHandoff: permissions.handoff, promotionalUse: permissions.promotion, trainingOptIn: permissions.training, containsOtherPeople: brief.people > 1, otherPeoplePermission: permissions.people, containsChildren: permissions.childPresent, guardianConfirmation: permissions.guardian });
+        activeConsentId = consent.consentId; setConsentId(activeConsentId);
+      }
+      if (!activeReferenceId) {
+        const uploaded = await uploadReference(photo.file, activeConsentId);
+        activeReferenceId = uploaded.assetId; setReferenceAssetId(activeReferenceId);
+      }
+      const queued = await createCreativeJob({ sourceApp: 'artzy-storefront', tool: 'caricature', mode: 'preview', purpose: customerPrompt, style: style.name.toLowerCase(), palette: (brief.colours || 'warm terracotta, cream, muted rose').split(',').map(value => value.trim()).filter(Boolean), outputFormat: 'jpeg', aspectRatio: '1:1', referenceAssetIds: [activeReferenceId], customerTextOverlay: '', storefrontContext: { page: '/caricatures/', type: caricatureType.id, occasion: brief.occasion, exaggeration }, erpContext: {}, consentId: activeConsentId });
+      setRemaining(queued.freeSamplesRemaining ?? Math.max(0, remaining - 1));
+      const completed = await waitForCreativeJob(queued.jobId, setProgress);
       if (completed.status !== 'completed' || !completed.previewUrl || !completed.assetId) throw new Error(completed.customerMessage || 'The concept could not be generated.');
-      setConcept(completed.previewUrl); setAssetId(completed.assetId); setStatus('ArtzyAI concept ready. Compare it with the reference before studio handoff.');
-    } catch (error) { setStatus((error as Error).message); } finally { setBusy(false); setProgress(''); }
+      const nextSample = { previewUrl: completed.previewUrl, assetId: completed.assetId, jobId: completed.jobId };
+      setSamples(current => [...current.filter(sample => sample.assetId !== nextSample.assetId), nextSample]);
+      setSelectedAssetId(nextSample.assetId);
+      setRemaining(completed.freeSamplesRemaining ?? Math.max(0, remaining - 1));
+      trackEvent({ eventName: samples.length === 0 ? 'caricature_first_sample_generated' : 'caricature_second_sample_generated', properties: { tool: 'caricature', page: '/caricatures/' } });
+      setStatus('Your watermarked ArtzyAI sample is ready. Compare the likeness and choose a direction.');
+    } catch (error) {
+      const typed = error as Error & { category?: string };
+      if (typed.category === 'credits_unavailable') setRemaining(0);
+      else getCreativeUsage().then(usage => setRemaining(usage.caricatureFreeSamplesRemaining)).catch(() => undefined);
+      setStatus(typed.message);
+    } finally { setBusy(false); setProgress(''); }
   }
-  async function removeConcept() { if (assetId) await deleteCreativeAsset(assetId).catch(() => undefined); setConcept(''); setAssetId(''); setStatus('Generated concept deleted.'); }
-  async function submitDraft() {
+  async function clearGeneratedAssets() { const ids = [...samples.map(sample => sample.assetId), referenceAssetId].filter(Boolean); await Promise.all(ids.map(id => deleteCreativeAsset(id).catch(() => undefined))); setSamples([]); setSelectedAssetId(''); }
+  async function deleteSample(sample: CaricatureSample) { await deleteCreativeAsset(sample.assetId).catch(() => undefined); setSamples(current => current.filter(item => item.assetId !== sample.assetId)); setSelectedAssetId(current => current === sample.assetId ? '' : current); setStatus('Sample deleted. A deleted sample still counts toward the secure two-sample allowance.'); }
+  function selectSample(sample: CaricatureSample) { setSelectedAssetId(sample.assetId); trackEvent({ eventName: 'caricature_concept_selected', properties: { tool: 'caricature', page: '/caricatures/' } }); setStatus('Concept selected for the studio brief.'); }
+  async function submitDraft(openHandoff = false) {
     if (!permissions.handoff) { setStatus('Confirm studio-handoff permission before creating an ERP enquiry.'); return; }
     setStatus('Creating your studio-review request…');
-    try { const response = await fetch('/api/storefront/custom-orders', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) }); const result = await response.json() as { success?: boolean; reference?: string; draftId?: string; error?: string }; if (!response.ok || !result.success) throw new Error(result.error || 'The draft could not be created.'); const next = result.reference || result.draftId || ''; setErpReference(next); setStatus(`Request ${next} is awaiting studio review. Expected response: 1–2 studio working days.`); }
+    try { const token = localStorage.getItem('artzy_customer_access_token'); const response = await fetch('/api/storefront/custom-orders', { method: 'POST', headers: { 'content-type': 'application/json', ...(token ? { 'x-customer-token': token } : {}) }, body: JSON.stringify(payload) }); const result = await response.json() as { success?: boolean; reference?: string; draftId?: string; error?: string }; if (!response.ok || !result.success) throw new Error(result.error || 'The draft could not be created.'); const next = result.reference || result.draftId || ''; setErpReference(next); trackEvent({ eventName: 'caricature_order_started', properties: { tool: 'caricature', page: '/caricatures/' } }); setStatus(`Request ${next} is awaiting studio review. Expected response: 1–2 studio working days.`); if (openHandoff) { trackEvent({ eventName: 'caricature_studio_guidance_requested', properties: { tool: 'caricature', page: '/caricatures/' } }); window.open(whatsappFor(next), '_blank', 'noopener,noreferrer'); } }
     catch (error) { saveDraft(); setStatus(`${(error as Error).message} Your text brief is saved privately on this device.`); }
   }
 
@@ -137,9 +182,9 @@ export default function CaricaturePhotoBuilder() {
       {step === 2 && <div className="wizard-pane"><header><b>Step 3 · Type and style</b><h3>Choose the composition, then its visual mood</h3><p>Caricature type controls what is shown. Visual style controls how it feels.</p></header><h4>Caricature type</h4><div className="caricature-type-grid">{types.map(item => <button type="button" aria-pressed={caricatureType.id === item.id} onClick={() => setCaricatureType(item)} key={item.id}><b>{item.name}</b><span>{item.note}</span><small>{item.addition ? `Estimated +₹${inr.format(item.addition)}` : 'Included'}</small></button>)}</div><h4>Visual style</h4><div className="caricature-style-grid">{visualStyles.map(option => { const item = CARICATURE_STYLES[option.id]; return <button type="button" aria-pressed={brief.styleId === option.id} className={brief.styleId === option.id ? 'is-selected' : ''} onClick={() => patch('styleId', option.id as CaricatureStyleId)} key={option.id}><img src={item.image} loading="lazy" alt={`${option.name} fictional style demonstration`}/><span><b>{option.name}</b><small>{item.summary}</small><em>Fictional AI sample</em></span></button>; })}</div></div>}
       {step === 3 && <div className="wizard-pane"><header><b>Step 4 · Occasion and story</b><h3>Add the details that make it personal</h3><p>Exact wording is kept as a separate deterministic text instruction—not trusted to generated pixels.</p></header><div className="wizard-details"><label>Occasion<select value={brief.occasion} onChange={event => patch('occasion', event.target.value as CaricatureBrief['occasion'])}>{OCCASIONS.map(item => <option value={item} key={item}>{label(item)}</option>)}</select></label>{(['profession','hobbies','clothing','colours','background','props'] as const).map(key => <label key={key}>{key === 'props' ? 'Pet or meaningful objects' : label(key)}<input value={brief[key]} maxLength={120} onChange={event => patch(key, event.target.value)} /></label>)}<label className="wide">Short exact message<input value={shortMessage} maxLength={80} onChange={event => setShortMessage(event.target.value)} placeholder="Rendered separately after generation"/></label><label className="wide">Other story details<textarea rows={3} value={brief.notes} maxLength={300} onChange={event => patch('notes', event.target.value)} /></label></div></div>}
       {step === 4 && <div className="wizard-pane"><header><b>Step 5 · Finish and price</b><h3>Choose how the caricature should arrive</h3><p>Every amount below is an estimate until ERP and the studio confirm the quotation.</p></header><div className="caricature-finish-grid">{finishes.map(item => <button type="button" aria-pressed={finish.id === item.id} onClick={() => patch('output', item.id as CaricatureBrief['output'])} key={item.id}><b>{item.name}</b><strong>Starts ₹{inr.format(item.base)}</strong><span>{item.size}</span><small>{item.frame} · {item.revisions} · {item.time}</small></button>)}</div><label className="caricature-commercial"><input type="checkbox" checked={commercialUsage} onChange={e => setCommercialUsage(e.target.checked)}/><span>Commercial usage requested <small>Estimated +₹1,500; rights confirmed in writing.</small></span></label><label className="caricature-required-date">Required date<input type="date" value={requiredDate} onChange={e => setRequiredDate(e.target.value)}/></label><div className="caricature-price-summary" aria-live="polite"><span>Estimated brief total</span><strong>₹{inr.format(estimate)}</strong><small>Delivery is calculated separately · Studio quotation and availability required</small></div></div>}
-      {step === 5 && <div className="wizard-pane"><header><b>Step 6 · Review and consent</b><h3>Check the brief and choose each permission</h3><p>Generation, retention, studio handoff, promotion and model training are separate choices.</p></header><div className="brief-review"><span><b>Photograph</b>{photo?.source === 'fictional-sample' ? 'Fictional sample' : 'Customer-selected photo'}</span><span><b>Subjects</b>{brief.people} people · {brief.pets} pets</span><span><b>Type & style</b>{caricatureType.name} · {style.name}</span><span><b>Occasion</b>{label(brief.occasion)}</span><span><b>Finish</b>{finish.name}</span><span><b>Estimate</b>₹{inr.format(estimate)} · ERP confirmation required</span></div><div className="caricature-consent-list"><Consent checked={permissions.process} onChange={value => setPermissions(p => ({ ...p, process: value }))}>I confirm I have permission to use this photograph and consent to secure processing for this requested concept.</Consent><Consent checked={permissions.ai} onChange={value => setPermissions(p => ({ ...p, ai: value }))}>I consent to ArtzyAI processing it to create this requested concept.</Consent>{brief.people + brief.pets > 1 && <Consent checked={permissions.people} onChange={value => setPermissions(p => ({ ...p, people: value }))}>I have permission for every person or pet photograph included.</Consent>}<Consent checked={permissions.childPresent} onChange={value => setPermissions(p => ({ ...p, childPresent: value }))}>This photograph contains a child.</Consent>{permissions.childPresent && <Consent checked={permissions.guardian} onChange={value => setPermissions(p => ({ ...p, guardian: value }))}>I am the parent/lawful guardian and give permission.</Consent>}<Consent checked={permissions.retain} onChange={value => setPermissions(p => ({ ...p, retain: value }))} optional>Save the photograph beyond the active request.</Consent><Consent checked={permissions.handoff} onChange={value => setPermissions(p => ({ ...p, handoff: value }))} optional>Send the selected photograph, concept and brief to Artzy’s Studio for review.</Consent><Consent checked={permissions.promotion} onChange={value => setPermissions(p => ({ ...p, promotion: value }))} optional>Allow promotional use by Artzy’s Studio.</Consent><Consent checked={permissions.training} onChange={value => setPermissions(p => ({ ...p, training: value }))} optional>Allow model-training use.</Consent></div><p className="privacy-note">Optional retention, promotional and training permissions are off by default. You can remove the photograph, delete a concept or withdraw before handoff.</p>{manual ? <p className="manual-note">AI generation is disabled for this group size. Create the ERP draft for a careful studio review.</p> : <button className="wizard-primary" type="button" onClick={generate} disabled={busy || !permissionsReady}>{busy ? 'Creating your ArtzyAI concept…' : 'Generate optional ArtzyAI concept'}</button>}<div className="caricature-review-actions"><button type="button" onClick={submitDraft}>Request studio confirmation</button><button type="button" onClick={saveDraft}>Save and resume</button><a href={whatsapp} target="_blank" rel="noreferrer">Discuss on WhatsApp</a></div></div>}
-      </div>{busy && <p className="wizard-progress" role="status">{progress}</p>}{status && <p className="caricature-builder__status" role="status">{status}{erpReference && <> <Link href="/account">Track request →</Link></>}</p>}<div className="wizard-controls"><button type="button" onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0}>Previous</button>{step < 5 && <button type="button" onClick={() => setStep(Math.min(5, step + 1))} disabled={!canContinue}>Continue</button>}</div>
-      {concept && <div className="caricature-result" aria-live="polite"><h3>Your ArtzyAI concept is ready</h3><p className="concept-review-note"><b>Compare the face, expression and selected direction.</b> ArtzyAI concept—not the final studio caricature. Facial likeness is not guaranteed.</p><div className="caricature-builder__comparison"><figure><img src={photo?.preview} alt="Selected reference photograph"/><figcaption>Selected reference</figcaption></figure><span aria-hidden="true">→</span><figure><img src={concept} alt="ArtzyAI-generated caricature concept"/><figcaption>ArtzyAI concept · not final artwork</figcaption></figure></div>{shortMessage && <p className="caricature-exact-message"><b>Exact separate wording:</b> {shortMessage}</p>}<p>Job reference: {jobReference}. Deepti and the studio confirm feasibility, likeness review, final price and finish.</p><div className="caricature-builder__actions"><button type="button" onClick={generate} disabled={busy}>Try variation</button><a href={concept} download={`${jobReference || 'artzy-caricature'}-concept.jpg`}>Save concept</a><button type="button" onClick={() => setStatus('Please describe what felt unsuitable in the story notes before trying another variation.')}>Report unsuitable result</button><button type="button" onClick={removeConcept}>Delete concept</button>{permissions.handoff && <a href={whatsapp} target="_blank" rel="noreferrer">Send to studio</a>}</div></div>}
+      {step === 5 && <div className="wizard-pane"><header><b>Step 6 · Review and consent</b><h3>Check the brief and choose each permission</h3><p>Generation, retention, studio handoff, promotion and model training are separate choices.</p></header><div className="brief-review"><span><b>Photograph</b>{photo?.source === 'fictional-sample' ? 'Fictional sample' : 'Customer-selected photo'}</span><span><b>Subjects</b>{brief.people} people · {brief.pets} pets</span><span><b>Type & style</b>{caricatureType.name} · {style.name}</span><span><b>Occasion</b>{label(brief.occasion)}</span><span><b>Finish</b>{finish.name}</span><span><b>Estimate</b>₹{inr.format(estimate)} · ERP confirmation required</span></div><div className="caricature-consent-list"><Consent checked={permissions.process} onChange={value => setPermissions(p => ({ ...p, process: value }))}>I confirm I have permission to use this photograph and consent to secure processing for this requested concept.</Consent><Consent checked={permissions.ai} onChange={value => setPermissions(p => ({ ...p, ai: value }))}>I consent to ArtzyAI processing it to create this requested concept.</Consent>{brief.people + brief.pets > 1 && <Consent checked={permissions.people} onChange={value => setPermissions(p => ({ ...p, people: value }))}>I have permission for every person or pet photograph included.</Consent>}<Consent checked={permissions.childPresent} onChange={value => setPermissions(p => ({ ...p, childPresent: value }))}>This photograph contains a child.</Consent>{permissions.childPresent && <Consent checked={permissions.guardian} onChange={value => setPermissions(p => ({ ...p, guardian: value }))}>I am the parent/lawful guardian and give permission.</Consent>}<Consent checked={permissions.retain} onChange={value => setPermissions(p => ({ ...p, retain: value }))} optional>Save the photograph beyond the active request.</Consent><Consent checked={permissions.handoff} onChange={value => setPermissions(p => ({ ...p, handoff: value }))} optional>Send the selected photograph, concept and brief to Artzy’s Studio for review.</Consent><Consent checked={permissions.promotion} onChange={value => setPermissions(p => ({ ...p, promotion: value }))} optional>Allow promotional use by Artzy’s Studio.</Consent><Consent checked={permissions.training} onChange={value => setPermissions(p => ({ ...p, training: value }))} optional>Allow model-training use.</Consent></div><p className="privacy-note">Optional retention, promotional and training permissions are off by default. You can remove the photograph, delete a concept or withdraw before handoff.</p>{manual && <p className="manual-note">AI generation is disabled for this group size. Create the ERP draft for a careful studio review.</p>}<div className="caricature-review-actions"><button type="button" onClick={() => submitDraft(false)}>Request studio confirmation</button><button type="button" onClick={saveDraft}>Save and resume</button></div></div>}
+      </div>{status && <p className="caricature-builder__status" role="status">{status}{erpReference && <> <Link href="/account">Track request →</Link></>}</p>}<div className="wizard-controls"><button type="button" onClick={() => setStep(Math.max(0, step - 1))} disabled={step === 0}>Previous</button>{step < 5 && <button type="button" onClick={() => setStep(Math.min(5, step + 1))} disabled={!canContinue}>Continue</button>}</div>
+      {step === 5 && photo && <CaricatureArtzyAiPanel photoPreview={photo.preview} prompt={customerPrompt} onPromptChange={value => { setCustomerPrompt(value); setPromptEdited(true); }} exaggeration={exaggeration} onExaggerationChange={value => { setExaggeration(value); setPromptEdited(false); }} samples={samples} selectedAssetId={selectedAssetId} remaining={remaining} busy={busy} progress={progress} generationReady={permissionsReady} manual={manual} onGenerate={generate} onSelect={selectSample} onDelete={deleteSample} onStudioGuide={() => submitDraft(true)} onContinue={() => submitDraft(false)}/>}
     </div>
   </section>;
 }
