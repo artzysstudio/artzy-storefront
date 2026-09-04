@@ -2,44 +2,16 @@ import PremiumHero from '@/components/PremiumHero';
 import StudioSignature from '@/components/StudioSignature';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import ProductCard from '@/components/ProductCard';
 import ArtzyMuse from '@/components/muse/ArtzyMuse';
-import { api, isStorefrontInventoryProduct, type Product } from '@/lib/api';
 import Link from 'next/link';
 import HomeDiscovery from '@/components/HomeDiscovery';
 import HomeGiftHamper from '@/components/HomeGiftHamper';
 import CustomerStories from '@/components/CustomerStories';
+import FreshStudioProducts from '@/components/FreshStudioProducts';
 
 const ARTZY_AI_ENABLED = false;
 
-const freshStudioPriorities = [
-  'Handpainted Wooden Mirror Frame',
-  'Handpainted Wooden Medium Size Sarswati Frame',
-  'Handpainted Candle Tealight Holder Set Of 2',
-  'Bamboo Pen Stand',
-  'Cozy Tea Time Essentials',
-  'Hand-painted Spoon Stand of 3',
-  'Hand-painted Wooden Key Holder Cabinet',
-  'Wooden Hand-painted Warli design Round wall hager',
-];
-
-function getFreshERPProducts(products: Product[]): Product[] {
-  const available = products.filter(isStorefrontInventoryProduct);
-  const chosen: Product[] = [];
-  for (const name of freshStudioPriorities) {
-    const match = available.find((product) => product.name === name && !chosen.some((item) => item.id === product.id));
-    if (match) chosen.push(match);
-  }
-  for (const product of available) {
-    if (chosen.length >= 8) break;
-    if (!chosen.some((item) => item.id === product.id)) chosen.push(product);
-  }
-  return chosen.slice(0, 8);
-}
-
 export default async function Home() {
-  const products = getFreshERPProducts(await api.products.list());
-
   return (
     <>
       <Header />
@@ -56,16 +28,7 @@ export default async function Home() {
             </div>
             <Link href="/shop">View all artwork →</Link>
           </div>
-          <div className="product-grid">
-            {products.slice(0, 8).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-          {products.length === 0 && <div className="home-products-unavailable" role="status">
-            <h3>The next studio pieces are being prepared.</h3>
-            <p>Current availability will appear here as soon as the live studio catalogue reconnects. For a specific piece, please ask the studio directly.</p>
-            <a href="https://wa.me/919158680722">Ask the studio on WhatsApp →</a>
-          </div>}
+          <FreshStudioProducts />
         </section>
 
         <HomeGiftHamper />
