@@ -47,12 +47,11 @@ fs.writeFileSync('src/app/favicon.ico', Buffer.concat([header, ...pngs]));
 const background = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200"><rect width="1200" height="1200" rx="64" fill="#fffaf5"/></svg>');
 const logo = await sharp(source)
   .resize(920, 920, { fit: 'contain' })
-  .sharpen({ sigma: 0.7 })
   .png()
   .toBuffer();
 await sharp(background)
   .composite([{ input: logo, left: 140, top: 140 }])
   .png()
-  .toFile('public/images/artzy-social-share.png');
+  .toFile('public/images/artzy-social-share-square.png');
 
 console.log('Generated Artzy favicon and social-share assets.');

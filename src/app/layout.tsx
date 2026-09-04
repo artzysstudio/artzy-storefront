@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: '/images/artzy-social-share.png',
+        url: '/images/artzy-social-share-square.png',
         width: 1200,
         height: 1200,
         alt: "Artzy's Studio — art created with heart",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "Artzy's Studio | Premium Handcrafted Art & Gifting",
     description: "Authentic art, original paintings and meaningful gifts created by Deepti J. Shah and her artist team.",
-    images: ['/images/artzy-social-share.png'],
+    images: ['/images/artzy-social-share-square.png'],
   },
   robots: {
     index: isIndexable,
