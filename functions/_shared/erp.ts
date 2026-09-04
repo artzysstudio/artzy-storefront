@@ -1,6 +1,7 @@
 export interface StorefrontEnv {
   ERP_API_BASE_URL?: string;
   ERP_API_TOKEN?: string;
+  ERP_HEALTH_PATH?: string;
   ERP_PRODUCTS_PATH?: string;
   ERP_CATEGORIES_PATH?: string;
   ERP_ORDER_PATH?: string;
@@ -57,6 +58,12 @@ export async function proxyErp(
   headers.set("accept", "application/json");
   headers.set("authorization", `Bearer ${env.ERP_API_TOKEN}`);
   headers.set("x-storefront-origin", new URL(request.url).origin);
+  const requestId = request.headers.get("x-request-id")?.slice(0, 128) || crypto.randomUUID();
+  headers.set("x-storefront-request-id", requestId);
+  const customerToken = request.headers.get("x-customer-token")?.trim();
+  if (customerToken && customerToken.length <= 4_096) {
+    headers.set("x-customer-token", customerToken);
+  }
 
   try {
     const upstream = await fetch(target, { ...init, headers });
@@ -70,6 +77,7 @@ export async function proxyErp(
       status: upstream.status,
       headers: {
         ...jsonHeaders,
+        "x-storefront-request-id": requestId,
         "cache-control":
           request.method === "GET"
             ? upstream.headers.get("cache-control") ??

@@ -18,11 +18,32 @@ export const onRequest = async (context: RouteContext) => {
   const method = context.request.method.toUpperCase();
 
   if (route === "status" && method === "GET") {
+    const configured = Boolean(context.env.ERP_API_BASE_URL && context.env.ERP_API_TOKEN);
+    if (!configured) {
+      return json({ success: false, configured: false, connected: false }, 503);
+    }
+
+    const health = await proxyErp(
+      context,
+      context.env.ERP_HEALTH_PATH ?? "/api/health",
+    );
+    if (!health.ok) {
+      return json({ success: false, configured: true, connected: false }, 503);
+    }
+
     return json({
       success: true,
-      configured: Boolean(
-        context.env.ERP_API_BASE_URL && context.env.ERP_API_TOKEN,
-      ),
+      configured: true,
+      connected: true,
+      capabilities: {
+        catalogue: true,
+        categories: true,
+        shipping: true,
+        payments: true,
+        customOrders: Boolean(context.env.ERP_CUSTOM_ORDER_PATH),
+        customerMagicLink: Boolean(context.env.ERP_CUSTOMER_MAGIC_LINK_PATH),
+        customerGoogleSignIn: Boolean(context.env.ERP_CUSTOMER_GOOGLE_AUTH_URL),
+      },
     });
   }
 
@@ -33,10 +54,32 @@ export const onRequest = async (context: RouteContext) => {
   }
 
   if (route === "categories" && method === "GET") {
-    return proxyErp(
+    const response = await proxyErp(
       context,
-      context.env.ERP_CATEGORIES_PATH ?? "/api/storefront/categories",
+      context.env.ERP_CATEGORIES_PATH ?? "/api/categories",
     );
+    if (!response.ok) return response;
+
+    const payload = await response.json() as {
+      success?: boolean;
+      data?: Array<Record<string, unknown>>;
+    } | Array<Record<string, unknown>>;
+    const categories = Array.isArray(payload) ? payload : payload.data ?? [];
+
+    return json({
+      success: true,
+      data: categories.map((category) => ({
+        ...category,
+        // The ERP currently includes large base64 category images. Product
+        // media belongs on media.artzysstudio.in, so do not transfer inline
+        // image blobs on every category request.
+        image_url:
+          typeof category.image_url === "string" &&
+          !category.image_url.startsWith("data:")
+            ? category.image_url
+            : null,
+      })),
+    });
   }
 
   if (route === "auth/magic-link" && method === "POST") {

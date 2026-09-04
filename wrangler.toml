@@ -6,6 +6,8 @@ pages_build_output_dir = ".vercel/output/static"
 [vars]
 ARTZYAI_API_ORIGIN = "https://artzyai.artzysstudio.in"
 ERP_API_BASE_URL = "https://erp.artzysstudio.in"
+ERP_HEALTH_PATH = "/api/health"
+ERP_CATEGORIES_PATH = "/api/categories"
 ERP_SHIPPING_PATH = "/api/shipping/quote"
 
 [[services]]
