@@ -44,19 +44,14 @@ pngs.forEach((png, index) => {
 });
 fs.writeFileSync('src/app/favicon.ico', Buffer.concat([header, ...pngs]));
 
-const background = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
-  <rect width="1200" height="630" fill="#fffaf5"/>
-  <rect width="24" height="630" fill="#ad4f55"/>
-  <path d="M550 92V538" stroke="#e7d7ca" stroke-width="2"/>
-  <text x="620" y="205" font-family="Georgia,serif" font-size="66" fill="#49372f">Art created</text>
-  <text x="620" y="282" font-family="Georgia,serif" font-size="66" font-style="italic" fill="#ad4f55">with heart.</text>
-  <text x="624" y="352" font-family="Arial,sans-serif" font-size="24" fill="#66534a">HAND-PAINTED ART · MEANINGFUL GIFTS</text>
-  <text x="624" y="405" font-family="Arial,sans-serif" font-size="25" fill="#66534a">Created in Pune by Deepti J. Shah</text>
-  <text x="624" y="475" font-family="Arial,sans-serif" font-size="22" font-weight="bold" fill="#49372f">www.artzysstudio.in</text>
-</svg>`);
-const logo = await sharp(source).resize(390, 390, { fit: 'contain' }).png().toBuffer();
+const background = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200"><rect width="1200" height="1200" rx="64" fill="#fffaf5"/></svg>');
+const logo = await sharp(source)
+  .resize(920, 920, { fit: 'contain' })
+  .sharpen({ sigma: 0.7 })
+  .png()
+  .toBuffer();
 await sharp(background)
-  .composite([{ input: logo, left: 105, top: 120 }])
+  .composite([{ input: logo, left: 140, top: 140 }])
   .png()
   .toFile('public/images/artzy-social-share.png');
 

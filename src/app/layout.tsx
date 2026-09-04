@@ -23,7 +23,7 @@ export const metadata: Metadata = {
       {
         url: '/images/artzy-social-share.png',
         width: 1200,
-        height: 630,
+        height: 1200,
         alt: "Artzy's Studio — art created with heart",
       },
     ],
