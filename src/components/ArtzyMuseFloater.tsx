@@ -3,49 +3,69 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
-type MuseMessage = { id: number; role: "assistant" | "customer"; text: string };
+type MuseMessage = { id: number; role: "assistant" | "customer"; text: string; action?: { href: string; label: string } };
 
 const quickQuestions = [
-  "Help me choose a gift",
-  "What can be customised?",
-  "Delivery and availability",
+  "Help me choose the right product",
+  "Plan a meaningful gift",
+  "Stock, variants and delivery",
 ];
 
 const studioAnswers = [
   {
     words: ["gift", "birthday", "anniversary", "wedding", "occasion"],
-    answer: "For a meaningful gift, tell me the occasion, recipient, budget and required date. Artzy’s Studio can suggest personalised art, caricatures, hand-painted pieces, combination gifts or corporate gifting options.",
+    answer: "I’d be happy to help you choose something that feels personal. Tell me who it is for, the occasion, your budget and the date you need it. I’ll guide you towards handmade gifts, personalised art, caricatures or a studio-planned hamper.",
+    action: { href: "/gifts/#gift-finder", label: "Find a meaningful gift" },
   },
   {
     words: ["custom", "customise", "customized", "personalise", "personalised"],
-    answer: "Custom work can include names, messages, colours, themes, portraits, caricatures, sizes and corporate branding. Final possibilities depend on the chosen product, material and delivery date.",
+    answer: "Artzy’s Studio can personalise names, messages, colours, themes, portraits, caricatures, sizes and business branding. Start with the idea that matters to you; the studio will confirm the material, price, production time and what will look best.",
+    action: { href: "/personalised/", label: "Explore personalisation" },
   },
   {
     words: ["digital", "print", "abstract", "geometric", "decor"],
-    answer: "Digital prints can be created for home or corporate décor in modern, abstract, geometric and requirement-led styles. Share your wall size, colour palette and a room photograph for a clearer recommendation.",
+    answer: "For wall art, tell me the room, wall size, colours you already have and the feeling you want. Explore modern, floral, geometric and Indian-inspired directions, then use an ArtzyAI concept as a conversation starter with the studio.",
+    action: { href: "/digital-prints/#digital-planner", label: "Plan digital art" },
   },
   {
     words: ["caricature", "portrait", "face", "photo"],
-    answer: "A caricature turns a person, couple, family or team into a character-led artwork. A clear front-facing photograph, preferred theme, names and occasion help the studio prepare the brief.",
+    answer: "A caricature is ideal when you want a recognisable, joyful story about a person, couple, family or team. Use a clear front-facing photo and share the occasion, personality, profession, hobbies and preferred style.",
+    action: { href: "/caricatures/", label: "Create a caricature brief" },
   },
   {
     words: ["corporate", "bulk", "employee", "client", "branding"],
-    answer: "Corporate gifts can be planned around quantity, budget, branding, recipient type and delivery schedule. The studio confirms samples, production timing and branding feasibility before the order.",
+    answer: "For business gifting or décor, I’ll help turn the purpose, audience, setting, quantity, brand colours, budget and deadline into a clear visual direction. You can create up to five ArtzyAI concepts before asking the studio to develop the strongest one.",
+    action: { href: "/for-business/#business-concept", label: "Plan a business concept" },
   },
   {
     words: ["delivery", "dispatch", "stock", "available", "availability", "time"],
-    answer: "Stock and variants are shown on each product when supplied by Artzy ERP. Dispatch and delivery are confirmed after the studio checks the item, PIN code and any personalisation; Muse does not promise a date.",
+    answer: "Live stock and variants come from Artzy ERP and appear on the product page when available. Delivery depends on your PIN code and whether the piece is ready, personalised or made to order. I won’t invent availability—the studio confirms the final date before you commit.",
+    action: { href: "/shop/", label: "View current studio products" },
   },
   {
     words: ["visit", "address", "location", "pune", "contact", "whatsapp"],
-    answer: "Visit Artzy’s Studio at Prashant Society, Preetishilp Building, Ground Floor, Lane 3, Plot 22, Paud Road, Kothrud, Pune 411038. You may also WhatsApp +91 91586 80722 or email artzysstudio@gmail.com.",
+    answer: "You’re welcome at Artzy’s Studio, Ground Floor, Preetishilp Building, Lane 3, Plot 22, Prashant Society, Paud Road, Kothrud, Pune 411038. For personal guidance, WhatsApp +91 91586 80722 or email artzysstudio@gmail.com.",
+    action: { href: "/contact/", label: "See studio and contact details" },
+  },
+  {
+    words: ["name plate", "nameplate", "door", "house name"],
+    answer: "A name plate should suit both the family and the entrance. Choose the wording, shape, size, lettering and an Indian art direction such as botanical, Warli, Madhubani, lotus or geometric. ArtzyAI can help you visualise the idea before the studio confirms the practical design.",
+    action: { href: "/name-plates/#name-plate-builder", label: "Build a name plate" },
+  },
+  {
+    words: ["artzyai", "ai", "concept", "generate", "preview"],
+    answer: "ArtzyAI creates imaginative, clearly labelled concept previews from your completed brief. They help you explore a direction; they are not ERP stock or a production proof. Select the idea you like, then Artzy’s Studio confirms feasibility, finish, price and delivery.",
+    action: { href: "/ai-concept-disclosure/", label: "How ArtzyAI concepts work" },
   },
 ];
 
 const answerQuestion = (question: string) => {
   const normalised = question.toLowerCase();
   const match = studioAnswers.find((entry) => entry.words.some((word) => normalised.includes(word)));
-  return match?.answer || "I can help with product selection, personalised gifts, digital prints, caricatures, corporate orders, stock, delivery and visiting the studio. Ask in your own words, or contact Deepti’s studio for a personal recommendation.";
+  return match || {
+    answer: "I want to guide you accurately, so I won’t guess. Tell me what you are looking for, who it is for, your budget, preferred colours or style, and when you need it. If your question needs a stock, price, production or delivery decision, I’ll take you directly to Deepti’s studio.",
+    action: { href: "/contact/", label: "Ask the studio personally" },
+  };
 };
 
 function MuseMark() {
@@ -71,7 +91,7 @@ export default function ArtzyMuseFloater() {
   const [isOpen, setIsOpen] = useState(false);
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<MuseMessage[]>([
-    { id: 1, role: "assistant", text: "Namaste. I’m Artzy Muse, your studio guide. Tell me what you are choosing, who it is for, or where the artwork will live." },
+    { id: 1, role: "assistant", text: "Namaste. I’m Artzy Muse, your senior studio guide. Tell me what you are choosing, who it is for, your budget or where the artwork will live, and I’ll help you find the clearest next step." },
   ]);
   const nextId = useRef(2);
   const conversationEnd = useRef<HTMLDivElement>(null);
@@ -91,10 +111,11 @@ export default function ArtzyMuseFloater() {
   const ask = (text: string) => {
     const clean = text.trim();
     if (!clean) return;
+    const response = answerQuestion(clean);
     setMessages((current) => [
       ...current,
       { id: nextId.current++, role: "customer", text: clean },
-      { id: nextId.current++, role: "assistant", text: answerQuestion(clean) },
+      { id: nextId.current++, role: "assistant", text: response.answer, action: response.action },
     ]);
     setQuestion("");
   };
@@ -139,7 +160,7 @@ export default function ArtzyMuseFloater() {
             {messages.map((message) => (
               <div className={`muse-message ${message.role}`} key={message.id}>
                 {message.role === "assistant" && <span aria-hidden="true"><MuseMark /></span>}
-                <p>{message.text}</p>
+                <div><p>{message.text}</p>{message.action && <Link className="muse-message-action" href={message.action.href} onClick={() => setIsOpen(false)}>{message.action.label} <span aria-hidden="true">→</span></Link>}</div>
               </div>
             ))}
             <div ref={conversationEnd} />
@@ -158,7 +179,7 @@ export default function ArtzyMuseFloater() {
           </form>
 
           <div className="muse-imagine-links"><span>CREATE AN AI CONCEPT</span><p>Complete a custom brief first, then generate a clearly labelled imaginative preview.</p><div><Link href="/name-plates/#name-plate-builder" onClick={() => setIsOpen(false)}>Name plate preview</Link><Link href="/digital-prints/#digital-planner" onClick={() => setIsOpen(false)}>Digital art preview</Link></div></div>
-          <p className="muse-chat-note">Muse provides general guidance. Stock, final price, custom feasibility and delivery are confirmed by the studio.</p>
+          <p className="muse-chat-note">Muse helps you choose with confidence. Live stock comes from Artzy ERP; final price, custom feasibility and delivery are confirmed by the studio.</p>
           <Link className="muse-guide-contact" href="/contact" onClick={() => setIsOpen(false)}>
             Speak with Deepti’s studio <span>&rarr;</span>
           </Link>
