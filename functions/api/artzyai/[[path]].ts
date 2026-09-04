@@ -3,6 +3,7 @@ type Env = {
   ARTZYAI_SERVICE_TOKEN?: string;
   ARTZYAI_BACKEND?: { fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> };
   ERP_API_BASE_URL?: string;
+  STOREFRONT_PUBLIC_ORIGIN?: string;
 };
 
 type Context = { request: Request; env: Env; params: { path?: string | string[] } };
@@ -20,7 +21,11 @@ const allowed = [
 
 export const onRequest = async ({ request, env, params }: Context): Promise<Response> => {
   const origin = request.headers.get('origin');
-  if (origin && origin !== new URL(request.url).origin) return Response.json({ error: 'Same-origin request required.' }, { status: 403, headers: noStore });
+  const allowedOrigins = new Set([new URL(request.url).origin]);
+  if (env.STOREFRONT_PUBLIC_ORIGIN) {
+    try { allowedOrigins.add(new URL(env.STOREFRONT_PUBLIC_ORIGIN).origin); } catch { /* Ignore invalid optional configuration. */ }
+  }
+  if (origin && !allowedOrigins.has(origin)) return Response.json({ error: 'Same-origin request required.' }, { status: 403, headers: noStore });
   const path = (Array.isArray(params.path) ? params.path.join('/') : params.path || '').replace(/^\/+|\/+$/g, '');
   if (!allowed.some(pattern => pattern.test(path))) return Response.json({ error: 'ArtzyAI route not found.' }, { status: 404, headers: noStore });
   if (!env.ARTZYAI_SERVICE_TOKEN) return Response.json({ error: 'ArtzyAI is not configured yet.' }, { status: 503, headers: noStore });
