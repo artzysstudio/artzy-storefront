@@ -117,6 +117,44 @@ export interface Product {
   erpUpdatedAt?: string;
 }
 
+const ARTZY_MEDIA_ORIGIN = 'https://media.artzysstudio.in';
+
+function storefrontMediaUrl(value: unknown): string | null {
+  if (typeof value !== 'string' || !value.trim()) return null;
+  const candidate = value.trim().replace(/\\/g, '/');
+
+  try {
+    const absolute = new URL(candidate);
+    return absolute.protocol === 'https:' && absolute.hostname === 'media.artzysstudio.in'
+      ? absolute.toString()
+      : null;
+  } catch {
+    const relative = candidate.replace(/^\/+/, '');
+    if (!relative || relative.includes('..') || relative.includes(':')) return null;
+    return new URL(relative, `${ARTZY_MEDIA_ORIGIN}/`).toString();
+  }
+}
+
+export function normalizeStorefrontProduct(product: Product): Product {
+  const source = product as Product & { cover_image?: unknown; sale_price?: unknown };
+  const candidates = [
+    ...(Array.isArray(product.images) ? product.images : []),
+    source.cover_image,
+  ];
+  const images = Array.from(new Set(candidates.map(storefrontMediaUrl).filter((image): image is string => Boolean(image))));
+  const erpSalePrice = Number(source.sale_price);
+
+  return {
+    ...product,
+    images,
+    salePrice: typeof product.salePrice === 'number'
+      ? product.salePrice
+      : Number.isFinite(erpSalePrice) && erpSalePrice > 0
+        ? erpSalePrice
+        : null,
+  };
+}
+
 /**
  * A product may appear in the public shop only when it is a real, available
  * ERP record with its own Artzy Studio product photograph. This deliberately
@@ -153,7 +191,7 @@ function normalizeProductList(payload: unknown): Product[] {
         ? (payload as { products: Product[] }).products
         : [];
 
-  return records.filter(isStorefrontInventoryProduct);
+  return records.map(normalizeStorefrontProduct).filter(isStorefrontInventoryProduct);
 }
 
 export interface CollectionSEO {

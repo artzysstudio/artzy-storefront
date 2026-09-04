@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { isStorefrontInventoryProduct, Product } from '@/lib/api';
+import { isStorefrontInventoryProduct, normalizeStorefrontProduct, Product } from '@/lib/api';
 import ProductCard from '@/components/ProductCard';
 import ProductDetailModal from '@/components/ProductDetailModal';
 
@@ -13,7 +13,7 @@ const slugify = (value: string) =>
 
 export default function ShopClient({ initialProducts, categoryScope = [] }: { initialProducts: Product[]; categoryScope?: string[] }) {
   const inScope = (product: Product) => isStorefrontInventoryProduct(product) && (categoryScope.length === 0 || categoryScope.some((scope) => slugify(product.category).includes(slugify(scope))));
-  const [products, setProducts] = useState<Product[]>(() => initialProducts.filter(inScope));
+  const [products, setProducts] = useState<Product[]>(() => initialProducts.map(normalizeStorefrontProduct).filter(inScope));
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedOccasion, setSelectedOccasion] = useState('');
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -74,7 +74,7 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
         const records = Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : Array.isArray(payload?.products) ? payload.products : [];
         // Replace the catalogue even when the live feed is empty. Retaining old
         // products here could leave a newly drafted item visible indefinitely.
-        if (isCurrent) setProducts(records.filter(inScope));
+        if (isCurrent) setProducts(records.map(normalizeStorefrontProduct).filter(inScope));
       } catch (error) {
         if (isCurrent && !(error instanceof DOMException && error.name === 'AbortError')) {
           console.warn('Live ERP refresh is unavailable.', error);
