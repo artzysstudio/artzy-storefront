@@ -72,7 +72,8 @@ export async function proxyErp(
         ...jsonHeaders,
         "cache-control":
           request.method === "GET"
-            ? "public, max-age=60, s-maxage=300, stale-while-revalidate=900"
+            ? upstream.headers.get("cache-control") ??
+              "public, max-age=60, s-maxage=300, stale-while-revalidate=900"
             : "no-store",
       },
     });
