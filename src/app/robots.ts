@@ -9,7 +9,10 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: indexable ? '/' : undefined,
-      disallow: indexable ? ['/account', '/checkout', '/api/', '/_next/'] : '/',
+      // Account and checkout already carry noindex directives. Keep them
+      // crawlable so search engines can see those directives, and never block
+      // framework assets needed to render and evaluate the storefront.
+      disallow: indexable ? ['/api/'] : '/',
     },
     sitemap: `${baseUrl}/sitemap.xml`,
   };
