@@ -22,6 +22,7 @@ export default async function Home() {
       <Header />
       <main>
         <PremiumHero imageUrl="/images/homepage-handmade-hero.webp" />
+        <HomeGiftHamper />
         <HomeDiscovery />
 
         <section className="section container" aria-labelledby="fresh-from-studio">
@@ -35,8 +36,6 @@ export default async function Home() {
           </div>
           <FreshStudioProducts />
         </section>
-
-        <HomeGiftHamper />
 
         <CustomerStories />
 
