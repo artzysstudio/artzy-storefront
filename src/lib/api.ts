@@ -56,6 +56,8 @@ export interface ProductVariant {
   quantity?: number;
   isAvailable?: boolean;
   attributes?: Record<string, string>;
+  colorHex?: string;
+  imageUrl?: string;
 }
 
 export interface Product {
@@ -142,18 +144,50 @@ function storefrontMediaUrl(value: unknown): string | null {
   }
 }
 
+function cleanText(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
 export function normalizeStorefrontProduct(product: Product): Product {
-  const source = product as Product & { cover_image?: unknown; sale_price?: unknown };
+  const source = product as Product & { cover_image?: unknown; sale_price?: unknown; description?: unknown };
   const candidates = [
     ...(Array.isArray(product.images) ? product.images : []),
     source.cover_image,
   ];
   const images = Array.from(new Set(candidates.map(storefrontMediaUrl).filter((image): image is string => Boolean(image))));
   const erpSalePrice = Number(source.sale_price);
+  const variants = Array.isArray(product.variants) ? product.variants.map((variant) => {
+    const raw = variant as ProductVariant & {
+      variant_name?: unknown; colour_name?: unknown; theme_label?: unknown;
+      colour_hex?: unknown; color_hex?: unknown; image_url?: unknown;
+      photos?: Array<{ url?: unknown }>; price_override?: unknown;
+      selling_price?: unknown; stock_qty?: unknown; is_active?: unknown;
+    };
+    const stock = Number(raw.stock_qty);
+    const price = Number(raw.price_override ?? raw.selling_price);
+    const imageUrl = storefrontMediaUrl(raw.image_url ?? raw.photos?.[0]?.url);
+
+    return {
+      ...variant,
+      name: cleanText(raw.variant_name) || cleanText(raw.colour_name) || cleanText(raw.theme_label) || variant.name,
+      price: Number.isFinite(price) && price > 0 ? price : variant.price,
+      quantity: Number.isFinite(stock) ? Math.max(0, stock) : variant.quantity,
+      isAvailable: typeof raw.is_active === 'boolean'
+        ? raw.is_active && (!Number.isFinite(stock) || stock > 0)
+        : variant.isAvailable,
+      colorHex: cleanText(raw.color_hex) || cleanText(raw.colour_hex) || variant.colorHex,
+      imageUrl: imageUrl || variant.imageUrl,
+    };
+  }) : product.variants;
 
   return {
     ...product,
-    images,
+    images: Array.from(new Set([
+      ...images,
+      ...(variants || []).map((variant) => variant.imageUrl).filter((image): image is string => Boolean(image)),
+    ])),
+    variants,
+    artworkStory: product.artworkStory || cleanText(source.description),
     salePrice: typeof product.salePrice === 'number'
       ? product.salePrice
       : Number.isFinite(erpSalePrice) && erpSalePrice > 0

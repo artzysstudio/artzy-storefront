@@ -15,6 +15,12 @@ const variantLabel = (variant: ProductVariant, index: number) =>
   Object.values(variant.attributes || {}).join(" · ") ||
   `Option ${index + 1}`;
 
+function professionalVariantLabel(variant: ProductVariant, index: number): string {
+  const label = variantLabel(variant, index);
+  const colour = label.match(/^(.+?)\s+Colou?r\b/i)?.[1]?.trim();
+  return colour || label.replace(/\s+/g, " ").trim();
+}
+
 export default function ProductDetailModal({
   product,
   onClose,
@@ -24,7 +30,7 @@ export default function ProductDetailModal({
 }) {
   const { addToCart, items } = useCart();
   const images = useMemo(
-    () => product.images.filter(Boolean).slice(0, 4),
+    () => product.images.filter(Boolean),
     [product.images],
   );
   const availableVariants = product.variants || [];
@@ -159,9 +165,19 @@ export default function ProductDetailModal({
                     type="button"
                     key={variant.id || variant.sku || index}
                     disabled={variant.isAvailable === false || variant.quantity === 0}
-                    onClick={() => { setSelectedVariant(index); setAdded(false); }}
+                    onClick={() => {
+                      setSelectedVariant(index);
+                      setAdded(false);
+                      setIsPlaying(false);
+                      if (variant.imageUrl) {
+                        const imageIndex = images.indexOf(variant.imageUrl);
+                        if (imageIndex >= 0) setActiveImage(imageIndex);
+                      }
+                    }}
                   >
-                    {variantLabel(variant, index)}
+                    {variant.colorHex && <span className="variant-colour" style={{ backgroundColor: variant.colorHex }} aria-hidden="true" />}
+                    <span>{professionalVariantLabel(variant, index)}</span>
+                    {typeof variant.quantity === "number" && <small>{variant.quantity > 0 ? `${variant.quantity} available` : "Unavailable"}</small>}
                   </button>
                 ))}
               </div>
@@ -195,6 +211,13 @@ export default function ProductDetailModal({
         </section>
       </article>
       <style jsx global>{`
+        .product-variants>div{display:flex;flex-wrap:wrap;gap:10px}
+        .product-variants button{display:inline-grid!important;grid-template-columns:auto auto;align-items:center;justify-content:start;gap:6px 8px;text-align:left}
+        .product-variants button small{grid-column:2;color:#75675f;font-size:.65rem;font-weight:500}
+        .product-variants button.active small{color:inherit;opacity:.82}
+        .variant-colour{width:15px;height:15px;border:1px solid rgba(52,38,31,.2);border-radius:50%;grid-row:1 / span 2}
+        .product-gallery-thumbs{overflow-x:auto!important;display:flex!important;justify-content:flex-start!important;scrollbar-width:thin}
+        .product-gallery-thumbs button{flex:0 0 76px}
         .product-detail-bag-stock{display:block;margin-top:9px;color:#67584f;font-size:.75rem;text-align:center}
         @media (min-width: 769px) {
           .product-detail-backdrop {
