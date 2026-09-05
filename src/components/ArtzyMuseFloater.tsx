@@ -5,6 +5,7 @@ import { FormEvent, KeyboardEvent as ReactKeyboardEvent, useEffect, useRef, useS
 
 type MuseMessage = { id: number; role: "assistant" | "customer"; text: string; action?: { href: string; label: string } };
 type MuseLanguage = "en" | "hi" | "mr";
+const conversationStorageKey = "artzy-muse-conversation-v2";
 
 const greetings: Record<MuseLanguage, string> = {
   en: "Namaste. I’m Artzy Muse, your studio guide. Tell me who or what you are choosing for, your budget, or the feeling you want to create. I’ll suggest the clearest next step.",
@@ -96,7 +97,7 @@ export default function ArtzyMuseFloater() {
     const savedLanguage = sessionStorage.getItem("artzy-muse-language") as MuseLanguage | null;
     const selectedLanguage = savedLanguage && savedLanguage in greetings ? savedLanguage : "en";
     setLanguage(selectedLanguage);
-    const savedConversation = sessionStorage.getItem("artzy-muse-conversation");
+    const savedConversation = sessionStorage.getItem(conversationStorageKey);
     if (savedConversation) {
       try {
         const parsed = JSON.parse(savedConversation) as MuseMessage[];
@@ -109,7 +110,7 @@ export default function ArtzyMuseFloater() {
     }
   }, []);
 
-  useEffect(() => { sessionStorage.setItem("artzy-muse-conversation", JSON.stringify(messages.slice(-12))); }, [messages]);
+  useEffect(() => { sessionStorage.setItem(conversationStorageKey, JSON.stringify(messages.slice(-12))); }, [messages]);
 
   useEffect(() => {
     if (!isOpen) return;
