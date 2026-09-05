@@ -18,7 +18,7 @@ export default async function OriginalArtPage() {
       <section className="shop-intro">
         <span>Original art · Available from the studio</span>
         <h1>Art with a hand,<br/><em>heart and history.</em></h1>
-        <p>Browse only the wall art and frames currently supplied by the Artzy ERP. Open a piece to check its SKU, availability and the details recorded by the studio.</p>
+        <p>Browse only the wall art and frames currently published by Artzy&apos;s Studio. Open a piece to check its SKU, availability and the details recorded by the studio.</p>
         <div><a href="#shop-products">View available art</a><Link href="/personalised/#custom-artwork">Commission an artwork</Link></div>
       </section>
       <ShopClient initialProducts={products} categoryScope={['Wall Art & Frames']} />

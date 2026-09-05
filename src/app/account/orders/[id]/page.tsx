@@ -21,7 +21,7 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
   const { id } = await params;
   if (id === 'ARTZY-0000') return <main className="container" style={{ padding: '8rem 1.25rem', minHeight: '70vh', maxWidth: '720px', textAlign: 'center' }}>
     <h1>Track a confirmed order</h1>
-    <p style={{ color: 'var(--text-muted)', lineHeight: 1.7 }}>Order tracking appears here only for an order returned by Artzy ERP. Sign in to your account or ask the studio with your confirmed order number.</p>
+    <p style={{ color: 'var(--text-muted)', lineHeight: 1.7 }}>Order tracking appears here only for a confirmed Artzy&apos;s Studio order. Sign in to your account or ask the studio with your confirmed order number.</p>
     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px', marginTop: '24px' }}><Link className="btn" href="/account">Your account</Link><a className="btn btn-solid" href="https://wa.me/919158680722">Ask on WhatsApp</a></div>
   </main>;
   const order = await api.commerce.getOrder(id);

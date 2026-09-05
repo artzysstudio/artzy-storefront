@@ -3,6 +3,7 @@ export interface StorefrontEnv {
   ERP_API_TOKEN?: string;
   ERP_HEALTH_PATH?: string;
   ERP_PRODUCTS_PATH?: string;
+  ERP_GIFT_HAMPERS_PATH?: string;
   ERP_CATEGORIES_PATH?: string;
   ERP_ORDER_PATH?: string;
   ERP_SHIPPING_PATH?: string;
@@ -39,7 +40,7 @@ export async function proxyErp(
       {
         success: false,
         code: "ERP_NOT_CONFIGURED",
-        error: "The storefront ERP connection is not configured yet.",
+        error: "The storefront connection is not configured yet.",
       },
       503,
     );
@@ -52,7 +53,7 @@ export async function proxyErp(
       : `${env.ERP_API_BASE_URL}/`;
     target = new URL(path.replace(/^\//, ""), base);
   } catch {
-    return json({ success: false, error: "Invalid ERP API configuration." }, 500);
+    return json({ success: false, error: "Invalid storefront configuration." }, 500);
   }
 
   const headers = new Headers(init.headers);
@@ -70,7 +71,7 @@ export async function proxyErp(
     const upstream = await fetch(target, { ...init, headers });
     if (!(upstream.headers.get("content-type") ?? "").includes("application/json")) {
       return json(
-        { success: false, error: "The ERP returned an unexpected response." },
+        { success: false, error: "The studio service returned an unexpected response." },
         502,
       );
     }
@@ -87,6 +88,6 @@ export async function proxyErp(
       },
     });
   } catch {
-    return json({ success: false, error: "The ERP is temporarily unavailable." }, 502);
+    return json({ success: false, error: "The studio service is temporarily unavailable." }, 502);
   }
 }

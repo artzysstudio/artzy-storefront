@@ -60,6 +60,25 @@ test('categories use the deployed ERP route and remove inline image blobs', { co
   }
 });
 
+test('gift hampers use the dedicated published hamper feed', { concurrency: false }, async () => {
+  const originalFetch = globalThis.fetch;
+  let requestedUrl = '';
+  globalThis.fetch = async (input) => {
+    requestedUrl = String(input);
+    return Response.json({ success: true, data: [{ id: 'hamper-one', name: 'Celebration Hamper' }] });
+  };
+
+  try {
+    const response = await onRequest(context('gift-hampers'));
+    const payload = await response.json() as { data: Array<{ id: string }> };
+    assert.equal(response.status, 200);
+    assert.equal(requestedUrl, 'https://erp.example.test/api/storefront/gift-hampers');
+    assert.equal(payload.data[0].id, 'hamper-one');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test('status fails closed when the ERP is unavailable', { concurrency: false }, async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => new Response('Unavailable', {

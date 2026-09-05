@@ -117,7 +117,7 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
               variantLabel: item.variantLabel,
               availableStock: stockQuantity,
             });
-            if (safeQuantity !== item.quantity) stockChanges.push(`${product.name} was adjusted to ${safeQuantity}, matching current ERP stock.`);
+            if (safeQuantity !== item.quantity) stockChanges.push(`${product.name} was adjusted to ${safeQuantity}, matching current studio availability.`);
           }
           const effectivePrice = product.salePrice && product.salePrice > 0 ? product.salePrice : product.price;
           loadedProducts.push({
@@ -134,7 +134,7 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
       if (cancelled) return;
       setCartProducts(loadedProducts);
       setSubtotal(total);
-      setInventoryMessage(stockChanges.length ? stockChanges.join(' ') : availableProducts.length ? 'Bag quantities checked against current ERP stock.' : 'Live ERP stock could not be refreshed. Stock will be checked again before payment.');
+      setInventoryMessage(stockChanges.length ? stockChanges.join(' ') : availableProducts.length ? 'Bag quantities checked against current studio availability.' : 'Live availability could not be refreshed. Stock will be checked again before payment.');
       setIsLoading(false);
     };
 
@@ -529,11 +529,11 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
                 </div>
                 <small className="checkout-item__stock">
                   {p.stockQuantity === 1
-                    ? 'Only 1 available in ERP stock'
+                    ? 'Only 1 available'
                     : p.stockQuantity !== null
                       ? p.cartQuantity >= p.stockQuantity
                         ? `All ${p.stockQuantity} available units are in your bag`
-                        : `${p.stockQuantity - p.cartQuantity} more available · ${p.stockQuantity} total in ERP stock`
+                        : `${p.stockQuantity - p.cartQuantity} more available · ${p.stockQuantity} total available`
                       : 'Availability confirmed again before payment'}
                 </small>
               </div>
@@ -561,7 +561,7 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', fontSize: '.82rem', color: 'var(--text-muted)' }}>
             <span>Tax</span>
-            <span>ERP-confirmed before payment</span>
+            <span>Availability confirmed before payment</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.2rem', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(0,0,0,0.1)' }}>
             <span>Total</span>

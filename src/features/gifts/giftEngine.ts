@@ -210,7 +210,7 @@ export function recommendGifts(products: Product[], intent: GiftIntent, packagin
   const message = recommendations.length
     ? `${recommendations.length} validated gift plan${recommendations.length === 1 ? '' : 's'} found within ${intent.budgetMode === 'per-gift' ? 'the per-gift' : 'your total'} budget.`
     : needsPersonalisation && excluded.personalisation
-      ? 'No current ERP product confirms the requested personalisation. Remove personalisation to see ready-stock gifts, or send the studio a custom brief.'
+      ? 'No current studio product confirms the requested personalisation. Remove personalisation to see ready-stock gifts, or send the studio a custom brief.'
       : intent.quantity > 1 && excluded.quantity
         ? 'Current verified stock cannot fulfil that quantity as one repeated gift. Reduce the quantity or ask the studio to confirm made-to-order capacity.'
         : 'No verified gift exactly matches every requirement. Relax one option below to see the closest safe alternative.';

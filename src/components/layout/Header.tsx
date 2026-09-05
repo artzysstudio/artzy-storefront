@@ -14,7 +14,7 @@ type NavItem = { label: string; href: string; note?: string; hardNavigate?: bool
 type NavGroup = { label: string; href: string; paths: string[]; note: string; items: NavItem[] };
 
 const NAV: NavGroup[] = [
-  { label: 'Shop', href: '/shop', paths: ['/shop'], note: 'Real photographed pieces currently available from the studio ERP', items: [
+  { label: 'Shop', href: '/shop', paths: ['/shop'], note: 'Real photographed pieces currently available from the studio', items: [
     { label: 'Shop All', href: '/shop' },
     { label: 'Home Décor', href: '/shop/?category=mirrors-and-decorative-hangings' },
     { label: 'Table & Utility Art', href: '/shop/?category=table-and-utility-art' },

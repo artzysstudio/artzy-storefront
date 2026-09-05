@@ -302,7 +302,7 @@ async function requestERP<T>(endpoint: string, init: RequestInit = {}): Promise<
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok || data?.success === false) {
-    throw new Error(data?.error || `ERP request failed with status ${response.status}`);
+    throw new Error(data?.error || `Studio service request failed with status ${response.status}`);
   }
   return data as T;
 }
@@ -441,8 +441,8 @@ const legacyPolicyPages: Record<string, PageDefinition> = {
   'customised-product-policy': policyPage('customised-product-policy', 'Customised products', 'A customised product begins only after the studio confirms the brief, price and timeline. Custom work may not be returnable unless it arrives damaged or differs materially from the approved brief. Ask the studio before payment if anything is unclear.'),
   'cancellation-policy': policyPage('cancellation-policy', 'Cancellation', 'Contact the studio as soon as possible if you need to cancel. Whether cancellation is possible depends on payment status and whether making or dispatch has begun.'),
   'privacy-policy': policyPage('privacy-policy', 'Privacy', 'Artzy’s Studio uses information you provide to answer enquiries, prepare custom briefs, fulfil orders and provide support. Uploaded reference images should be used only for the requested creative service and handled according to the confirmed brief.'),
-  'terms-and-conditions': policyPage('terms-and-conditions', 'Terms and conditions', 'Product availability, price, customisation and delivery are confirmed through the storefront and Artzy ERP. AI-generated previews are concepts only and are not stock, production proofs or confirmed orders.'),
-  'ai-concept-disclosure': policyPage('ai-concept-disclosure', 'AI concept disclosure', 'Artzy Muse previews are imaginative concepts to help discuss a direction. They are clearly separate from ERP stock, Deepti’s original artworks and final production proofs. The studio confirms feasibility, materials, price and delivery before work begins.'),
+  'terms-and-conditions': policyPage('terms-and-conditions', 'Terms and conditions', 'Product availability, price, customisation and delivery are confirmed through the storefront and Artzy’s Studio. AI-generated previews are concepts only and are not stock, production proofs or confirmed orders.'),
+  'ai-concept-disclosure': policyPage('ai-concept-disclosure', 'AI concept disclosure', 'Artzy Muse previews are imaginative concepts to help discuss a direction. They are clearly separate from catalogue stock, Deepti’s original artworks and final production proofs. The studio confirms feasibility, materials, price and delivery before work begins.'),
 };
 
 // The full launch-ready policies are maintained separately from fallback page

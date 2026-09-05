@@ -136,12 +136,12 @@ export default function GiftBuilder({ products }: { products: Product[] }) {
       <div className="gift-how-it-works"><span><b>1</b> Choose who and why</span><span><b>2</b> Set a comfortable budget</span><span><b>3</b> See real in-stock gift plans</span></div>
     </div>
     <div className="gift-builder__intro">
-      <div><span className="gift-kicker">Artzy Gift Concierge</span><h2 id="gift-builder-title">A thoughtful gift plan,<br/><em>built around your person.</em></h2><p>Tell us the moment, budget and mood. We check real ERP stock first, then rank practical ideas from Deepti&apos;s studio.</p></div>
+      <div><span className="gift-kicker">Artzy Gift Concierge</span><h2 id="gift-builder-title">A thoughtful gift plan,<br/><em>built around your person.</em></h2><p>Tell us the moment, budget and mood. We check current studio availability first, then rank practical ideas from Deepti&apos;s studio.</p></div>
       <div className="gift-muse-box">
         <label htmlFor="gift-muse">Describe the gift in your own words</label>
         <textarea id="gift-muse" value={intent.naturalLanguage} onChange={(event) => set('naturalLanguage', event.target.value)} placeholder="10 artistic gifts for employees, ₹15,000 total, premium wrapping" rows={3}/>
         <button type="button" onClick={useMuse} disabled={!intent.naturalLanguage.trim()}>Let Artzy Muse understand</button>
-        <small>Muse interprets your brief. Stock, prices and capabilities are always validated against the ERP catalogue.</small>
+        <small>Muse interprets your brief. Stock, prices and capabilities are always checked against the current studio catalogue.</small>
       </div>
     </div>
 

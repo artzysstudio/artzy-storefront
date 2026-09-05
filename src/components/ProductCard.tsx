@@ -87,7 +87,7 @@ export default function ProductCard({ product, className, onView }: { product: P
                 : quantityInBag > 0 ? 'Add another' : 'Add to bag'}
         </button>
         {!isCorporate && stockQuantity !== null && stockQuantity > 0 && (
-          <small className="product-card-stock">{stockQuantity === 1 ? 'One available in ERP stock' : `${stockQuantity} available in ERP stock`}</small>
+          <small className="product-card-stock">{stockQuantity === 1 ? 'One available' : `${stockQuantity} available`}</small>
         )}
       </div>
       <style jsx>{`

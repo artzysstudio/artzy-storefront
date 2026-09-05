@@ -53,6 +53,12 @@ export const onRequest = async (context: RouteContext) => {
     return proxyErp(context, `${path}${url.search}`);
   }
 
+  if (route === "gift-hampers" && method === "GET") {
+    const url = new URL(context.request.url);
+    const path = context.env.ERP_GIFT_HAMPERS_PATH ?? "/api/storefront/gift-hampers";
+    return proxyErp(context, `${path}${url.search}`);
+  }
+
   if (route === "categories" && method === "GET") {
     const response = await proxyErp(
       context,
@@ -110,7 +116,7 @@ export const onRequest = async (context: RouteContext) => {
   }
 
   if (route === "auth/google" && method === "GET") {
-    if (!context.env.ERP_API_BASE_URL) return json({ success: false, error: "The ERP connection is not configured yet." }, 503);
+    if (!context.env.ERP_API_BASE_URL) return json({ success: false, error: "Customer sign-in is temporarily unavailable." }, 503);
     const target = new URL(
       context.env.ERP_CUSTOMER_GOOGLE_AUTH_URL ??
         "/api/storefront/auth/google",

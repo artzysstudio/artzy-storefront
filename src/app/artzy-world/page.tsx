@@ -48,7 +48,7 @@ export default function ArtzyWorldPage() {
             <a className="story-hero__secondary" href="#how-it-works">How the preview works</a>
           </div>
           <div className="world-powered"><i aria-hidden="true">✿</i><span>Powered by <strong>ArtzyAI</strong><small>Part of the Artzy&apos;s Studio experience</small></span></div>
-          <small>Visual placement is approximate. ERP remains authoritative for product, price, stock and dimensions.</small>
+          <small>Visual placement is approximate. The studio catalogue remains authoritative for product, price, stock and dimensions.</small>
         </div>
       </section>
 
@@ -59,11 +59,11 @@ export default function ArtzyWorldPage() {
           <p>Artzy World is the studio&apos;s visualisation layer—not another catalogue or builder. It helps you understand a piece in context, then returns you to its existing product or custom-art journey.</p>
         </header>
         <ol className="world-five-steps">
-          <li><b>01</b><div><h3>Select an art direction</h3><p>Choose available Artzy artwork from the studio ERP, or begin a custom wall-art direction.</p></div></li>
+          <li><b>01</b><div><h3>Select an art direction</h3><p>Choose available Artzy artwork from the studio catalogue, or begin a custom wall-art direction.</p></div></li>
           <li><b>02</b><div><h3>Bring in your room</h3><p>Upload a clear wall photograph or use a carefully labelled sample room.</p></div></li>
           <li><b>03</b><div><h3>Adjust the view</h3><p>Compare approximate placement, size, frame and colour mood in one comfortable workspace.</p></div></li>
           <li><b>04</b><div><h3>Add optional guidance</h3><p>Choose room-aware recommendations and optional Vastu-inspired guidance within the same preview.</p></div></li>
-          <li><b>05</b><div><h3>Continue in the right place</h3><p>Open the existing ERP product or carry your choices into the studio&apos;s custom-art workflow.</p></div></li>
+          <li><b>05</b><div><h3>Continue in the right place</h3><p>Open the available product or carry your choices into the studio&apos;s custom-art workflow.</p></div></li>
         </ol>
       </section>
 
@@ -74,7 +74,7 @@ export default function ArtzyWorldPage() {
           <h2>Picture the scale.<br/><em>Keep the choice simple.</em></h2>
           <p>The workspace stays open and full-page, with no nested frame or second scrollbar. Your room and art choices remain together while you compare the view.</p>
           <div className="world-preview-promises">
-            <article><b>Available studio artwork</b><p>See the ERP product, current price and stock status, then open its product page or add it to your bag.</p></article>
+            <article><b>Available studio artwork</b><p>See the current price and stock status, then open its product page or add it to your bag.</p></article>
             <article><b>Custom wall-art direction</b><p>Carry room, palette, size, frame and optional Vastu preference into the existing custom hand-painted artwork workflow.</p></article>
           </div>
           <div className="world-coming-soon world-preview-live" role="status"><span aria-hidden="true">✿</span><div><strong>Interactive preview is ready</strong><small>Your uploaded wall photo stays in your browser during the preview.</small></div></div>

@@ -7,6 +7,33 @@
     <meta name="theme-color" content="#fbfaf7" />
     <link rel="canonical" href="https://www.artzysstudio.in/artzy-world/preview/" />
     <title>Artzy World · Preview art in your space</title>
+    <script>
+      // The preview is a bundled sub-application. Translate its internal
+      // system label into customer language, including content rendered later.
+      document.addEventListener('DOMContentLoaded', function () {
+        function useCustomerLanguage(root) {
+          var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+          var node;
+          while ((node = walker.nextNode())) {
+            if (/\bERP\b/.test(node.nodeValue || '')) {
+              node.nodeValue = node.nodeValue.replace(/\bERP\b/g, 'studio catalogue');
+            }
+          }
+        }
+        useCustomerLanguage(document.body);
+        new MutationObserver(function (changes) {
+          changes.forEach(function (change) {
+            change.addedNodes.forEach(function (node) {
+              if (node.nodeType === Node.TEXT_NODE && /\bERP\b/.test(node.nodeValue || '')) {
+                node.nodeValue = node.nodeValue.replace(/\bERP\b/g, 'studio catalogue');
+              } else if (node.nodeType === Node.ELEMENT_NODE) {
+                useCustomerLanguage(node);
+              }
+            });
+          });
+        }).observe(document.body, { childList: true, subtree: true });
+      });
+    </script>
     <script type="module" crossorigin src="/artzy-world/preview/assets/index-B-YFbowe.js"></script>
     <link rel="stylesheet" crossorigin href="/artzy-world/preview/assets/index-Cyi4TJkR.css">
   </head>

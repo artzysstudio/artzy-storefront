@@ -13,7 +13,7 @@ const greetings: Record<MuseLanguage, string> = {
 };
 
 const pageContext = (path: string) => {
-  if (path.startsWith("/shop")) return "I can help you compare current ERP products, stock, variants and delivery questions.";
+  if (path.startsWith("/shop")) return "I can help you compare current studio products, stock, variants and delivery questions.";
   if (path.startsWith("/gifts")) return "Tell me the recipient, occasion, budget and required date, and I’ll help narrow the gift direction.";
   if (path.startsWith("/name-plates")) return "I can help you choose wording, size, shape, lettering and an Indian art direction for the entrance.";
   if (path.startsWith("/caricatures")) return "I can help turn a photo, personality and occasion into a clear caricature brief.";
@@ -37,10 +37,10 @@ const studioAnswers = [
   { words: ["caricature", "portrait", "face", "photo"], answer: "A caricature is ideal when you want a recognisable, joyful story about a person, couple, family or team. Use a clear front-facing photo and share the occasion, personality, profession, hobbies and preferred style.", action: { href: "/caricatures/", label: "Create a caricature brief" } },
   { words: ["corporate", "bulk", "employee", "client", "branding"], answer: "For business gifting or décor, I’ll help turn the purpose, audience, setting, quantity, brand colours, budget and deadline into a clear visual direction.", action: { href: "/for-business/#business-concept", label: "Plan a business concept" } },
   { words: ["order", "tracking", "track", "status"], answer: "For an existing order, open your account to see the latest confirmed information. If you cannot find it, I can take you to the studio for personal help.", action: { href: "/account/", label: "View account and orders" } },
-  { words: ["delivery", "dispatch", "stock", "available", "availability", "time"], answer: "Live stock and variants come from Artzy ERP and appear on product pages when available. Delivery depends on your PIN code and whether the piece is ready, personalised or made to order. The studio confirms the final date before you commit.", action: { href: "/shop/", label: "View current studio products" } },
+  { words: ["delivery", "dispatch", "stock", "available", "availability", "time"], answer: "Live stock and variants appear on product pages when available. Delivery depends on your PIN code and whether the piece is ready, personalised or made to order. The studio confirms the final date before you commit.", action: { href: "/shop/", label: "View current studio products" } },
   { words: ["visit", "address", "location", "pune", "contact", "whatsapp"], answer: "You’re welcome at Artzy’s Studio, Ground Floor, Preetishilp Building, Lane 3, Plot 22, Prashant Society, Paud Road, Kothrud, Pune 411038. For personal guidance, WhatsApp +91 91586 80722.", action: { href: "/contact/", label: "See studio and contact details" } },
   { words: ["name plate", "nameplate", "door", "house name"], answer: "A name plate should suit both the family and the entrance. Choose the wording, shape, size, lettering and an Indian art direction such as botanical, Warli, Madhubani, lotus or geometric.", action: { href: "/name-plates/#name-plate-builder", label: "Build a name plate" } },
-  { words: ["artzyai", "ai", "concept", "generate", "preview"], answer: "ArtzyAI creates imaginative, clearly labelled concept previews from your completed brief. They are not ERP stock or a production proof. The studio confirms feasibility, finish, price and delivery.", action: { href: "/ai-concept-disclosure/", label: "How ArtzyAI concepts work" } },
+  { words: ["artzyai", "ai", "concept", "generate", "preview"], answer: "ArtzyAI creates imaginative, clearly labelled concept previews from your completed brief. They are not catalogue stock or a production proof. The studio confirms feasibility, finish, price and delivery.", action: { href: "/ai-concept-disclosure/", label: "How ArtzyAI concepts work" } },
 ];
 
 const answerQuestion = (question: string) => {
@@ -114,7 +114,8 @@ export default function ArtzyMuseFloater() {
     const update = () => {
       const height = viewport?.height ?? window.innerHeight;
       const keyboardOpen = document.activeElement === textareaRef.current && window.innerHeight - height > 140;
-      dialogRef.current?.style.setProperty("--muse-sheet-height", `${Math.round(window.innerHeight * 0.7)}px`);
+      const compactHeight = Math.min(520, Math.max(360, window.innerHeight * 0.56));
+      dialogRef.current?.style.setProperty("--muse-sheet-height", `${Math.round(compactHeight)}px`);
       dialogRef.current?.style.setProperty("--muse-expanded-height", `${Math.round(keyboardOpen ? height : window.innerHeight)}px`);
       if (keyboardOpen) setIsExpanded(true);
     };
@@ -147,8 +148,7 @@ export default function ArtzyMuseFloater() {
         <div ref={conversationRef} className="muse-conversation" aria-live="polite" aria-relevant="additions text">{messages.map((message) => <div className={`muse-message ${message.role}`} key={message.id}>{message.role === "assistant" && <span aria-hidden="true"><MuseMark /></span>}<div><p>{message.text}</p>{message.action && <Link className="muse-message-action" href={message.action.href} onClick={closeMuse}>{message.action.label} <span aria-hidden="true">→</span></Link>}</div></div>)}</div>
         <footer className="muse-chat-footer">
           <form className="muse-chat-form" onSubmit={submit}><label htmlFor="muse-question">Ask Artzy Muse</label><div><textarea ref={textareaRef} id="muse-question" rows={1} value={question} onFocus={() => setIsExpanded(true)} onChange={(event) => resizeComposer(event.target.value)} onKeyDown={onComposerKeyDown} placeholder="Type your question…" autoComplete="off" /><button type="submit" aria-label="Send question" disabled={!question.trim()}>→</button></div></form>
-          <div className="muse-language-row"><label htmlFor="muse-language">Language</label><select id="muse-language" value={language} onChange={(event) => changeLanguage(event.target.value as MuseLanguage)}><option value="en">English</option><option value="hi">हिन्दी</option><option value="mr">मराठी</option></select><button type="button" onClick={speakGreeting} aria-label="Listen to Artzy Muse greeting">Listen <span aria-hidden="true">♪</span></button></div>
-          <details className="muse-more-help"><summary>More ways I can help</summary><div className="muse-imagine-links"><span>CREATE AN AI CONCEPT</span><p>Complete a custom brief, then create a clearly labelled imaginative preview.</p><div><Link href="/name-plates/#name-plate-builder" onClick={closeMuse}>Name plate</Link><Link href="/digital-prints/#digital-planner" onClick={closeMuse}>Digital art</Link></div></div><p className="muse-chat-note">Live stock comes from Artzy ERP. Final price, feasibility and delivery are confirmed by the studio.</p></details>
+          <details className="muse-more-help"><summary>Language, listening &amp; more help</summary><div className="muse-language-row"><label htmlFor="muse-language">Language</label><select id="muse-language" value={language} onChange={(event) => changeLanguage(event.target.value as MuseLanguage)}><option value="en">English</option><option value="hi">हिन्दी</option><option value="mr">मराठी</option></select><button type="button" onClick={speakGreeting} aria-label="Listen to Artzy Muse greeting">Listen <span aria-hidden="true">♪</span></button></div><div className="muse-imagine-links"><span>CREATE AN AI CONCEPT</span><p>Complete a custom brief, then create a clearly labelled imaginative preview.</p><div><Link href="/name-plates/#name-plate-builder" onClick={closeMuse}>Name plate</Link><Link href="/digital-prints/#digital-planner" onClick={closeMuse}>Digital art</Link></div></div><p className="muse-chat-note">Live stock comes from the studio catalogue. Final price, feasibility and delivery are confirmed by the studio.</p></details>
           <Link className="muse-guide-contact" href="/contact" onClick={closeMuse}>Need a person? <strong>Speak with Deepti’s studio</strong><span aria-hidden="true">→</span></Link>
         </footer>
       </aside>
