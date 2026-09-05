@@ -15,10 +15,14 @@ const variantLabel = (variant: ProductVariant, index: number) =>
   Object.values(variant.attributes || {}).join(" · ") ||
   `Option ${index + 1}`;
 
-function professionalVariantLabel(variant: ProductVariant, index: number): string {
+function professionalVariantLabel(variant: ProductVariant, index: number, productName: string): string {
   const label = variantLabel(variant, index);
-  const colour = label.match(/^(.+?)\s+Colou?r\b/i)?.[1]?.trim();
-  return colour || label.replace(/\s+/g, " ").trim();
+  const colourParts = label.match(/^(.+?)\s+Colou?r(?:\s+(.+))?$/i);
+  if (!colourParts) return label.replace(/\s+/g, " ").trim();
+  const colour = colourParts[1].trim();
+  const descriptor = colourParts[2]?.replace(/\s+/g, " ").trim();
+  if (!descriptor || productName.toLowerCase().includes(descriptor.toLowerCase())) return colour;
+  return `${colour} · ${descriptor.replace(/\bOf\b/g, "of")}`;
 }
 
 export default function ProductDetailModal({
@@ -176,7 +180,7 @@ export default function ProductDetailModal({
                     }}
                   >
                     {variant.colorHex && <span className="variant-colour" style={{ backgroundColor: variant.colorHex }} aria-hidden="true" />}
-                    <span>{professionalVariantLabel(variant, index)}</span>
+                    <span>{professionalVariantLabel(variant, index, product.name)}</span>
                     {typeof variant.quantity === "number" && <small>{variant.quantity > 0 ? `${variant.quantity} available` : "Unavailable"}</small>}
                   </button>
                 ))}

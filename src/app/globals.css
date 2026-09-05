@@ -2704,3 +2704,11 @@ body.artzy-muse-open .muse-floater,body.artzy-muse-open .plate-mobile-bar,body.a
   .home-gift-unavailable{min-width:calc(100vw - 36px)}
 }
 @media(prefers-reduced-motion:reduce){.home-gift-piece img{transition:none}.home-gift-loading span{animation:none}}
+
+/* Mobile story heroes: always show the complete 2:1 illustration before copy. */
+@media(max-width:700px){
+  .story-hero{display:flex!important;min-height:0!important;flex-direction:column;align-items:stretch}
+  .story-hero .story-hero__image{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;aspect-ratio:2/1;object-fit:contain!important;object-position:center!important;border-radius:0;background:#f8f0e7;animation:none}
+  .story-hero .story-hero__shade{display:none!important}
+  .story-hero .story-hero__copy{width:auto!important;margin:0!important;padding:34px 20px 42px!important}
+}
