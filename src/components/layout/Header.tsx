@@ -112,7 +112,7 @@ export default function Header() {
         </nav>
 
         <div className="store-utilities">
-          <a className="ask-studio" href="https://wa.me/919158680722" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">✿</span> Ask Studio</a>
+          <a className="ask-studio" href="https://wa.me/919158680722" target="_blank" rel="noopener noreferrer" aria-label="Ask Artzy's Studio on WhatsApp"><span aria-hidden="true">✿</span><span className="ask-studio__label">Ask Studio</span></a>
           <button className="utility-icon" aria-label="Search" onClick={() => setSearchOpen(true)}><Icon name="search" /></button>
           <Link className="utility-icon desktop-account" href="/account" prefetch={false} aria-label="Your account"><Icon name="account" /></Link>
           <Link className="utility-icon cart-link" href="/checkout" prefetch={false} aria-label={`Cart with ${cartCount} items`}><Icon name="cart" />{cartCount > 0 && <b>{cartCount}</b>}</Link>
@@ -138,6 +138,6 @@ export default function Header() {
       .mobile-accordion__row{min-height:58px;display:grid!important;grid-template-columns:1fr 48px;align-items:center;padding:0!important}.mobile-accordion--direct .mobile-accordion__row{grid-template-columns:1fr}.mobile-accordion__row>a{font:500 1.35rem var(--font-serif),Georgia,serif;color:#41332c}.mobile-accordion__row.is-active>a{color:#a3464c}.mobile-accordion__row>button{width:44px;height:44px;border:0;background:transparent;color:#a3464c;font-size:1.35rem;cursor:pointer}@media(min-width:901px){.mobile-navigation{display:none!important}}
       .mobile-navigation__quick{grid-template-columns:1fr 1fr}.mobile-navigation__quick a{padding-inline:8px;text-align:center}.mobile-navigation__quick a:last-child{background:#b25156;color:white}@media(max-width:1240px){.store-header__inner{padding-inline:14px}.desktop-nav__group>button,.desktop-nav__direct{padding-inline:6px;font-size:.6rem}}
     `}</style>
-    <style jsx global>{`.mega-menu[hidden],.mobile-navigation[aria-hidden=true],.mobile-accordion>div[hidden]{display:none!important}`}</style>
+    <style jsx global>{`.mega-menu[hidden],.mobile-navigation[aria-hidden=true],.mobile-accordion>div[hidden]{display:none!important}@media(max-width:380px){.ask-studio{width:44px;padding:0!important;justify-content:center}.ask-studio__label{display:none}}`}</style>
   </>;
 }
