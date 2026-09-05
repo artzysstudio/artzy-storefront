@@ -8,6 +8,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return {
     title: `Order #${id} | Artzy's Studio`,
     description: 'Track your order status and details.',
+    robots: { index: false, follow: false },
+    alternates: { canonical: `/account/orders/${encodeURIComponent(id)}/` },
   };
 }
 

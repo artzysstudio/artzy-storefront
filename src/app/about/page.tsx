@@ -39,10 +39,10 @@ export default function AboutPage() {
               transforms silence into a deeply personal visual language.
             </p>
             <div className="about-actions">
-              <Link href="/shop" className="about-primary">
+              <Link href="/shop/" className="about-primary">
                 Explore Deepti’s work <span>→</span>
               </Link>
-              <Link href="/personalized" className="about-secondary">
+              <Link href="/personalised/" className="about-secondary">
                 Commission something personal
               </Link>
             </div>
@@ -115,7 +115,7 @@ export default function AboutPage() {
         <section className="about-closing">
           <span>Artzy’s Studio · By Deepti J. Shah</span>
           <h2>Bring home a piece of her visual language.</h2>
-          <Link href="/shop">Discover the collection →</Link>
+          <Link href="/shop/">Discover the collection →</Link>
         </section>
       </main>
       <Footer />

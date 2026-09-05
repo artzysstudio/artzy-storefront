@@ -11,6 +11,7 @@ import type { ArtDirectionId } from '@/data/artDirections';
 export const metadata: Metadata = {
   title: "Custom Hand-Painted Name Plates | Artzy's Studio",
   description: "Explore Artzy-style botanical, Warli-inspired, lotus and contemporary name-plate directions, then prepare a precise studio-review request.",
+  alternates: { canonical: '/name-plates/' },
 };
 
 const directions: Array<{ slug: ArtDirectionId; title: string; copy: string; sample: string; shape: string; palette: string }> = [

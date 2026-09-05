@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import PremiumHero from '@/components/PremiumHero';
 import StudioSignature from '@/components/StudioSignature';
 import Header from '@/components/layout/Header';
@@ -10,6 +11,10 @@ import CustomerStories from '@/components/CustomerStories';
 import FreshStudioProducts from '@/components/FreshStudioProducts';
 
 const ARTZY_AI_ENABLED = false;
+
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
 
 export default async function Home() {
   return (

@@ -363,7 +363,7 @@ const mockHomePage: PageDefinition = {
     },
     {
       id: 'sec_custom', type: 'custom_journey', isEnabled: true, sortOrder: 5, themeVariant: 'light', backgroundStyle: 'none',
-      content: { title: "Custom Artwork Journey", body: "Commission a piece tailored specifically for your space.", ctaText: "Start a Commission", ctaLink: "/personalized" }
+      content: { title: "Custom Artwork Journey", body: "Commission a piece tailored specifically for your space.", ctaText: "Start a Commission", ctaLink: "/personalised/" }
     },
     {
       id: 'sec_corporate', type: 'corporate_gifting', isEnabled: true, sortOrder: 6, themeVariant: 'sage', backgroundStyle: 'solid',

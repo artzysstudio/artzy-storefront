@@ -5,7 +5,8 @@ import { api } from '@/lib/api';
 export const metadata: Metadata = {
   title: 'Secure Checkout | Artzy\'s Studio',
   description: 'Complete your purchase securely.',
-  robots: 'noindex, nofollow'
+  robots: 'noindex, nofollow',
+  alternates: { canonical: '/checkout/' },
 };
 
 export default async function CheckoutPage() {

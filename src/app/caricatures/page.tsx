@@ -14,6 +14,7 @@ const occasions = [
 export const metadata: Metadata = {
   title: "Personalised Caricatures from Photos | Artzy's Studio",
   description: "Personalised photo caricatures for individuals, couples, families and pets—made for occasions with studio-confirmed digital, print, framed and canvas finishes.",
+  alternates: { canonical: '/caricatures/' },
 };
 
 export default function CaricaturesPage() {

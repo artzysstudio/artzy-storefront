@@ -14,6 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: pageData.seoMetadata?.title || `${pageData.title} | Artzy's Studio`,
       description: pageData.seoMetadata?.description,
       keywords: pageData.seoMetadata?.keywords,
+      alternates: { canonical: `/${slug}/` },
       openGraph: {
         title: pageData.seoMetadata?.title || `${pageData.title} | Artzy's Studio`,
         description: pageData.seoMetadata?.description,

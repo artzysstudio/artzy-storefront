@@ -38,7 +38,6 @@ export const metadata: Metadata = {
     index: isIndexable,
     follow: isIndexable,
   },
-  alternates: { canonical: '/' },
 };
 
 import { CartProvider } from "@/context/CartContext";

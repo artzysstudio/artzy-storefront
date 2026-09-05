@@ -10,6 +10,7 @@ import { RichProductName } from '@/components/RichProductText';
 export default function ProductCard({ product, className, onView }: { product: Product, className?: string, onView?: () => void }) {
   const { addToCart } = useCart();
   const [added, setAdded] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
   const isCorporate = product.collectionId === 'c-corporate-gifts';
 
   if (!isStorefrontInventoryProduct(product)) return null;
@@ -27,15 +28,19 @@ export default function ProductCard({ product, className, onView }: { product: P
 
   const productImage = (
     <>
-      <Image
-        src={product.images[0]}
-        alt={product.name}
-        fill
-        sizes="(max-width: 560px) 50vw, (max-width: 1024px) 33vw, 300px"
-        className="product-image"
-        style={{ objectFit: 'cover' }}
-        unoptimized
-      />
+      {!imageFailed && product.images[0] ? <Image
+          src={product.images[0]}
+          alt={product.name}
+          fill
+          sizes="(max-width: 560px) 50vw, (max-width: 1024px) 33vw, 300px"
+          className="product-image"
+          style={{ objectFit: 'cover' }}
+          unoptimized
+          onError={() => setImageFailed(true)}
+        /> : <span className="product-image-fallback" role="img" aria-label={`${product.name} image temporarily unavailable`}>
+          <Image src="/images/artzy-studio-logo.png" alt="" width={88} height={88} unoptimized />
+          <small>Studio image coming soon</small>
+        </span>}
       {product.isSoldOut && <span className="product-status">Sold out</span>}
     </>
   );

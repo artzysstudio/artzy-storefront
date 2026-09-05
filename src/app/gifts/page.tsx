@@ -8,6 +8,7 @@ import CreativeConceptBuilder from '@/components/CreativeConceptBuilder';
 export const metadata = {
   title: "Gift Concierge | Personalised, Occasion & Corporate Gifts | Artzy's Studio",
   description: "Build an artistic gift plan for weddings, birthdays, housewarmings, festivals, employees and clients using real Artzy's Studio inventory.",
+  alternates: { canonical: '/gifts/' },
 };
 
 export default async function GiftsPage() {

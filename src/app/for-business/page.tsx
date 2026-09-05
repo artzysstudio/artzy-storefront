@@ -4,7 +4,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import CreativeConceptBuilder from '@/components/CreativeConceptBuilder';
 
-export const metadata: Metadata = { title: "Corporate Gifting & Commercial Art | Artzy's Studio", description: "Corporate gifts, commercial art, bulk orders and creative commissions made by Artzy's Studio in Pune." };
+export const metadata: Metadata = { title: "Corporate Gifting & Commercial Art | Artzy's Studio", description: "Corporate gifts, commercial art, bulk orders and creative commissions made by Artzy's Studio in Pune.", alternates: { canonical: '/for-business/' } };
 
 const services = [
   ['corporate-gifting','Corporate gifting','Thoughtful, brand-aware gifts for teams, clients, milestones and celebrations.'],

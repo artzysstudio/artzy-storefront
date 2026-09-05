@@ -7,6 +7,7 @@ import DigitalArtPlanner from '@/features/digital/DigitalArtPlanner';
 export const metadata: Metadata = {
   title: "Custom Digital Art & Prints | Artzy's Studio",
   description: "Plan custom digital wall art, canvas prints and commercial artwork, or continue to Artzy's dedicated photo-to-caricature studio.",
+  alternates: { canonical: '/digital-prints/' },
 };
 
 const directions = [

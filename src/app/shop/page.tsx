@@ -7,6 +7,7 @@ import Link from 'next/link';
 export const metadata = {
   title: 'Shop Art & Gifts | Artzy\'s Studio',
   description: 'Explore the full portfolio of Deepti J. Shah\'s original paintings, resin art, and bespoke gifts.',
+  alternates: { canonical: '/shop/' },
 };
 
 export default async function ShopPage() {

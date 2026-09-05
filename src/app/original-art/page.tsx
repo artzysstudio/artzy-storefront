@@ -7,6 +7,7 @@ import Link from 'next/link';
 export const metadata = {
   title: "Available Original Art | Artzy's Studio",
   description: 'Available wall art and frames created by Deepti J. Shah and the Artzy Studio team in Pune.',
+  alternates: { canonical: '/original-art/' },
 };
 
 export default async function OriginalArtPage() {

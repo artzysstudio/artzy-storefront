@@ -5,7 +5,7 @@ import Footer from '@/components/layout/Footer';
 import CreativeConceptBuilder from '@/components/CreativeConceptBuilder';
 import ArtzyWorldBriefResume from '@/components/ArtzyWorldBriefResume';
 
-export const metadata: Metadata = { title: "Personalised Art & Gifts | Artzy's Studio", description: "Caricatures, digital art, custom paintings and occasion gifts created personally at Artzy's Studio in Pune." };
+export const metadata: Metadata = { title: "Personalised Art & Gifts | Artzy's Studio", description: "Caricatures, digital art, custom paintings and occasion gifts created personally at Artzy's Studio in Pune.", alternates: { canonical: '/personalised/' } };
 
 const paths = [
   { title: 'Caricatures from photos', copy: 'Turn people, memories and joyful details into expressive digital caricatures.', href: '/caricatures', mark: '01' },
