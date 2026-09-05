@@ -72,8 +72,7 @@ export default function Footer() {
           <Link href="/ai-concept-disclosure">AI concept disclosure</Link>
         </nav>
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} Artzy&apos;s Studio. All rights reserved.</span>
-          <span>Created with intention in Pune, India</span>
+          <span>© 2026 Artzy’s Studio. All rights reserved. · Designed &amp; Developed by Jaisal Shah</span>
         </div>
       </div>
     </footer>
