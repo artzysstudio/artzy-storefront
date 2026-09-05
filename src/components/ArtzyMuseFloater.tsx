@@ -138,9 +138,12 @@ export default function ArtzyMuseFloater() {
     const update = () => {
       const height = viewport?.height ?? window.innerHeight;
       const keyboardOpen = document.activeElement === textareaRef.current && window.innerHeight - height > 140;
-      const compactHeight = Math.min(520, Math.max(360, window.innerHeight * 0.56));
+      // Give the conversation enough room to feel like a real assistant on phones.
+      // The previous 56% sheet left only a few lines for messages once the header,
+      // shortcuts and composer were visible.
+      const compactHeight = Math.min(height, Math.min(760, Math.max(560, height * 0.88)));
       dialogRef.current?.style.setProperty("--muse-sheet-height", `${Math.round(compactHeight)}px`);
-      dialogRef.current?.style.setProperty("--muse-expanded-height", `${Math.round(keyboardOpen ? height : window.innerHeight)}px`);
+      dialogRef.current?.style.setProperty("--muse-expanded-height", `${Math.round(height)}px`);
       if (keyboardOpen) setIsExpanded(true);
     };
     update(); viewport?.addEventListener("resize", update); viewport?.addEventListener("scroll", update);
@@ -189,16 +192,17 @@ export default function ArtzyMuseFloater() {
   const submit = (event: FormEvent) => { event.preventDefault(); void ask(question); };
   const onComposerKeyDown = (event: ReactKeyboardEvent<HTMLTextAreaElement>) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void ask(question); } };
   const resizeComposer = (value: string) => { setQuestion(value); const textarea = textareaRef.current; if (textarea) { textarea.style.height = "auto"; textarea.style.height = `${Math.min(textarea.scrollHeight, 96)}px`; } };
+  const hasStarted = messages.some((message) => message.role === "customer");
 
   return <>
     <button ref={triggerRef} className={`muse-floater${isOpen ? " open" : ""}`} type="button" aria-label="Ask Artzy Muse" aria-expanded={isOpen} aria-controls="artzy-muse-guide" onClick={() => isOpen ? closeMuse() : setIsOpen(true)}><span className="muse-floater-mark" aria-hidden="true"><MuseMark /></span><span className="muse-floater-copy"><strong>Ask Artzy Muse</strong><small>Your studio guide</small></span></button>
     <div className={`muse-guide-shell${isOpen ? " open" : ""}`} aria-hidden={!isOpen}>
       <button className="muse-guide-backdrop" type="button" aria-label="Close Artzy Muse" onClick={closeMuse} />
-      <aside ref={dialogRef} id="artzy-muse-guide" className={`muse-guide muse-chat${isExpanded ? " is-expanded" : ""}`} role="dialog" aria-modal="true" aria-labelledby="muse-guide-title">
+      <aside ref={dialogRef} id="artzy-muse-guide" className={`muse-guide muse-chat${isExpanded ? " is-expanded" : ""}${hasStarted ? " has-conversation" : ""}`} role="dialog" aria-modal="true" aria-labelledby="muse-guide-title">
         <button className="muse-sheet-handle" type="button" aria-label={isExpanded ? "Return Artzy Muse to compact view" : "Expand Artzy Muse"} aria-pressed={isExpanded} onClick={() => setIsExpanded((value) => !value)}><span /></button>
         <header className="muse-guide-top"><div className="muse-guide-brand"><span className="muse-panel-mark" aria-hidden="true"><MuseMark /></span><div><strong>Artzy Muse</strong><small>Artzy’s Studio assistant</small></div></div><button className="muse-close" type="button" aria-label="Close Artzy Muse" onClick={closeMuse}>×</button></header>
         <div className="muse-chat-intro"><span>ASK · DISCOVER · CREATE</span><h2 id="muse-guide-title">How may I help?</h2><p>Find art, meaningful gifts, personalised creations, or get help with your order.</p></div>
-        <div className="muse-quick-questions" aria-label="Quick ways Artzy Muse can help">{quickActions.map((item) => <button type="button" key={item.label} disabled={isThinking} onClick={() => void ask(item.question)}><span aria-hidden="true">{item.icon}</span>{item.label}</button>)}</div>
+        {!hasStarted && <div className="muse-quick-questions" aria-label="Quick ways Artzy Muse can help">{quickActions.map((item) => <button type="button" key={item.label} disabled={isThinking} onClick={() => void ask(item.question)}><span aria-hidden="true">{item.icon}</span>{item.label}</button>)}</div>}
         <div ref={conversationRef} className="muse-conversation" aria-live="polite" aria-busy={isThinking} aria-relevant="additions text">{messages.map((message) => <div className={`muse-message ${message.role}`} key={message.id}>{message.role === "assistant" && <span aria-hidden="true"><MuseMark /></span>}<div><p>{message.text}</p>{message.action && <Link className="muse-message-action" href={message.action.href} onClick={closeMuse}>{message.action.label} <span aria-hidden="true">→</span></Link>}</div></div>)}{isThinking && <div className="muse-message assistant muse-thinking"><span aria-hidden="true"><MuseMark /></span><div><p>Thinking about the best next step…</p></div></div>}</div>
         <footer className="muse-chat-footer">
           <form className="muse-chat-form" onSubmit={submit}><label htmlFor="muse-question">Ask Artzy Muse</label><div><textarea ref={textareaRef} id="muse-question" rows={1} value={question} disabled={isThinking} onFocus={() => setIsExpanded(true)} onChange={(event) => resizeComposer(event.target.value)} onKeyDown={onComposerKeyDown} placeholder={isThinking ? "Artzy Muse is thinking…" : "Type your question…"} autoComplete="off" /><button type="submit" aria-label="Send question" disabled={isThinking || !question.trim()}>→</button></div></form>
