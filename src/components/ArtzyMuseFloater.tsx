@@ -43,11 +43,33 @@ const studioAnswers = [
   { words: ["artzyai", "ai", "concept", "generate", "preview"], answer: "ArtzyAI creates imaginative, clearly labelled concept previews from your completed brief. They are not catalogue stock or a production proof. The studio confirms feasibility, finish, price and delivery.", action: { href: "/ai-concept-disclosure/", label: "How ArtzyAI concepts work" } },
 ];
 
-const answerQuestion = (question: string) => {
+const answerQuestion = (question: string, path: string) => {
   const normalised = question.toLowerCase();
+  const amountMatch = normalised.match(/(?:₹|rs\.?|inr)?\s*(\d[\d,]{2,})\s*(?:\/-)?/i);
+  const amount = amountMatch ? Number(amountMatch[1].replace(/,/g, "")) : 0;
+  const isBudgetMessage = amount > 0 && (/budget|₹|rs\.?|inr|\/-/i.test(normalised) || /^\s*[\d,]+\s*$/.test(normalised));
+
+  if (isBudgetMessage) {
+    const formatted = `₹${amount.toLocaleString("en-IN")}`;
+    if (path.startsWith("/for-business")) return {
+      answer: `${formatted} is noted. To make that budget useful, tell me the number of recipients and the occasion or business purpose. I’ll help you judge whether a ready gift, a simple personalised piece or a studio quotation is the best fit.`,
+      action: { href: "/for-business/#business-concept", label: "Plan within this budget" },
+    };
+    if (path.startsWith("/name-plates")) return {
+      answer: `${formatted} is noted for your name plate. The final fit depends on size, material and painting detail. Choose those three options in the builder and I’ll keep the estimate clear before you send it to the studio.`,
+      action: { href: "/name-plates/#name-plate-builder", label: "Build within this budget" },
+    };
+    if (path.startsWith("/digital-prints") || path.startsWith("/artzy-world")) return {
+      answer: `${formatted} is noted for your art. Tell me the room or purpose and the size you need; then I can guide you towards a suitable ready piece or a simpler custom direction without pretending an unavailable item will fit.`,
+      action: { href: "/digital-prints/#digital-planner", label: "Plan art within this budget" },
+    };
+    return {
+      answer: `${formatted} is a helpful gift budget, and I’ll remember it. Who is the gift for?`,
+      action: { href: "/gifts/#gift-finder", label: `Find a gift within ${formatted}` },
+    };
+  }
   return studioAnswers.find((entry) => entry.words.some((word) => normalised.includes(word))) || {
-    answer: "Tell me what you are looking for, who it is for, your budget, preferred colours or style, and when you need it. If your question needs a stock, price, production or delivery decision, I’ll take you directly to Deepti’s studio.",
-    action: { href: "/contact/", label: "Ask the studio personally" },
+    answer: "I’m here with you. What would you like help choosing today?",
   };
 };
 
@@ -60,6 +82,7 @@ export default function ArtzyMuseFloater() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [language, setLanguage] = useState<MuseLanguage>("en");
   const [question, setQuestion] = useState("");
+  const [isThinking, setIsThinking] = useState(false);
   const [messages, setMessages] = useState<MuseMessage[]>([{ id: 1, role: "assistant", text: greetings.en }]);
   const nextId = useRef(2);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -131,9 +154,39 @@ export default function ArtzyMuseFloater() {
 
   const changeLanguage = (next: MuseLanguage) => { setLanguage(next); sessionStorage.setItem("artzy-muse-language", next); setMessages((current) => [...current, { id: nextId.current++, role: "assistant", text: greetings[next] }]); };
   const speakGreeting = () => { if (!("speechSynthesis" in window)) return; window.speechSynthesis.cancel(); const speech = new SpeechSynthesisUtterance(greetings[language]); speech.lang = language === "hi" ? "hi-IN" : language === "mr" ? "mr-IN" : "en-IN"; speech.rate = .92; window.speechSynthesis.speak(speech); };
-  const ask = (text: string) => { const clean = text.trim(); if (!clean) return; const response = answerQuestion(clean); setMessages((current) => [...current, { id: nextId.current++, role: "customer", text: clean }, { id: nextId.current++, role: "assistant", text: response.answer, action: response.action }]); setQuestion(""); if (textareaRef.current) textareaRef.current.style.height = "auto"; };
-  const submit = (event: FormEvent) => { event.preventDefault(); ask(question); };
-  const onComposerKeyDown = (event: ReactKeyboardEvent<HTMLTextAreaElement>) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); ask(question); } };
+  const ask = async (text: string) => {
+    const clean = text.trim();
+    if (!clean || isThinking) return;
+    const history = messages.slice(-10).map(({ role, text: historyText }) => ({ role, text: historyText }));
+    setMessages((current) => [...current, { id: nextId.current++, role: "customer", text: clean }]);
+    setQuestion("");
+    setIsThinking(true);
+    if (textareaRef.current) textareaRef.current.style.height = "auto";
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 18_000);
+    try {
+      const customerToken = localStorage.getItem("artzy_customer_access_token");
+      const response = await fetch("/api/muse", {
+        method: "POST",
+        credentials: "same-origin",
+        signal: controller.signal,
+        headers: { "content-type": "application/json", ...(customerToken ? { "x-artzy-customer-token": customerToken } : {}) },
+        body: JSON.stringify({ message: clean, page: window.location.pathname, language, history }),
+      });
+      const result = await response.json() as { reply?: string; action?: { href?: string; label?: string } };
+      if (!response.ok || !result.reply?.trim()) throw new Error("Muse unavailable");
+      const action = result.action?.href && result.action?.label ? { href: result.action.href, label: result.action.label } : undefined;
+      setMessages((current) => [...current, { id: nextId.current++, role: "assistant", text: result.reply!.trim(), action }]);
+    } catch {
+      const fallback = answerQuestion(clean, window.location.pathname);
+      setMessages((current) => [...current, { id: nextId.current++, role: "assistant", text: `${fallback.answer} I’m using my studio guidance while the live assistant reconnects.`, action: fallback.action }]);
+    } finally {
+      window.clearTimeout(timeout);
+      setIsThinking(false);
+    }
+  };
+  const submit = (event: FormEvent) => { event.preventDefault(); void ask(question); };
+  const onComposerKeyDown = (event: ReactKeyboardEvent<HTMLTextAreaElement>) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void ask(question); } };
   const resizeComposer = (value: string) => { setQuestion(value); const textarea = textareaRef.current; if (textarea) { textarea.style.height = "auto"; textarea.style.height = `${Math.min(textarea.scrollHeight, 96)}px`; } };
 
   return <>
@@ -144,10 +197,10 @@ export default function ArtzyMuseFloater() {
         <button className="muse-sheet-handle" type="button" aria-label={isExpanded ? "Return Artzy Muse to compact view" : "Expand Artzy Muse"} aria-pressed={isExpanded} onClick={() => setIsExpanded((value) => !value)}><span /></button>
         <header className="muse-guide-top"><div className="muse-guide-brand"><span className="muse-panel-mark" aria-hidden="true"><MuseMark /></span><div><strong>Artzy Muse</strong><small>Artzy’s Studio assistant</small></div></div><button className="muse-close" type="button" aria-label="Close Artzy Muse" onClick={closeMuse}>×</button></header>
         <div className="muse-chat-intro"><span>ASK · DISCOVER · CREATE</span><h2 id="muse-guide-title">How may I help?</h2><p>Find art, meaningful gifts, personalised creations, or get help with your order.</p></div>
-        <div className="muse-quick-questions" aria-label="Quick ways Artzy Muse can help">{quickActions.map((item) => <button type="button" key={item.label} onClick={() => ask(item.question)}><span aria-hidden="true">{item.icon}</span>{item.label}</button>)}</div>
-        <div ref={conversationRef} className="muse-conversation" aria-live="polite" aria-relevant="additions text">{messages.map((message) => <div className={`muse-message ${message.role}`} key={message.id}>{message.role === "assistant" && <span aria-hidden="true"><MuseMark /></span>}<div><p>{message.text}</p>{message.action && <Link className="muse-message-action" href={message.action.href} onClick={closeMuse}>{message.action.label} <span aria-hidden="true">→</span></Link>}</div></div>)}</div>
+        <div className="muse-quick-questions" aria-label="Quick ways Artzy Muse can help">{quickActions.map((item) => <button type="button" key={item.label} disabled={isThinking} onClick={() => void ask(item.question)}><span aria-hidden="true">{item.icon}</span>{item.label}</button>)}</div>
+        <div ref={conversationRef} className="muse-conversation" aria-live="polite" aria-busy={isThinking} aria-relevant="additions text">{messages.map((message) => <div className={`muse-message ${message.role}`} key={message.id}>{message.role === "assistant" && <span aria-hidden="true"><MuseMark /></span>}<div><p>{message.text}</p>{message.action && <Link className="muse-message-action" href={message.action.href} onClick={closeMuse}>{message.action.label} <span aria-hidden="true">→</span></Link>}</div></div>)}{isThinking && <div className="muse-message assistant muse-thinking"><span aria-hidden="true"><MuseMark /></span><div><p>Thinking about the best next step…</p></div></div>}</div>
         <footer className="muse-chat-footer">
-          <form className="muse-chat-form" onSubmit={submit}><label htmlFor="muse-question">Ask Artzy Muse</label><div><textarea ref={textareaRef} id="muse-question" rows={1} value={question} onFocus={() => setIsExpanded(true)} onChange={(event) => resizeComposer(event.target.value)} onKeyDown={onComposerKeyDown} placeholder="Type your question…" autoComplete="off" /><button type="submit" aria-label="Send question" disabled={!question.trim()}>→</button></div></form>
+          <form className="muse-chat-form" onSubmit={submit}><label htmlFor="muse-question">Ask Artzy Muse</label><div><textarea ref={textareaRef} id="muse-question" rows={1} value={question} disabled={isThinking} onFocus={() => setIsExpanded(true)} onChange={(event) => resizeComposer(event.target.value)} onKeyDown={onComposerKeyDown} placeholder={isThinking ? "Artzy Muse is thinking…" : "Type your question…"} autoComplete="off" /><button type="submit" aria-label="Send question" disabled={isThinking || !question.trim()}>→</button></div></form>
           <details className="muse-more-help"><summary>Language, listening &amp; more help</summary><div className="muse-language-row"><label htmlFor="muse-language">Language</label><select id="muse-language" value={language} onChange={(event) => changeLanguage(event.target.value as MuseLanguage)}><option value="en">English</option><option value="hi">हिन्दी</option><option value="mr">मराठी</option></select><button type="button" onClick={speakGreeting} aria-label="Listen to Artzy Muse greeting">Listen <span aria-hidden="true">♪</span></button></div><div className="muse-imagine-links"><span>CREATE AN AI CONCEPT</span><p>Complete a custom brief, then create a clearly labelled imaginative preview.</p><div><Link href="/name-plates/#name-plate-builder" onClick={closeMuse}>Name plate</Link><Link href="/digital-prints/#digital-planner" onClick={closeMuse}>Digital art</Link></div></div><p className="muse-chat-note">Live stock comes from the studio catalogue. Final price, feasibility and delivery are confirmed by the studio.</p></details>
           <Link className="muse-guide-contact" href="/contact" onClick={closeMuse}>Need a person? <strong>Speak with Deepti’s studio</strong><span aria-hidden="true">→</span></Link>
         </footer>
