@@ -1,0 +1,13 @@
+url,primary_intent,title_direction,description_direction,status
+/,Brand and discovery,Artzy's Studio handmade art and meaningful gifts,Artist-led studio offering original art decor gifts and personalised work,retain
+/shop/,Transactional,Shop handcrafted home decor and art,Current studio products with accurate stock price and options,retain
+/original-art/,Transactional,Original Indian paintings by Deepti J. Shah,Explore original paintings and commission guidance,retain
+/gifts/,Commercial,Meaningful handmade and personalised gifts,Choose gifts by person occasion style and budget,retain
+/name-plates/,Commercial,Custom hand-painted name plates,Plan wording motif shape and finish with a live estimate,retain
+/digital-prints/,Commercial,Custom digital paintings from photos,Create an artist-guided digital artwork brief,retain
+/caricatures/,Commercial,Personalised caricature gifts,Upload a photo and prepare a caricature concept,retain
+/for-business/,B2B,Corporate gifting and commercial art,Studio-led gifting and art for organisations,retain
+/artzy-world/,Discovery and preview,Artzy World interactive art preview,Understand and preview studio art in a room,retain
+/about/,Trust and local,Meet Deepti J. Shah and Artzy's Studio Pune,Artist story studio practice and contact path,retain
+/contact/,Local and conversion,Contact and visit Artzy's Studio Pune,Address phone WhatsApp and enquiry routes,retain
+/artzy-world/preview/,Workflow,Not a search landing page,Interactive preview application,noindex
