@@ -8,8 +8,15 @@ import { useCustomer } from '@/context/CustomerContext';
 import Image from 'next/image';
 import Link from 'next/link';
 import { RichProductName } from '@/components/RichProductText';
+import { clampCartQuantity, normaliseStockLimit } from '@/lib/cart-stock';
 
 type CheckoutStep = 'address' | 'gifting' | 'shipping' | 'payment';
+type CartProduct = Product & {
+  cartQuantity: number;
+  stockQuantity: number | null;
+  cartVariantId?: string;
+  cartVariantLabel?: string;
+};
 
 function CartThumbnail({ product }: { product: Product }) {
   const [failed, setFailed] = useState(false);
@@ -42,14 +49,15 @@ function CartThumbnail({ product }: { product: Product }) {
 }
 
 export default function CheckoutClient({ initialProducts }: { initialProducts: Product[] }) {
-  const { items, giftBundles, clearCart } = useCart();
+  const { items, giftBundles, setCartQuantity, removeFromCart, removeGiftBundle, clearCart } = useCart();
   const { isAuthenticated, user } = useCustomer();
   const router = useRouter();
   
   const [step, setStep] = useState<CheckoutStep>('address');
-  const [cartProducts, setCartProducts] = useState<(Product & { quantity: number })[]>([]);
+  const [cartProducts, setCartProducts] = useState<CartProduct[]>([]);
   const [subtotal, setSubtotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [inventoryMessage, setInventoryMessage] = useState<string | null>(null);
   
   // Form State
   const [address, setAddress] = useState({ name: '', email: '', phone: '', address: '', city: '', state: '', pincode: '' });
@@ -87,25 +95,52 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
         // current price and stock again before payment.
       }
 
-      const loadedProducts = [];
+      const loadedProducts: CartProduct[] = [];
+      const stockChanges: string[] = [];
       let total = 0;
       for (const item of items) {
         const product = availableProducts.find((candidate) => candidate.id === item.productId);
         if (product) {
+          const variant = item.variantId
+            ? product.variants?.find((candidate, index) => String(candidate.id || candidate.sku || index) === item.variantId)
+            : undefined;
+          const stockQuantity = normaliseStockLimit(variant?.quantity ?? product.quantity);
+          const safeQuantity = clampCartQuantity(item.quantity, stockQuantity);
+          if (safeQuantity === 0) {
+            removeFromCart(item.productId, item.variantId);
+            stockChanges.push(`${product.name} is no longer available and was removed from your bag.`);
+            continue;
+          }
+          if (safeQuantity !== item.quantity || item.availableStock !== stockQuantity) {
+            setCartQuantity(item.productId, safeQuantity, {
+              variantId: item.variantId,
+              variantLabel: item.variantLabel,
+              availableStock: stockQuantity,
+            });
+            if (safeQuantity !== item.quantity) stockChanges.push(`${product.name} was adjusted to ${safeQuantity}, matching current ERP stock.`);
+          }
           const effectivePrice = product.salePrice && product.salePrice > 0 ? product.salePrice : product.price;
-          loadedProducts.push({ ...product, price: effectivePrice, quantity: item.quantity });
-          total += effectivePrice * item.quantity;
+          loadedProducts.push({
+            ...product,
+            price: variant?.price ?? effectivePrice,
+            cartQuantity: safeQuantity,
+            stockQuantity,
+            cartVariantId: item.variantId,
+            cartVariantLabel: item.variantLabel,
+          });
+          total += (variant?.price ?? effectivePrice) * safeQuantity;
         }
       }
       if (cancelled) return;
       setCartProducts(loadedProducts);
       setSubtotal(total);
+      setInventoryMessage(stockChanges.length ? stockChanges.join(' ') : availableProducts.length ? 'Bag quantities checked against current ERP stock.' : 'Live ERP stock could not be refreshed. Stock will be checked again before payment.');
       setIsLoading(false);
     };
 
     void loadCartDetails();
     return () => { cancelled = true; };
-  }, [initialProducts, items]);
+  }, [initialProducts, items, removeFromCart, setCartQuantity]);
 
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -123,6 +158,35 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
   const handleAddressContinue = (e: React.FormEvent) => {
     e.preventDefault();
     setStep('gifting');
+  };
+
+  const updateBagQuantity = (product: CartProduct, quantity: number) => {
+    setCartQuantity(product.id, quantity, {
+      variantId: product.cartVariantId,
+      variantLabel: product.cartVariantLabel,
+      availableStock: product.stockQuantity,
+    });
+    setShippingOptions([]);
+    setShippingRate(null);
+    setShippingNeedsConfirmation(false);
+    setStep('address');
+  };
+
+  const resetDeliveryQuote = () => {
+    setShippingOptions([]);
+    setShippingRate(null);
+    setShippingNeedsConfirmation(false);
+    setStep('address');
+  };
+
+  const removeBagProduct = (product: CartProduct) => {
+    removeFromCart(product.id, product.cartVariantId);
+    resetDeliveryQuote();
+  };
+
+  const removeBagBundle = (bundleId: string) => {
+    removeGiftBundle(bundleId);
+    resetDeliveryQuote();
   };
 
   const handleGiftingContinue = async (e: React.FormEvent) => {
@@ -222,7 +286,7 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
             } else {
               finishRazorpayAttempt('Payment verification failed. No inventory was changed. Please contact Artzy’s Studio with your order number.');
             }
-          } catch (err) {
+          } catch {
             finishRazorpayAttempt('Payment verification could not be completed. Please contact Artzy’s Studio before retrying.');
           }
         },
@@ -441,12 +505,13 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
           </div>
           <Link href="/shop/">Continue shopping</Link>
         </div>
+        {inventoryMessage && <p className="checkout-inventory-status" role="status">{inventoryMessage}</p>}
         <div className="checkout-items">
           {cartProducts.map(p => (
-            <article key={p.id} className="checkout-item">
+            <article key={`${p.id}-${p.cartVariantId || 'standard'}`} className="checkout-item">
               <Link href={`/shop/?product=${encodeURIComponent(String(p.id))}`} className="checkout-item__preview" aria-label={`View ${p.name}`}>
                 <CartThumbnail product={p} />
-                <span className="checkout-item__quantity" aria-label={`Quantity ${p.quantity}`}>{p.quantity}</span>
+                <span className="checkout-item__quantity" aria-label={`Quantity ${p.cartQuantity}`}>{p.cartQuantity}</span>
               </Link>
               <div className="checkout-item__details">
                 <Link href={`/shop/?product=${encodeURIComponent(String(p.id))}`} className="checkout-item__name">
@@ -454,14 +519,29 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
                 </Link>
                 <div className="checkout-item__meta">
                   <span>{p.category}</span>
-                  <span>Quantity: {p.quantity}</span>
+                  {p.cartVariantLabel && <span>{p.cartVariantLabel}</span>}
                 </div>
+                <div className="checkout-item__controls" aria-label={`Quantity for ${p.name}`}>
+                  <button type="button" onClick={() => updateBagQuantity(p, p.cartQuantity - 1)} aria-label={p.cartQuantity === 1 ? `Remove ${p.name}` : `Decrease ${p.name} quantity`}>−</button>
+                  <output aria-live="polite" aria-label={`${p.cartQuantity} selected`}>{p.cartQuantity}</output>
+                  <button type="button" onClick={() => updateBagQuantity(p, p.cartQuantity + 1)} disabled={p.stockQuantity !== null && p.cartQuantity >= p.stockQuantity} aria-label={`Add another ${p.name}`}>+</button>
+                  <button type="button" className="checkout-item__remove" onClick={() => removeBagProduct(p)}>Remove</button>
+                </div>
+                <small className="checkout-item__stock">
+                  {p.stockQuantity === 1
+                    ? 'Only 1 available in ERP stock'
+                    : p.stockQuantity !== null
+                      ? p.cartQuantity >= p.stockQuantity
+                        ? `All ${p.stockQuantity} available units are in your bag`
+                        : `${p.stockQuantity - p.cartQuantity} more available · ${p.stockQuantity} total in ERP stock`
+                      : 'Availability confirmed again before payment'}
+                </small>
               </div>
-              <strong className="checkout-item__price">₹{(p.price * p.quantity).toLocaleString('en-IN')}</strong>
+              <strong className="checkout-item__price">₹{(p.price * p.cartQuantity).toLocaleString('en-IN')}</strong>
             </article>
           ))}
         </div>
-        {giftBundles.map((bundle) => <div key={bundle.id} style={{ border: '1px solid rgba(181,79,85,.35)', background: '#fff8f5', padding: '1rem', borderRadius: '8px', marginBottom: '1rem' }}><strong>Artzy Gift Plan · {bundle.occasion}</strong><div style={{ fontSize: '.85rem', marginTop: '.35rem' }}>{bundle.quantity} gift{bundle.quantity === 1 ? '' : 's'} · {bundle.packaging.name}</div><div style={{ fontSize: '.8rem', color: 'var(--text-muted)', marginTop: '.35rem' }}>{bundle.museReason}</div></div>)}
+        {giftBundles.map((bundle) => <div className="checkout-gift-bundle" key={bundle.id}><strong>Artzy Gift Plan · {bundle.occasion}</strong><div>{bundle.quantity} gift{bundle.quantity === 1 ? '' : 's'} · {bundle.packaging.name}</div><p>{bundle.museReason}</p><button type="button" onClick={() => removeBagBundle(bundle.id)}>Remove gift plan</button></div>)}
         
         <div style={{ borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
