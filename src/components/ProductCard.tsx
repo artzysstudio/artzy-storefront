@@ -6,12 +6,17 @@ import { isStorefrontInventoryProduct, Product } from '@/lib/api';
 import Image from 'next/image';
 import Link from 'next/link';
 import { RichProductName } from '@/components/RichProductText';
+import { normaliseStockLimit, remainingStock } from '@/lib/cart-stock';
 
 export default function ProductCard({ product, className, onView }: { product: Product, className?: string, onView?: () => void }) {
-  const { addToCart } = useCart();
+  const { addToCart, items } = useCart();
   const [added, setAdded] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
   const isCorporate = product.collectionId === 'c-corporate-gifts';
+  const stockQuantity = normaliseStockLimit(product.quantity);
+  const quantityInBag = items.find((item) => item.productId === product.id && !item.variantId)?.quantity || 0;
+  const remaining = remainingStock(stockQuantity, quantityInBag);
+  const stockReached = remaining === 0;
 
   if (!isStorefrontInventoryProduct(product)) return null;
 
@@ -21,7 +26,7 @@ export default function ProductCard({ product, className, onView }: { product: P
       return;
     }
 
-    addToCart(product.id);
+    addToCart(product.id, 1, { availableStock: stockQuantity });
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1800);
   };
@@ -68,18 +73,26 @@ export default function ProductCard({ product, className, onView }: { product: P
       <div className="product-card-actions">
         <button
           className={`quick-add-button${added ? ' added' : ''}`}
-          disabled={product.isSoldOut}
+          disabled={product.isSoldOut || stockReached}
           onClick={handlePrimaryAction}
         >
           {product.isSoldOut
             ? 'Sold out'
             : isCorporate
               ? 'Enquire'
+              : stockReached
+                ? stockQuantity === 1 ? 'Only one · in bag' : 'All available · in bag'
               : added
                 ? 'Added ✓'
-                : 'Add to bag'}
+                : quantityInBag > 0 ? 'Add another' : 'Add to bag'}
         </button>
+        {!isCorporate && stockQuantity !== null && stockQuantity > 0 && (
+          <small className="product-card-stock">{stockQuantity === 1 ? 'One available in ERP stock' : `${stockQuantity} available in ERP stock`}</small>
+        )}
       </div>
+      <style jsx>{`
+        .product-card-stock{display:block;grid-column:1/-1;padding:7px 6px 0;color:#75665e;font-size:.65rem;line-height:1.3;text-align:center}
+      `}</style>
     </article>
   );
 }

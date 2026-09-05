@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Product, ProductVariant } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
 import RichProductText, { RichProductName } from "@/components/RichProductText";
+import { normaliseStockLimit, remainingStock } from "@/lib/cart-stock";
 
 // Optional ERP fields are rendered only when the product feed provides them.
 const variantLabel = (variant: ProductVariant, index: number) =>
@@ -21,7 +22,7 @@ export default function ProductDetailModal({
   product: Product;
   onClose: () => void;
 }) {
-  const { addToCart } = useCart();
+  const { addToCart, items } = useCart();
   const images = useMemo(
     () => product.images.filter(Boolean).slice(0, 4),
     [product.images],
@@ -33,7 +34,11 @@ export default function ProductDetailModal({
   const [added, setAdded] = useState(false);
 
   const selected = availableVariants[selectedVariant];
-  const stockQuantity = selected?.quantity ?? product.quantity;
+  const selectedVariantId = selected ? String(selected.id || selected.sku || selectedVariant) : undefined;
+  const stockQuantity = normaliseStockLimit(selected?.quantity ?? product.quantity);
+  const quantityInBag = items.find((item) => item.productId === product.id && (item.variantId || '') === (selectedVariantId || ''))?.quantity || 0;
+  const remaining = remainingStock(stockQuantity, quantityInBag);
+  const stockReached = remaining === 0;
   const soldOut =
     product.isSoldOut ||
     product.availability === "out_of_stock" ||
@@ -69,7 +74,11 @@ export default function ProductDetailModal({
 
   const addProduct = () => {
     if (soldOut) return;
-    addToCart(product.id);
+    addToCart(product.id, 1, {
+      availableStock: stockQuantity,
+      variantId: selectedVariantId,
+      variantLabel: selected ? variantLabel(selected, selectedVariant) : undefined,
+    });
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1800);
   };
@@ -150,7 +159,7 @@ export default function ProductDetailModal({
                     type="button"
                     key={variant.id || variant.sku || index}
                     disabled={variant.isAvailable === false || variant.quantity === 0}
-                    onClick={() => setSelectedVariant(index)}
+                    onClick={() => { setSelectedVariant(index); setAdded(false); }}
                   >
                     {variantLabel(variant, index)}
                   </button>
@@ -179,12 +188,14 @@ export default function ProductDetailModal({
             </details>
           )}
 
-          <button className={`product-detail-add${added ? " added" : ""}`} type="button" disabled={soldOut} onClick={addProduct}>
-            {soldOut ? "Currently unavailable" : added ? "Added to bag ✓" : "Add to bag"}
+          <button className={`product-detail-add${added ? " added" : ""}`} type="button" disabled={soldOut || stockReached} onClick={addProduct}>
+            {soldOut ? "Currently unavailable" : stockReached ? stockQuantity === 1 ? "Only one available · already in bag" : "All available stock is in your bag" : added ? "Added to bag ✓" : quantityInBag > 0 ? "Add another to bag" : "Add to bag"}
           </button>
+          {!soldOut && quantityInBag > 0 && <small className="product-detail-bag-stock" aria-live="polite">{quantityInBag} in your bag{remaining !== null ? ` · ${remaining} more available` : ''}</small>}
         </section>
       </article>
       <style jsx global>{`
+        .product-detail-bag-stock{display:block;margin-top:9px;color:#67584f;font-size:.75rem;text-align:center}
         @media (min-width: 769px) {
           .product-detail-backdrop {
             display: grid !important;
