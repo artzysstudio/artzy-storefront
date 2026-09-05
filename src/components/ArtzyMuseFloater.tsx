@@ -5,23 +5,23 @@ import { FormEvent, KeyboardEvent as ReactKeyboardEvent, useEffect, useRef, useS
 
 type MuseMessage = { id: number; role: "assistant" | "customer"; text: string; action?: { href: string; label: string } };
 type MuseLanguage = "en" | "hi" | "mr";
-const conversationStorageKey = "artzy-muse-conversation-v2";
+const conversationStorageKey = "artzy-muse-conversation-v3";
 
 const greetings: Record<MuseLanguage, string> = {
-  en: "Namaste. I’m Artzy Muse, your studio guide. Tell me who or what you are choosing for, your budget, or the feeling you want to create. I’ll suggest the clearest next step.",
+  en: "Namaste. I’m Artzy Muse, your studio guide. Tell me what you’re looking for, and I’ll help one step at a time.",
   hi: "नमस्ते। मैं Artzy Muse, आपकी स्टूडियो गाइड हूँ। बताइए आप किसके लिए चुन रहे हैं, आपका बजट क्या है और आप कैसा एहसास चाहते हैं। मैं सरल मार्गदर्शन दूँगी।",
   mr: "नमस्कार. मी Artzy Muse, तुमची स्टुडिओ गाइड आहे. तुम्ही कोणासाठी निवडत आहात, बजेट आणि अपेक्षित भावना सांगा. मी सोपे मार्गदर्शन करेन.",
 };
 
 const pageContext = (path: string) => {
-  if (path.startsWith("/shop")) return "I can help you compare current studio products, stock, variants and delivery questions.";
-  if (path.startsWith("/gifts")) return "Tell me the recipient, occasion, budget and required date, and I’ll help narrow the gift direction.";
-  if (path.startsWith("/name-plates")) return "I can help you choose wording, size, shape, lettering and an Indian art direction for the entrance.";
-  if (path.startsWith("/caricatures")) return "I can help turn a photo, personality and occasion into a clear caricature brief.";
-  if (path.startsWith("/digital-prints")) return "Tell me about the room, wall size, colours and mood, and I’ll help shape the art direction.";
-  if (path.startsWith("/for-business")) return "I can organise your business purpose, audience, quantity, budget and deadline into a useful brief.";
-  if (path.startsWith("/artzy-world")) return "I can help you preview art in a room and understand scale, placement and colour mood.";
-  return "I can help you discover handmade pieces, meaningful gifts, personalised art and studio services.";
+  if (path.startsWith("/shop")) return "Ask me to compare a piece or check what suits your need.";
+  if (path.startsWith("/gifts")) return "For a gift, start with who it is for.";
+  if (path.startsWith("/name-plates")) return "For a name plate, start with the wording or entrance style.";
+  if (path.startsWith("/caricatures")) return "For a caricature, start with the person and occasion.";
+  if (path.startsWith("/digital-prints")) return "For wall art, start with the room or feeling.";
+  if (path.startsWith("/for-business")) return "For business work, start with the purpose and quantity.";
+  if (path.startsWith("/artzy-world")) return "I can help you place art confidently in your room.";
+  return "Ask me about art, gifts or personalisation.";
 };
 
 const quickActions = [
