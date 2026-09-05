@@ -2683,9 +2683,9 @@ body.artzy-muse-open .muse-floater,body.artzy-muse-open .plate-mobile-bar,body.a
 @media(max-width:760px){
   .home-hamper{grid-template-columns:1fr;min-height:0}
   .home-hamper__copy{padding:48px 20px 42px}
-  .home-hamper h2{font-size:clamp(3rem,14vw,4.35rem)}
+  .home-hamper h2{font-size:clamp(2.65rem,12vw,3.7rem)}
   .home-hamper__actions{display:grid}
-  .home-hamper__gallery{display:flex;min-height:420px;gap:12px;padding:18px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:18px}
+  .home-hamper__gallery{order:-1;display:flex;min-height:420px;gap:12px;padding:18px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:18px}
   .home-gift-piece,.home-gift-piece--featured{width:82vw;max-width:340px;min-height:380px;flex:0 0 82vw;display:block;scroll-snap-align:start}
   .home-gift-piece:nth-of-type(3){display:block}
   .home-gift-piece__copy strong,.home-gift-piece:not(.home-gift-piece--featured) .home-gift-piece__copy strong{font-size:1.45rem}
