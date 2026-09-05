@@ -124,7 +124,7 @@ export default function ArtzyMuseFloater() {
       try {
         const parsed = JSON.parse(savedConversation) as MuseMessage[];
         if (Array.isArray(parsed) && parsed.length) {
-          setMessages(parsed.slice(-12));
+          setMessages(parsed.slice(-6));
           nextId.current = Math.max(...parsed.map((item) => item.id), 1) + 1;
         }
       } catch { /* Start a fresh, safe conversation. */ }
@@ -141,8 +141,15 @@ export default function ArtzyMuseFloater() {
   }, []);
 
   useEffect(() => {
-    sessionStorage.setItem("artzy-muse-conversation", JSON.stringify(messages.slice(-12)));
+    sessionStorage.setItem("artzy-muse-conversation", JSON.stringify(messages.slice(-6)));
   }, [messages]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [isOpen]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -242,8 +249,7 @@ export default function ArtzyMuseFloater() {
             </div>
           </form>
 
-          <div className="muse-imagine-links"><span>CREATE AN AI CONCEPT</span><p>Complete a custom brief first, then generate a clearly labelled imaginative preview.</p><div><Link href="/name-plates/#name-plate-builder" onClick={() => setIsOpen(false)}>Name plate preview</Link><Link href="/digital-prints/#digital-planner" onClick={() => setIsOpen(false)}>Digital art preview</Link></div></div>
-          <p className="muse-chat-note">Muse helps you choose with confidence. Live stock comes from Artzy ERP; final price, custom feasibility and delivery are confirmed by the studio.</p>
+          <details className="muse-more-help"><summary>More ways I can help</summary><div className="muse-imagine-links"><span>CREATE AN AI CONCEPT</span><p>Complete a custom brief first, then create a clearly labelled imaginative preview.</p><div><Link href="/name-plates/#name-plate-builder" onClick={() => setIsOpen(false)}>Name plate</Link><Link href="/digital-prints/#digital-planner" onClick={() => setIsOpen(false)}>Digital art</Link></div></div><p className="muse-chat-note">Live stock comes from Artzy ERP. Final price, feasibility and delivery are confirmed by the studio.</p></details>
           <Link className="muse-guide-contact" href="/contact" onClick={() => setIsOpen(false)}>
             Speak with Deepti’s studio <span>&rarr;</span>
           </Link>
