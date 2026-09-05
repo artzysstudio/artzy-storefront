@@ -2602,10 +2602,10 @@ body.artzy-muse-open .muse-floater,body.artzy-muse-open .plate-mobile-bar,body.a
 @media(max-width:700px){
   .muse-guide-shell{z-index:2000}
   .muse-guide-backdrop{background:rgba(39,27,22,.46);backdrop-filter:blur(2px)}
-  .muse-guide{--muse-sheet-height:88dvh;--muse-expanded-height:100dvh;inset:auto 0 0!important;width:100%!important;height:var(--muse-sheet-height)!important;max-height:none!important;padding:0!important;border:0!important;border-top:1px solid #d9c7bb!important;border-radius:24px 24px 0 0!important;overflow:hidden!important;display:flex!important;flex-direction:column;background:#fffaf5;box-shadow:0 -18px 60px rgba(44,29,23,.25);transform:translateY(102%)!important;transition:height .24s ease,transform .26s ease,opacity .2s ease!important}
+  .muse-guide{--muse-sheet-height:100dvh;--muse-expanded-height:100dvh;inset:auto 0 0!important;width:100%!important;height:var(--muse-sheet-height)!important;max-height:none!important;padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;display:flex!important;flex-direction:column;background:#fffaf5;box-shadow:0 -18px 60px rgba(44,29,23,.25);transform:translateY(102%)!important;transition:transform .26s ease,opacity .2s ease!important}
   .muse-guide-shell.open .muse-guide{transform:translateY(0)!important}
   .muse-guide.is-expanded{height:var(--muse-expanded-height)!important;border-radius:18px 18px 0 0!important}
-  .muse-sheet-handle{width:100%;height:20px;min-height:20px;display:grid;place-items:center;flex:0 0 20px;padding:0;border:0;background:#fffaf5;cursor:pointer}
+  .muse-sheet-handle{display:none}
   .muse-sheet-handle span{width:42px;height:4px;border-radius:99px;background:#c9b5aa}
   .muse-guide-top{position:sticky;top:0;z-index:3;min-height:60px;display:flex;align-items:center;justify-content:space-between;flex:0 0 auto;padding:5px 14px 9px!important;border-bottom:1px solid #e5d8cf;background:#fffaf5}
   .muse-panel-mark{width:40px;height:40px}.muse-panel-mark svg{width:27px;height:27px}.muse-guide-brand{min-width:0}.muse-guide-brand strong{font-size:1.08rem}.muse-guide-brand small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.53rem}
@@ -2620,6 +2620,7 @@ body.artzy-muse-open .muse-floater,body.artzy-muse-open .plate-mobile-bar,body.a
   .muse-language-row{min-height:38px;margin:5px 0 7px;gap:6px}.muse-language-row label{position:static!important;width:auto!important;height:auto!important;overflow:visible!important;clip:auto!important;font-size:.56rem}.muse-language-row select,.muse-language-row button{min-height:36px!important;font-size:.64rem}.muse-language-row select{min-width:88px;padding-block:6px}.muse-language-row button{margin-left:auto;padding-inline:11px}
   .muse-more-help{margin:3px 0!important;border-top:1px solid #eadfd7}.muse-more-help summary{min-height:38px;display:flex;align-items:center;padding:7px 2px!important;font-size:.68rem}.muse-more-help[open]{max-height:30dvh;overflow-y:auto;scrollbar-width:none}.muse-more-help[open]::-webkit-scrollbar{display:none}.muse-more-help .muse-imagine-links{margin:2px 0 6px}.muse-chat-note{font-size:.64rem}
   .muse-chat .muse-guide-contact{min-height:42px!important;padding:7px 2px!important;border:0!important;background:transparent!important;color:#843b41!important;font-size:.67rem!important}.muse-guide-contact strong{border-bottom:1px solid currentColor}
+  .muse-guide.has-conversation .muse-guide-contact{display:none}
   .muse-guide.is-expanded:focus-within .muse-chat-intro{display:none}.muse-guide.is-expanded:focus-within .muse-quick-questions{padding-block:4px!important}.muse-guide.is-expanded:focus-within .muse-quick-questions button{min-height:38px!important}
 }
 @media(max-width:360px){.muse-chat-intro{padding-inline:13px!important}.muse-quick-questions{padding-inline:13px!important}.muse-chat-footer{padding-inline:11px}.muse-guide-brand small{max-width:170px}.muse-language-row label{display:none}}

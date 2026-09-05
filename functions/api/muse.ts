@@ -74,6 +74,7 @@ function findItems(payload: unknown): Array<Record<string, unknown>> {
 function compactItem(item: Record<string, unknown>): Record<string, string | number | boolean> | null {
   const name = cleanText(item.name || item.title || item.product_name, 100);
   if (!name) return null;
+  const id = cleanText(String(item.id ?? item.product_id ?? item.productId ?? ""), 90);
   const price = Number(item.sale_price ?? item.salePrice ?? item.price ?? item.unit_price ?? 0);
   const quantity = Number(item.stock_quantity ?? item.stockQuantity ?? item.quantity ?? 0);
   return {
@@ -81,7 +82,8 @@ function compactItem(item: Record<string, unknown>): Record<string, string | num
     ...(Number.isFinite(price) && price > 0 ? { price } : {}),
     category: cleanText(item.category_name || item.category || item.type, 60),
     available: item.in_stock === true || item.available === true || quantity > 0,
-    slug: cleanText(item.slug || item.id, 90),
+    ...(id ? { id } : {}),
+    slug: cleanText(String(item.slug ?? item.id ?? ""), 90),
   };
 }
 

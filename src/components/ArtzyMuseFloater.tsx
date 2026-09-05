@@ -5,7 +5,7 @@ import { FormEvent, KeyboardEvent as ReactKeyboardEvent, useEffect, useRef, useS
 
 type MuseMessage = { id: number; role: "assistant" | "customer"; text: string; action?: { href: string; label: string } };
 type MuseLanguage = "en" | "hi" | "mr";
-const conversationStorageKey = "artzy-muse-conversation-v3";
+const conversationStorageKey = "artzy-muse-conversation-v4";
 
 const greetings: Record<MuseLanguage, string> = {
   en: "Namaste. I’m Artzy Muse, your studio guide. Tell me what you’re looking for, and I’ll help one step at a time.",
@@ -141,7 +141,7 @@ export default function ArtzyMuseFloater() {
       // Give the conversation enough room to feel like a real assistant on phones.
       // The previous 56% sheet left only a few lines for messages once the header,
       // shortcuts and composer were visible.
-      const compactHeight = Math.min(height, Math.min(760, Math.max(560, height * 0.88)));
+      const compactHeight = height;
       dialogRef.current?.style.setProperty("--muse-sheet-height", `${Math.round(compactHeight)}px`);
       dialogRef.current?.style.setProperty("--muse-expanded-height", `${Math.round(height)}px`);
       if (keyboardOpen) setIsExpanded(true);
