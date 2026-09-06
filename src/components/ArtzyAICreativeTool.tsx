@@ -93,7 +93,7 @@ export default function ArtzyAICreativeTool({ variant, title, purpose, style, pa
     else { const href = URL.createObjectURL(file); const anchor = document.createElement('a'); anchor.href = href; anchor.download = file.name; anchor.click(); window.setTimeout(() => URL.revokeObjectURL(href), 1000); }
   }
 
-  const whatsapp = `https://wa.me/919158680722?text=${encodeURIComponent(`${studioMessage}\n\nI created an ArtzyAI concept. Please confirm feasibility, final price and timeline. I will attach the downloaded concept separately.`)}`;
+  const whatsapp = `https://wa.me/919158680722?text=${encodeURIComponent(studioMessage.trim())}`;
   const needsGuidance = remaining === 0 || state === 'credits_unavailable' || state === 'failed';
   return <section className="artzyai-tool" aria-labelledby={`artzyai-${variant}-title`}>
     <header className="artzyai-tool__intro"><span>Powered by ArtzyAI</span><h3 id={`artzyai-${variant}-title`}>{title}</h3><p>ArtzyAI helps you imagine the creative direction. Deepti and Artzy’s Studio confirm what can actually be made.</p>{remaining !== null && <strong className="artzyai-tool__quota">{remaining > 0 ? `${remaining} of ${maxGenerations} concept previews available in this session` : 'Five concept previews completed—continue with Studio guidance'}</strong>}<small>AI concept—not stock, completed artwork, Deepti’s final artwork or a production proof.</small></header>

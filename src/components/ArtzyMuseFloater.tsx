@@ -210,8 +210,10 @@ export default function ArtzyMuseFloater() {
     const update = () => {
       const height = viewport?.height ?? window.innerHeight;
       const keyboardOpen = document.activeElement === textareaRef.current && window.innerHeight - height > 140;
-      dialogRef.current?.style.setProperty("--muse-sheet-height", `${Math.round(height)}px`);
-      dialogRef.current?.style.setProperty("--muse-expanded-height", `${Math.round(height)}px`);
+      const compactHeight = Math.min(Math.round(height * 0.82), 720);
+      const expandedHeight = Math.min(Math.round(height * 0.94), 900);
+      dialogRef.current?.style.setProperty("--muse-sheet-height", `${compactHeight}px`);
+      dialogRef.current?.style.setProperty("--muse-expanded-height", `${expandedHeight}px`);
       if (keyboardOpen) setIsExpanded(true);
     };
     update(); viewport?.addEventListener("resize", update); viewport?.addEventListener("scroll", update);

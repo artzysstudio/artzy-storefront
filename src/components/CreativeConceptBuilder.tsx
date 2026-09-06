@@ -30,10 +30,11 @@ export default function CreativeConceptBuilder({ kind }: { kind: BuilderKind }) 
   const [requiredDate, setRequiredDate] = useState('');
   const ready = Boolean(purpose && style && output && (!isBusiness || (audience && setting && quantity > 0)));
   const message = useMemo(() => [
-    "Hello Artzy's Studio, I created an Artzy Muse direction.",
-    `Project: ${purpose || 'Please guide me'}`,
-    `Style: ${style || 'Please guide me'}`,
-    `Preferred output: ${output || 'Please guide me'}`,
+    'Namaste Artzy Studio,',
+    '',
+    `I would like your guidance for a ${purpose || 'personalised creation'}.`,
+    `Creative direction: ${style || 'Please recommend'}`,
+    `Preferred piece: ${output || 'Please recommend'}`,
     ...(isBusiness ? [
       `Organisation: ${organisation || 'Not specified'}`,
       `Audience: ${audience}`,
@@ -44,8 +45,10 @@ export default function CreativeConceptBuilder({ kind }: { kind: BuilderKind }) 
       `Budget: ${budget || 'To discuss'}`,
       `Required date: ${requiredDate || 'Flexible'}`,
     ] : []),
-    `Story or requirement: ${story.trim() || "I would like Deepti's guidance."}`,
-    'The image is an AI concept only. Please confirm feasibility, final design, price and delivery time.',
+    `What matters to me: ${story.trim() || "I would appreciate Deepti's recommendation."}`,
+    '',
+    'I selected an ArtzyAI concept and will attach it here as a visual reference.',
+    'Please advise the most suitable material and finish, final price, and delivery timeline.',
   ].join('\n'), [audience, brandColours, budget, isBusiness, mustInclude, organisation, output, purpose, quantity, requiredDate, setting, story, style]);
 
   const palette = (brandColours || 'warm terracotta, cream, muted rose and olive').split(',').map(value => value.trim()).filter(Boolean).join(', ');
