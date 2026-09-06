@@ -7,11 +7,76 @@
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#fbfaf7" />
     <link rel="canonical" href="https://www.artzysstudio.in/artzy-world/preview/" />
-    <title>Artzy World · Preview art in your space</title>
+    <title>Artzy World &middot; Preview art in your space</title>
+    <style>
+      .room-choice-grid img { aspect-ratio: 3 / 2; object-fit: cover; object-position: center; }
+      .room-source-note:not([hidden]) { display: flex; }
+      :where(button, a, select, input):focus-visible {
+        outline: 3px solid #b65158;
+        outline-offset: 3px;
+      }
+      .world-voice-guide {
+        max-width: 1240px;
+        margin: 18px auto 0;
+        padding: 13px 16px;
+        color: #3f3029;
+        background: #f4e8dd;
+        border: 1px solid #dcc8b8;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .world-voice-guide__copy { min-width: 0; flex: 1; }
+      .world-voice-guide strong { display: block; margin-bottom: 3px; font-size: .82rem; }
+      .world-voice-guide p { margin: 0; color: #604b40; font-size: .84rem; line-height: 1.45; }
+      .world-voice-guide button {
+        min-height: 44px;
+        padding: 9px 15px;
+        color: #fff;
+        background: #a84d51;
+        border: 0;
+        border-radius: 999px;
+        font: inherit;
+        font-size: .78rem;
+        font-weight: 750;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+      @media (max-width: 600px) {
+        html, body { overflow-x: clip; }
+        .room-choice-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .room-choice-grid button { height: auto; min-height: 112px; aspect-ratio: 3 / 2; }
+        .artwork-choice-grid { grid-template-columns: 1fr; }
+        .artwork-choice-grid button { min-height: 112px; }
+        .preview-stepper { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .preview-stepper li { min-width: 0; padding: 8px 3px; justify-content: center; }
+        .preview-stepper small { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+        :where(.workflow-panel, .preview-intent-entry) button,
+        :where(.workflow-panel, .preview-intent-entry) .button { min-height: 44px; }
+        .world-voice-guide { margin: 12px 14px 0; align-items: stretch; gap: 9px; }
+        .world-voice-guide button { flex: 0 0 auto; }
+        body.sample-room-active .ar-public-workspace .interactive-room {
+          aspect-ratio: 3 / 2;
+          height: auto;
+          min-height: 0;
+        }
+        body.sample-room-active .interactive-room .room-image { object-position: center; }
+      }
+    </style>
     <script>
       // The preview is a bundled sub-application. Translate its internal
       // system label into customer language, including content rendered later.
       document.addEventListener('DOMContentLoaded', function () {
+        var sampleRooms = {
+          '/concepts/hero-room.jpg': '/artzy-world/preview/rooms/living.webp',
+          '/concepts/world-room.jpg': '/artzy-world/preview/rooms/bedroom.webp',
+          '/concepts/product-page.png': '/artzy-world/preview/rooms/dining.webp',
+          '/concepts/studio-gallery.jpg': '/artzy-world/preview/rooms/home-office.webp',
+          '/concepts/creative-studio.png': '/artzy-world/preview/rooms/corporate-office.webp',
+          '/concepts/artzy-world.png': '/artzy-world/preview/rooms/meditation.webp'
+        };
+
         function useCustomerLanguage(root) {
           var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
           var node;
@@ -21,7 +86,97 @@
             }
           }
         }
+
+        function improveRoomPreview() {
+          document.querySelectorAll('img').forEach(function (image) {
+            var path = new URL(image.src, window.location.origin).pathname;
+            if (sampleRooms[path]) image.src = sampleRooms[path];
+            var choice = image.closest('.room-choice-grid button');
+            if (choice) {
+              var label = choice.querySelector('span');
+              if (label && !label.textContent.includes('sample')) label.textContent += ' · sample';
+              image.alt = label ? label.textContent + ' room with an empty wall for artwork preview' : 'Sample room for artwork preview';
+            }
+          });
+
+          var stageImage = document.querySelector('.interactive-room .room-image');
+          var isUploadedWall = stageImage && stageImage.src.indexOf('blob:') === 0;
+          document.body.classList.toggle('sample-room-active', Boolean(stageImage && !isUploadedWall));
+
+          var sourceNote = document.querySelector('.room-source-note');
+          if (sourceNote) {
+            sourceNote.removeAttribute('hidden');
+            var heading = sourceNote.querySelector('strong');
+            var detail = sourceNote.querySelector('small');
+            if (heading) heading.textContent = isUploadedWall ? 'Your uploaded wall' : 'Selected sample room';
+            if (detail) detail.textContent = isUploadedWall
+              ? 'Your photo remains in this browser during the preview.'
+              : 'Generated room backdrop for placement guidance; artwork marked available comes from the current Artzy Studio catalogue.';
+          }
+        }
+
+        var voiceEnabled = false;
+        var lastGuidance = '';
+        var guidanceByStep = {
+          0: 'Choose whether you want to preview available art, find art for your room, or create something personal.',
+          1: 'Choose a sample room, or take a clear, straight photo of your own wall.',
+          2: 'Choose one suitable wall piece. Available studio art and imaginative concepts are kept separate.',
+          3: 'Drag the artwork into position, then check its size, frame and colour mood.',
+          4: 'Choose the concept you prefer, save it, or send one clear brief to Artzy Studio.'
+        };
+
+        function activeWorkflowStep() {
+          var visiblePanel = Array.from(document.querySelectorAll('[data-workflow-step]')).find(function (panel) {
+            return !panel.hidden;
+          });
+          return visiblePanel ? Number(visiblePanel.getAttribute('data-workflow-step')) : 0;
+        }
+
+        function speakGuidance(message) {
+          if (!('speechSynthesis' in window)) return;
+          window.speechSynthesis.cancel();
+          var speech = new SpeechSynthesisUtterance(message);
+          speech.lang = 'en-IN';
+          speech.rate = 0.92;
+          window.speechSynthesis.speak(speech);
+        }
+
+        function ensureVoiceGuide() {
+          var intro = document.querySelector('.ar-public-intro');
+          if (!intro || document.querySelector('.world-voice-guide')) return;
+          var guide = document.createElement('aside');
+          guide.className = 'world-voice-guide';
+          guide.setAttribute('aria-label', 'Artzy World voice guidance');
+          guide.innerHTML = '<div class="world-voice-guide__copy"><strong>Voice guidance</strong><p aria-live="polite"></p></div><button type="button" aria-pressed="false">Hear this step</button>';
+          intro.insertAdjacentElement('afterend', guide);
+          guide.querySelector('button').addEventListener('click', function (event) {
+            if (!('speechSynthesis' in window)) {
+              guide.querySelector('p').textContent = 'Voice is not supported in this browser. The same guidance remains visible here.';
+              event.currentTarget.disabled = true;
+              return;
+            }
+            voiceEnabled = !voiceEnabled;
+            event.currentTarget.setAttribute('aria-pressed', String(voiceEnabled));
+            event.currentTarget.textContent = voiceEnabled ? 'Voice on' : 'Hear this step';
+            if (voiceEnabled) speakGuidance(lastGuidance);
+            else window.speechSynthesis.cancel();
+          });
+        }
+
+        function updateVoiceGuidance() {
+          ensureVoiceGuide();
+          var caption = document.querySelector('.world-voice-guide p');
+          if (!caption) return;
+          var nextGuidance = guidanceByStep[activeWorkflowStep()];
+          if (nextGuidance === lastGuidance) return;
+          lastGuidance = nextGuidance;
+          caption.textContent = nextGuidance;
+          if (voiceEnabled) speakGuidance(nextGuidance);
+        }
+
         useCustomerLanguage(document.body);
+        improveRoomPreview();
+        updateVoiceGuidance();
         new MutationObserver(function (changes) {
           changes.forEach(function (change) {
             change.addedNodes.forEach(function (node) {
@@ -32,7 +187,9 @@
               }
             });
           });
-        }).observe(document.body, { childList: true, subtree: true });
+          improveRoomPreview();
+          updateVoiceGuidance();
+        }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
       });
     </script>
     <script type="module" crossorigin src="/artzy-world/preview/assets/index-B-YFbowe.js"></script>
