@@ -108,10 +108,12 @@
             sourceNote.removeAttribute('hidden');
             var heading = sourceNote.querySelector('strong');
             var detail = sourceNote.querySelector('small');
-            if (heading) heading.textContent = isUploadedWall ? 'Your uploaded wall' : 'Selected sample room';
-            if (detail) detail.textContent = isUploadedWall
+            var nextHeading = isUploadedWall ? 'Your uploaded wall' : 'Selected sample room';
+            var nextDetail = isUploadedWall
               ? 'Your photo remains in this browser during the preview.'
               : 'Generated room backdrop for placement guidance; artwork marked available comes from the current Artzy Studio catalogue.';
+            if (heading && heading.textContent !== nextHeading) heading.textContent = nextHeading;
+            if (detail && detail.textContent !== nextDetail) detail.textContent = nextDetail;
           }
         }
 
