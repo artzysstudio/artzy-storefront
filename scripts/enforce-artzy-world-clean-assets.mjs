@@ -1,6 +1,10 @@
 import fs from 'node:fs';
 
-const bundle = new URL('../public/artzy-world/preview/assets/index-B-YFbowe.js', import.meta.url);
+const previewIndex = new URL('../public/artzy-world/preview/index.html', import.meta.url);
+const html = fs.readFileSync(previewIndex, 'utf8');
+const bundleMatch = html.match(/src="\/artzy-world\/preview\/assets\/([^"?]+\.js)"/);
+if (!bundleMatch) throw new Error('Unable to find the active Artzy World JavaScript bundle.');
+const bundle = new URL(`../public/artzy-world/preview/assets/${bundleMatch[1]}`, import.meta.url);
 let source = fs.readFileSync(bundle, 'utf8');
 
 const replacements = [
@@ -23,3 +27,12 @@ for (const [before, after] of replacements) {
 }
 
 fs.writeFileSync(bundle, source);
+
+const requiredSignals = [
+  'product-cutout frame-none',
+  'Continue with this preview',
+  'Approximate placement',
+];
+for (const signal of requiredSignals) {
+  if (!source.includes(signal)) throw new Error(`Artzy World bundle is missing: ${signal}`);
+}
