@@ -2638,6 +2638,23 @@ body.artzy-muse-open .muse-floater,body.artzy-muse-open .plate-mobile-bar,body.a
   body:has(.plate-mobile-bar) .muse-floater,body:has(.digital-mobile-bar) .muse-floater{bottom:calc(82px + env(safe-area-inset-bottom))!important}
 }
 
+/* Footer customer information: labelled, aligned and touch-friendly. */
+.footer-customer-info{padding:24px 0;border-top:1px solid rgba(78,57,48,.14)}
+.footer-customer-info h4{margin:0 0 13px;color:#513e36;font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.footer-customer-info .footer-policy-links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;padding:0;border:1px solid #ded1c7;background:rgba(255,250,245,.48)}
+.footer-customer-info .footer-policy-links a{min-width:0;min-height:50px;display:flex;align-items:center;justify-content:space-between;gap:9px;padding:11px 13px;border-right:1px solid #ded1c7;border-bottom:1px solid #ded1c7;color:#5e4b42;font-size:.68rem;font-weight:650;line-height:1.35;text-decoration:none}
+.footer-customer-info .footer-policy-links a:nth-child(4n){border-right:0}.footer-customer-info .footer-policy-links a:nth-last-child(-n+4){border-bottom:0}
+.footer-customer-info .footer-policy-links a span{flex:0 0 auto;color:#a54b50;font-size:.85rem}.footer-customer-info .footer-policy-links a:hover,.footer-customer-info .footer-policy-links a:focus-visible{background:#f7e9e2;color:#873b41}
+@media(max-width:700px){
+  .footer-customer-info{padding:22px 0 18px}
+  .footer-customer-info h4{margin-bottom:11px}
+  .footer-customer-info .footer-policy-links{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .footer-customer-info .footer-policy-links a{min-height:54px;padding:11px 10px;font-size:.65rem}
+  .footer-customer-info .footer-policy-links a:nth-child(4n){border-right:1px solid #ded1c7}.footer-customer-info .footer-policy-links a:nth-child(2n){border-right:0}
+  .footer-customer-info .footer-policy-links a:nth-last-child(-n+4){border-bottom:1px solid #ded1c7}.footer-customer-info .footer-policy-links a:nth-last-child(-n+2){border-bottom:0}
+  .footer-bottom{align-items:flex-start;padding-right:0;font-size:.72rem;line-height:1.55}
+}
+
 /* Homepage gifting lead: photographs come from the studio's published hamper collection. */
 .home-hamper{
   display:grid;

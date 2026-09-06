@@ -6,7 +6,7 @@ const MAP_URL = 'https://maps.app.goo.gl/WQ3CbkywNQCoNx6g9';
 
 export default function Footer() {
   return (
-    <footer className="footer">
+    <footer id="site-footer" className="footer">
       <div className="container">
         <div className="footer-grid">
           <div className="footer-brand">
@@ -60,17 +60,19 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        <nav className="footer-policy-links" aria-label="Customer information">
-          <Link href="/about">About the Studio</Link>
-          <Link href="/contact">Visit &amp; Contact</Link>
-          <Link href="/shipping-policy">Shipping</Link>
-          <Link href="/returns-policy">Returns &amp; damage</Link>
-          <Link href="/customised-product-policy">Customised products</Link>
-          <Link href="/cancellation-policy">Cancellation</Link>
-          <Link href="/privacy-policy">Privacy</Link>
-          <Link href="/terms-and-conditions">Terms</Link>
-          <Link href="/ai-concept-disclosure">AI concept disclosure</Link>
-        </nav>
+        <section className="footer-customer-info" aria-labelledby="footer-customer-info-title">
+          <h4 id="footer-customer-info-title">Customer care &amp; policies</h4>
+          <nav className="footer-policy-links" aria-label="Customer care and legal information">
+            <Link href="/contact">Visit &amp; contact <span aria-hidden="true">→</span></Link>
+            <Link href="/shipping-policy">Shipping &amp; delivery <span aria-hidden="true">→</span></Link>
+            <Link href="/returns-policy">Returns, damage &amp; refunds <span aria-hidden="true">→</span></Link>
+            <Link href="/cancellation-policy">Cancellation policy <span aria-hidden="true">→</span></Link>
+            <Link href="/customised-product-policy">Custom-made order policy <span aria-hidden="true">→</span></Link>
+            <Link href="/privacy-policy">Privacy policy <span aria-hidden="true">→</span></Link>
+            <Link href="/terms-and-conditions">Terms &amp; conditions <span aria-hidden="true">→</span></Link>
+            <Link href="/ai-concept-disclosure">AI concept policy <span aria-hidden="true">→</span></Link>
+          </nav>
+        </section>
         <div className="footer-bottom">
           <span>© 2026 Artzy’s Studio. All rights reserved. · Designed &amp; Developed by Jaisal Shah</span>
         </div>
