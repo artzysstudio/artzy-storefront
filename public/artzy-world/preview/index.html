@@ -81,9 +81,12 @@
           var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
           var node;
           while ((node = walker.nextNode())) {
-            if (/\bERP\b/.test(node.nodeValue || '')) {
-              node.nodeValue = node.nodeValue.replace(/\bERP\b/g, 'studio catalogue');
-            }
+            var copy = node.nodeValue || '';
+            var customerCopy = copy
+              .replace(/\bERP catalogue\b/gi, 'studio catalogue')
+              .replace(/\bERP\b/g, 'studio')
+              .replace(/\bstudio catalogue catalogue\b/gi, 'studio catalogue');
+            if (customerCopy !== copy) node.nodeValue = customerCopy;
           }
         }
 
@@ -183,7 +186,9 @@
           changes.forEach(function (change) {
             change.addedNodes.forEach(function (node) {
               if (node.nodeType === Node.TEXT_NODE && /\bERP\b/.test(node.nodeValue || '')) {
-                node.nodeValue = node.nodeValue.replace(/\bERP\b/g, 'studio catalogue');
+                node.nodeValue = (node.nodeValue || '')
+                  .replace(/\bERP catalogue\b/gi, 'studio catalogue')
+                  .replace(/\bERP\b/g, 'studio');
               } else if (node.nodeType === Node.ELEMENT_NODE) {
                 useCustomerLanguage(node);
               }
@@ -194,8 +199,8 @@
         }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['src'] });
       });
     </script>
-    <script type="module" crossorigin src="/artzy-world/preview/assets/index-CDFpoz76.js"></script>
-    <link rel="stylesheet" crossorigin href="/artzy-world/preview/assets/index-CRKmGEH-.css">
+    <script type="module" crossorigin src="/artzy-world/preview/assets/index-B1xMp5c1.js"></script>
+    <link rel="stylesheet" crossorigin href="/artzy-world/preview/assets/index-GyUWN0ta.css">
   </head>
   <body>
     <div id="root"></div>
