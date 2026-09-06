@@ -8,6 +8,21 @@ interface RouteContext extends PagesContext {
   params: { path?: string | string[] };
 }
 
+const CANONICAL_STOREFRONT_ORIGIN = "https://www.artzysstudio.in";
+
+function customerReturnOrigin(context: RouteContext): string {
+  const configured = context.env.STOREFRONT_PUBLIC_ORIGIN?.trim();
+  if (configured) {
+    try {
+      const url = new URL(configured);
+      if (url.protocol === "https:" && !["localhost", "127.0.0.1"].includes(url.hostname)) {
+        return url.origin;
+      }
+    } catch { /* Fall through to the public storefront. */ }
+  }
+  return CANONICAL_STOREFRONT_ORIGIN;
+}
+
 function routeName(context: RouteContext): string {
   const path = context.params.path;
   return Array.isArray(path) ? path.join("/") : path ?? "";
@@ -122,8 +137,7 @@ export const onRequest = async (context: RouteContext) => {
         "/api/storefront/auth/google",
       context.env.ERP_API_BASE_URL,
     );
-    const storefrontOrigin = context.env.STOREFRONT_PUBLIC_ORIGIN ?? new URL(context.request.url).origin;
-    target.searchParams.set("return_to", `${storefrontOrigin.replace(/\/$/, "")}/account/`);
+    target.searchParams.set("return_to", `${customerReturnOrigin(context)}/account/`);
     return Response.redirect(target, 302);
   }
 

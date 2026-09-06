@@ -5,6 +5,7 @@ import { onRequest } from '../functions/api/storefront/[[path]]';
 const env = {
   ERP_API_BASE_URL: 'https://erp.example.test',
   ERP_API_TOKEN: 'server-only-token',
+  STOREFRONT_PUBLIC_ORIGIN: 'https://www.artzysstudio.in',
 };
 
 function context(path: string) {
@@ -77,6 +78,23 @@ test('gift hampers use the dedicated published hamper feed', { concurrency: fals
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+test('Google sign-in always returns global customers to the production account page', async () => {
+  const response = await onRequest(context('auth/google'));
+  assert.equal(response.status, 302);
+  const target = new URL(response.headers.get('location') ?? '');
+  assert.equal(target.origin, 'https://erp.example.test');
+  assert.equal(target.pathname, '/api/storefront/auth/google');
+  assert.equal(target.searchParams.get('return_to'), 'https://www.artzysstudio.in/account/');
+});
+
+test('Google sign-in rejects an accidental localhost storefront configuration', async () => {
+  const mock = context('auth/google');
+  mock.env = { ...env, STOREFRONT_PUBLIC_ORIGIN: 'http://localhost:3000' };
+  const response = await onRequest(mock);
+  const target = new URL(response.headers.get('location') ?? '');
+  assert.equal(target.searchParams.get('return_to'), 'https://www.artzysstudio.in/account/');
 });
 
 test('status fails closed when the ERP is unavailable', { concurrency: false }, async () => {
