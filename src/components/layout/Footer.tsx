@@ -15,6 +15,7 @@ export default function Footer() {
               The creative world of artist Deepti J. Shah—hand-painted art,
               digital prints, caricatures and meaningful gifts.
             </p>
+            <strong className="footer-social-label">Follow Artzy&apos;s Studio</strong>
             <SocialLinks location="footer" />
           </div>
           <div className="footer-col">

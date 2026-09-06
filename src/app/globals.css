@@ -1861,7 +1861,8 @@ img, video, canvas { max-width: 100%; height: auto; }
 .social-links .social-icon-dot { fill: currentColor; stroke: none; }
 .social-links-header { margin-right: 4px; }
 .social-links-menu { display: none; padding: 2px 0 20px; }
-.social-links-footer { margin-top: 20px; }
+.footer-social-label { display: block; margin-top: 20px; color: #6b5147; font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; }
+.social-links-footer { margin-top: 10px; }
 .social-links-footer a { width: 42px; height: 42px; background: #fffaf4; }
 
 @media (max-width: 900px) {
