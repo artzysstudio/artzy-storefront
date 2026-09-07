@@ -1,4 +1,7 @@
 import { MetadataRoute } from 'next';
+import erpProducts from '@/data/erp-products.json';
+import { isStorefrontInventoryProduct, normalizeStorefrontProduct, type Product } from '@/lib/api';
+import { productPath } from '@/lib/product-routing';
 
 export const dynamic = 'force-static';
 
@@ -18,12 +21,21 @@ const routes = [
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // Product modal URLs canonicalise to /shop/, so they are deliberately not
-  // submitted separately. Add products after stable product routes ship.
-  return routes.map(([route, changeFrequency, priority]) => ({
+  const pages = routes.map(([route, changeFrequency, priority]) => ({
     url: route ? `${BASE_URL}/${route}/` : `${BASE_URL}/`,
     lastModified: CONTENT_RELEASE_DATE,
     changeFrequency,
     priority,
   }));
+  const products = (erpProducts as Product[])
+    .map(normalizeStorefrontProduct)
+    .filter(isStorefrontInventoryProduct)
+    .map((product) => ({
+      url: `${BASE_URL}${productPath(product)}`,
+      lastModified: product.erpUpdatedAt ? new Date(product.erpUpdatedAt) : CONTENT_RELEASE_DATE,
+      changeFrequency: 'weekly' as const,
+      priority: 0.75,
+      images: product.images.slice(0, 1),
+    }));
+  return [...pages, ...products];
 }

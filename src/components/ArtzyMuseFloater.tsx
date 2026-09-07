@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FormEvent, KeyboardEvent as ReactKeyboardEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
 
 type MuseMessage = { id: number; role: "assistant" | "customer"; text: string; action?: { href: string; label: string } };
 type MuseLanguage = "en" | "hi" | "mr";
@@ -11,6 +11,7 @@ type PageGuide = { description: string; prompt: string; actions: QuickAction[] }
 
 const conversationStorageKey = "artzy-muse-conversation-v5";
 const voiceStorageKey = "artzy-muse-voice";
+const dismissalStorageKey = "artzy-muse-dismissed";
 
 const greetings: Record<MuseLanguage, string> = {
   en: "Namaste. I’m Artzy Muse. Tell me what you need, and I’ll guide you one step at a time.",
@@ -140,20 +141,21 @@ export default function ArtzyMuseFloater() {
   const conversationRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const speak = (text: string) => {
+  const speak = useCallback((text: string) => {
     if (!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = language === "hi" ? "hi-IN" : language === "mr" ? "mr-IN" : "en-IN";
     utterance.rate = 0.92;
     window.speechSynthesis.speak(utterance);
-  };
-  const closeMuse = () => {
+  }, [language]);
+  const closeMuse = useCallback(() => {
     window.speechSynthesis?.cancel();
+    localStorage.setItem(dismissalStorageKey, "yes");
     setIsOpen(false);
     setIsExpanded(false);
     window.setTimeout(() => triggerRef.current?.focus(), 0);
-  };
+  }, []);
 
   useEffect(() => {
     const savedLanguage = sessionStorage.getItem("artzy-muse-language") as MuseLanguage | null;
@@ -171,10 +173,9 @@ export default function ArtzyMuseFloater() {
         }
       } catch { /* Start a fresh conversation. */ }
     } else setMessages([{ id: 1, role: "assistant", text: `${greetings[selectedLanguage]} ${pageGuide(window.location.pathname).prompt}` }]);
-    if (!sessionStorage.getItem("artzy-muse-welcomed")) {
-      const timer = window.setTimeout(() => { setIsOpen(true); sessionStorage.setItem("artzy-muse-welcomed", "yes"); }, 2800);
-      return () => window.clearTimeout(timer);
-    }
+    // Muse is intentionally collapsed by default. Opening is always a
+    // customer action, and a dismissal is remembered across visits.
+    if (localStorage.getItem(dismissalStorageKey)) setIsOpen(false);
   }, []);
 
   useEffect(() => { sessionStorage.setItem(conversationStorageKey, JSON.stringify(messages.slice(-12))); }, [messages]);
@@ -182,7 +183,7 @@ export default function ArtzyMuseFloater() {
     if (previousPath.current === pathname) return;
     previousPath.current = pathname;
     if (voiceEnabled && isOpen) speak(guide.prompt);
-  }, [guide.prompt, isOpen, pathname, voiceEnabled]);
+  }, [guide.prompt, isOpen, pathname, speak, voiceEnabled]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -202,7 +203,7 @@ export default function ArtzyMuseFloater() {
     window.addEventListener("keydown", handleKeyDown);
     window.setTimeout(() => getFocusable()[0]?.focus(), 20);
     return () => { document.body.style.overflow = previousOverflow; document.body.classList.remove("artzy-muse-open"); window.removeEventListener("keydown", handleKeyDown); };
-  }, [isOpen]);
+  }, [closeMuse, isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;

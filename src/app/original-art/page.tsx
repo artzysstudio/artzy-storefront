@@ -21,7 +21,7 @@ export default async function OriginalArtPage() {
         <p>Browse only the wall art and frames currently published by Artzy&apos;s Studio. Open a piece to check its SKU, availability and the details recorded by the studio.</p>
         <div><a href="#shop-products">View available art</a><Link href="/personalised/#custom-artwork">Commission an artwork</Link></div>
       </section>
-      <ShopClient initialProducts={products} categoryScope={['Wall Art & Frames']} />
+      <ShopClient initialProducts={products} categoryScope={['Wall Art & Frames']} emptyExperience="original-art" />
     </main>
     <Footer />
   </>;

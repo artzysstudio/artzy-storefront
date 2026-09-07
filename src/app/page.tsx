@@ -13,7 +13,15 @@ import FreshStudioProducts from '@/components/FreshStudioProducts';
 const ARTZY_AI_ENABLED = false;
 
 export const metadata: Metadata = {
+  title: "Handmade Art & Personalised Gifts | Artzy's Studio",
+  description: "Discover handmade art, meaningful gifts, personalised creations and studio-planned hampers by artist Deepti J. Shah in Pune.",
   alternates: { canonical: '/' },
+  openGraph: {
+    title: "Handmade Art & Personalised Gifts | Artzy's Studio",
+    description: "Handmade art, meaningful gifts and personalised creations by Deepti J. Shah.",
+    url: '/',
+    images: [{ url: '/images/artzy-social-share-square.png', width: 1200, height: 1200, alt: "Artzy's Studio handmade art and gifting" }],
+  },
 };
 
 export default async function Home() {

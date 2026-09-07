@@ -19,6 +19,7 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    ".chrome-world/**",
     ".npm-cache/**",
     ".vercel/**",
     "public/artzy-world/preview-app/**",

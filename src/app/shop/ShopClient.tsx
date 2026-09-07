@@ -1,18 +1,35 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { isStorefrontInventoryProduct, normalizeStorefrontProduct, Product } from '@/lib/api';
 import ProductCard from '@/components/ProductCard';
-import ProductDetailModal from '@/components/ProductDetailModal';
+import Link from 'next/link';
+import { productPath, storefrontCategoryLabel } from '@/lib/product-routing';
 
 const ERP_PRODUCT_FEED = '/api/storefront/products';
 const PRODUCT_BATCH_SIZE = 12;
+const EMPTY_CATEGORY_SCOPE: string[] = [];
+const EMPTY_LEGACY_ROUTES: Array<{ id: string; path: string }> = [];
 
 const slugify = (value: string) =>
   value.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
-export default function ShopClient({ initialProducts, categoryScope = [] }: { initialProducts: Product[]; categoryScope?: string[] }) {
-  const inScope = (product: Product) => isStorefrontInventoryProduct(product) && (categoryScope.length === 0 || categoryScope.some((scope) => slugify(product.category).includes(slugify(scope))));
+export default function ShopClient({
+  initialProducts,
+  categoryScope = EMPTY_CATEGORY_SCOPE,
+  emptyExperience,
+  legacyProductRoutes = EMPTY_LEGACY_ROUTES,
+}: {
+  initialProducts: Product[];
+  categoryScope?: string[];
+  emptyExperience?: 'original-art';
+  legacyProductRoutes?: Array<{ id: string; path: string }>;
+}) {
+  const inScope = useCallback(
+    (product: Product) => isStorefrontInventoryProduct(product)
+      && (categoryScope.length === 0 || categoryScope.some((scope) => slugify(product.category).includes(slugify(scope)))),
+    [categoryScope],
+  );
   const [products, setProducts] = useState<Product[]>(() => initialProducts.map(normalizeStorefrontProduct).filter(inScope));
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedOccasion, setSelectedOccasion] = useState('');
@@ -20,7 +37,6 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
   const [readyToShipOnly, setReadyToShipOnly] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [visibleCount, setVisibleCount] = useState(PRODUCT_BATCH_SIZE);
   const [showBackToTop, setShowBackToTop] = useState(false);
 
@@ -90,7 +106,7 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
       controller?.abort();
       window.clearInterval(refreshTimer);
     };
-  }, []);
+  }, [inScope]);
 
   useEffect(() => {
     setMaxPrice(highestPrice);
@@ -119,22 +135,11 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
     const requestedProduct = new URLSearchParams(window.location.search).get('product');
     if (!requestedProduct) return;
     const match = products.find((product) => String(product.id) === requestedProduct);
-    if (match) setSelectedProduct(match);
-  }, [products]);
-
-  const openProduct = (product: Product) => {
-    setSelectedProduct(product);
-    const url = new URL(window.location.href);
-    url.searchParams.set('product', String(product.id));
-    window.history.replaceState({}, '', url);
-  };
-
-  const closeProduct = () => {
-    setSelectedProduct(null);
-    const url = new URL(window.location.href);
-    url.searchParams.delete('product');
-    window.history.replaceState({}, '', url);
-  };
+    const permanentPath = match
+      ? productPath(match)
+      : legacyProductRoutes.find((route) => route.id === requestedProduct)?.path;
+    if (permanentPath) window.location.replace(permanentPath);
+  }, [legacyProductRoutes, products]);
 
   useEffect(() => {
     document.body.style.overflow = mobileFiltersOpen ? 'hidden' : '';
@@ -176,7 +181,7 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
     updateBackToTop();
     window.addEventListener('scroll', updateBackToTop, { passive: true });
     return () => window.removeEventListener('scroll', updateBackToTop);
-  }, [categoryScope.join('|')]);
+  }, []);
 
   const clearFilters = () => {
     setSelectedCategory('');
@@ -222,7 +227,7 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
               checked={selectedCategory === category}
               onChange={() => setSelectedCategory(category)}
             />
-            <span>{category}</span>
+            <span>{storefrontCategoryLabel(category)}</span>
           </label>
         ))}
       </fieldset>
@@ -276,15 +281,25 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
         </fieldset>
       )}
 
-      <fieldset className="filter-group">
+      {highestPrice > 0 && <fieldset className="filter-group">
         <legend>Availability</legend>
         <label className="filter-option"><input type="checkbox" checked={readyToShipOnly} onChange={(event) => setReadyToShipOnly(event.target.checked)} /><span>Ready to ship</span></label>
-      </fieldset>
+      </fieldset>}
     </>
   );
 
   return (
-    <div className="shop-shell container">
+    <div className={`shop-shell container${products.length === 0 ? ' shop-shell--empty' : ''}`}>
+      {products.length === 0 && emptyExperience === 'original-art' ? <section className="original-art-empty" aria-labelledby="original-art-empty-title">
+        <span>Original work is released thoughtfully</span>
+        <h2 id="original-art-empty-title">No original pieces are listed for sale today.</h2>
+        <p>Deepti&apos;s available originals will appear here only after the studio publishes their verified details. You can still begin a commission or explore her recent work.</p>
+        <div>
+          <Link className="btn btn-solid" href="/personalised/#custom-artwork">Commission an original</Link>
+          <a className="btn" href="https://www.instagram.com/artzysstudio/" target="_blank" rel="noreferrer">View past work</a>
+          <Link className="btn" href="/contact/?type=original-art-notify">Tell me about new originals</Link>
+        </div>
+      </section> : <>
       <div className="shop-controls" id="shop-products">
         <div className="category-strip-heading">
           <strong>Browse categories</strong>
@@ -298,13 +313,13 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
               key={category}
               onClick={() => chooseCategory(category)}
             >
-              {category}
+              {storefrontCategoryLabel(category)}
             </button>
           ))}
         </nav>
 
         {activeFilterCount > 0 && <div className="active-filter-chips" aria-label="Active filters">
-          {selectedCategory && <button onClick={() => setSelectedCategory('')}>{selectedCategory} <span aria-hidden="true">×</span></button>}
+          {selectedCategory && <button onClick={() => setSelectedCategory('')}>{storefrontCategoryLabel(selectedCategory)} <span aria-hidden="true">×</span></button>}
           {selectedOccasion && <button onClick={() => setSelectedOccasion('')}>{selectedOccasion} <span aria-hidden="true">×</span></button>}
           {selectedRoom && <button onClick={() => setSelectedRoom('')}>{selectedRoom} <span aria-hidden="true">×</span></button>}
           {readyToShipOnly && <button onClick={() => setReadyToShipOnly(false)}>Ready to ship <span aria-hidden="true">×</span></button>}
@@ -346,7 +361,7 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
           {filteredProducts.length > 0 ? (
             <>
               <div className="product-grid">
-                {visibleProducts.map((product) => <ProductCard key={product.id} product={product} onView={() => openProduct(product)} />)}
+                {visibleProducts.map((product) => <ProductCard key={product.id} product={product} />)}
               </div>
               {remainingProducts > 0 && (
                 <div className="shop-load-more">
@@ -394,7 +409,7 @@ export default function ShopClient({ initialProducts, categoryScope = [] }: { in
           </aside>
         </div>
       )}
-      {selectedProduct && <ProductDetailModal product={selectedProduct} onClose={closeProduct} />}
+      </>}
       <button
         className={`back-to-top${showBackToTop ? ' visible' : ''}`}
         type="button"

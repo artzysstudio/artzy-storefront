@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { RichProductName } from '@/components/RichProductText';
 import { normaliseStockLimit, remainingStock } from '@/lib/cart-stock';
+import { productPath, storefrontCategoryLabel } from '@/lib/product-routing';
 
 export default function ProductCard({ product, className, onView }: { product: Product, className?: string, onView?: () => void }) {
   const { addToCart, items } = useCart();
@@ -57,16 +58,16 @@ export default function ProductCard({ product, className, onView }: { product: P
           {productImage}
         </button>
       ) : (
-        <Link href={`/shop?product=${encodeURIComponent(String(product.id))}`} className="product-image-wrapper" aria-label={`View ${product.name}`}>
+        <Link href={productPath(product)} className="product-image-wrapper" aria-label={`View ${product.name}`}>
           {productImage}
         </Link>
       )}
 
       <div className="product-meta">
-        <span className="product-category">{product.category}</span>
+        <span className="product-category">{storefrontCategoryLabel(product.category)}</span>
         {onView ? <button type="button" className="product-name-link product-name-trigger" onClick={onView}>
           <h3 className="product-name"><RichProductName name={product.name} /></h3>
-        </button> : <Link href={`/shop?product=${encodeURIComponent(String(product.id))}`} className="product-name-link"><h3 className="product-name"><RichProductName name={product.name} /></h3></Link>}
+        </button> : <Link href={productPath(product)} className="product-name-link"><h3 className="product-name"><RichProductName name={product.name} /></h3></Link>}
         <span className="product-price">₹{product.price.toLocaleString('en-IN')}</span>
       </div>
 

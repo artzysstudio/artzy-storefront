@@ -26,7 +26,7 @@ test('does not invent unsupported personalisation', () => {
   const intent = { ...defaultGiftIntent, personalisation: 'name' };
   const result = recommendGifts([product()], intent);
   assert.equal(result.recommendations.length, 0);
-  assert.ok(result.message.includes('No current ERP product confirms'));
+  assert.ok(result.message.includes('No current studio product confirms'));
 });
 
 test('bulk plan requires verified quantity for every SKU', () => {

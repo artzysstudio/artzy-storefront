@@ -62,6 +62,8 @@ export interface ProductVariant {
 
 export interface Product {
   id: string;
+  /** First-published permanent route. Derived locally; ERP ID remains authoritative. */
+  routeSlug?: string;
   sku?: string;
   name: string;
   category: string;
@@ -89,6 +91,11 @@ export interface Product {
   
   careInstructions?: string;
   leadTime?: string;
+  contents?: string;
+  handmadeVariation?: string;
+  dispatchTime?: string;
+  deliveryEstimate?: string;
+  returnEligibility?: string;
   availability?: 'in_stock' | 'made_to_order' | 'out_of_stock';
   
   // Gifting & Customization
@@ -149,7 +156,14 @@ function cleanText(value: unknown): string | undefined {
 }
 
 export function normalizeStorefrontProduct(product: Product): Product {
-  const source = product as Product & { cover_image?: unknown; sale_price?: unknown; description?: unknown };
+  const source = product as Product & {
+    cover_image?: unknown; sale_price?: unknown; description?: unknown;
+    care_instructions?: unknown; lead_time?: unknown; contents?: unknown;
+    handmade_variation?: unknown; dispatch_time?: unknown;
+    delivery_estimate?: unknown; return_eligibility?: unknown;
+    gift_wrapping_available?: unknown;
+    route_slug?: unknown;
+  };
   const candidates = [
     ...(Array.isArray(product.images) ? product.images : []),
     source.cover_image,
@@ -182,12 +196,25 @@ export function normalizeStorefrontProduct(product: Product): Product {
 
   return {
     ...product,
+    routeSlug: product.routeSlug || cleanText(source.route_slug),
     images: Array.from(new Set([
       ...images,
       ...(variants || []).map((variant) => variant.imageUrl).filter((image): image is string => Boolean(image)),
     ])),
     variants,
     artworkStory: product.artworkStory || cleanText(source.description),
+    careInstructions: product.careInstructions || cleanText(source.care_instructions),
+    leadTime: product.leadTime || cleanText(source.lead_time),
+    contents: product.contents || cleanText(source.contents),
+    handmadeVariation: product.handmadeVariation || cleanText(source.handmade_variation),
+    dispatchTime: product.dispatchTime || cleanText(source.dispatch_time),
+    deliveryEstimate: product.deliveryEstimate || cleanText(source.delivery_estimate),
+    returnEligibility: product.returnEligibility || cleanText(source.return_eligibility),
+    giftWrappingAvailable: typeof product.giftWrappingAvailable === 'boolean'
+      ? product.giftWrappingAvailable
+      : typeof source.gift_wrapping_available === 'boolean'
+        ? source.gift_wrapping_available
+        : undefined,
     salePrice: typeof product.salePrice === 'number'
       ? product.salePrice
       : Number.isFinite(erpSalePrice) && erpSalePrice > 0

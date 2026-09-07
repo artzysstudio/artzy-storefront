@@ -6,6 +6,7 @@ import { Product, ProductVariant } from "@/lib/api";
 import { useCart } from "@/context/CartContext";
 import RichProductText, { RichProductName } from "@/components/RichProductText";
 import { normaliseStockLimit, remainingStock } from "@/lib/cart-stock";
+import { storefrontCategoryLabel } from "@/lib/product-routing";
 
 // Optional ERP fields are rendered only when the product feed provides them.
 const variantLabel = (variant: ProductVariant, index: number) =>
@@ -28,9 +29,15 @@ function professionalVariantLabel(variant: ProductVariant, index: number, produc
 export default function ProductDetailModal({
   product,
   onClose,
+  standalone = false,
+  commerceReady = true,
+  availabilityStatus,
 }: {
   product: Product;
-  onClose: () => void;
+  onClose?: () => void;
+  standalone?: boolean;
+  commerceReady?: boolean;
+  availabilityStatus?: string;
 }) {
   const { addToCart, items } = useCart();
   const images = useMemo(
@@ -55,14 +62,13 @@ export default function ProductDetailModal({
     selected?.isAvailable === false ||
     stockQuantity === 0;
   const displayPrice = selected?.price ?? product.salePrice ?? product.price;
-  const deliveryTime =
-    product.leadTime ||
-    (product.availability === "made_to_order" ? "Made to order — dispatch time confirmed after your brief" : "Dispatch timing confirmed after your PIN code and order details");
+  const deliveryTime = product.deliveryEstimate || product.dispatchTime || product.leadTime;
 
   useEffect(() => {
+    if (standalone) return;
     document.body.style.overflow = "hidden";
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") onClose?.();
       if (event.key === "ArrowRight") setActiveImage((index) => (index + 1) % images.length);
       if (event.key === "ArrowLeft") setActiveImage((index) => (index - 1 + images.length) % images.length);
     };
@@ -71,7 +77,7 @@ export default function ProductDetailModal({
       document.body.style.overflow = "";
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [images.length, onClose]);
+  }, [images.length, onClose, standalone]);
 
   useEffect(() => {
     if (!isPlaying || images.length < 2) return;
@@ -83,7 +89,7 @@ export default function ProductDetailModal({
   }, [images.length, isPlaying]);
 
   const addProduct = () => {
-    if (soldOut) return;
+    if (soldOut || !commerceReady) return;
     addToCart(product.id, 1, {
       availableStock: stockQuantity,
       variantId: selectedVariantId,
@@ -94,15 +100,15 @@ export default function ProductDetailModal({
   };
 
   return (
-    <div className="product-detail-backdrop" role="presentation" onClick={onClose}>
+    <div className={`product-detail-backdrop${standalone ? " product-detail-standalone" : ""}`} role={standalone ? undefined : "presentation"} onClick={standalone ? undefined : onClose}>
       <article
         className="product-detail-modal"
-        role="dialog"
-        aria-modal="true"
+        role={standalone ? undefined : "dialog"}
+        aria-modal={standalone ? undefined : "true"}
         aria-labelledby="product-detail-title"
         onClick={(event) => event.stopPropagation()}
       >
-        <button className="product-detail-close" type="button" onClick={onClose} aria-label="Close product details">×</button>
+        {!standalone && <button className="product-detail-close" type="button" onClick={onClose} aria-label="Close product details">×</button>}
 
         <section className="product-gallery" aria-label={`${product.name} gallery`}>
           <div className="product-gallery-stage">
@@ -137,14 +143,16 @@ export default function ProductDetailModal({
         </section>
 
         <section className="product-detail-copy">
-          <span className="product-detail-category">{product.category}</span>
+          <span className="product-detail-category">{storefrontCategoryLabel(product.category)}</span>
           <h2 id="product-detail-title"><RichProductName name={product.name} /></h2>
           {product.sku && <span className="product-detail-sku">SKU {product.sku}</span>}
           <div className="product-detail-price">₹{displayPrice.toLocaleString("en-IN")}</div>
 
           <div className={`product-stock ${soldOut ? "out" : ""}`}>
             <span aria-hidden="true"></span>
-            {soldOut
+            {!commerceReady
+              ? "Checking current availability"
+              : soldOut
               ? "Currently unavailable"
               : typeof stockQuantity === "number"
                 ? stockQuantity <= 5
@@ -155,9 +163,7 @@ export default function ProductDetailModal({
                   : "Available to order"}
           </div>
 
-          <RichProductText
-            text={product.artworkStory || product.artistNotes || product.seo?.description || `A distinctive ${product.category.toLowerCase()} piece from Deepti J. Shah’s studio, created with an artist’s attention to colour, finish and detail.`}
-          />
+          {(product.artworkStory || product.artistNotes || product.seo?.description) && <RichProductText text={product.artworkStory || product.artistNotes || product.seo?.description || ''} />}
 
           {availableVariants.length > 0 && (
             <fieldset className="product-variants">
@@ -192,14 +198,18 @@ export default function ProductDetailModal({
             {product.medium && <div><dt>Medium</dt><dd>{product.medium}</dd></div>}
             {product.material && <div><dt>Material</dt><dd>{product.material}</dd></div>}
             {product.dimensions && <div><dt>Dimensions</dt><dd>{product.dimensions}</dd></div>}
+            {product.weight && <div><dt>Weight</dt><dd>{product.weight}</dd></div>}
+            {product.contents && <div><dt>Contents</dt><dd>{product.contents}</dd></div>}
             {product.artist && <div><dt>Artist</dt><dd>{product.artist}</dd></div>}
+            {product.handmadeVariation && <div><dt>Handmade variation</dt><dd>{product.handmadeVariation}</dd></div>}
+            {product.returnEligibility && <div><dt>Returns</dt><dd>{product.returnEligibility}</dd></div>}
+            {typeof product.giftWrappingAvailable === 'boolean' && <div><dt>Gift wrapping</dt><dd>{product.giftWrappingAvailable ? 'Available' : 'Not available'}</dd></div>}
           </dl>
 
-          <div className="delivery-card">
+          {deliveryTime && <div className="delivery-card">
             <strong>Delivery estimate</strong>
             <span>{deliveryTime}</span>
-            <small>Final delivery depends on destination, personalisation and studio availability.</small>
-          </div>
+          </div>}
 
           {product.careInstructions && (
             <details className="product-care">
@@ -208,8 +218,9 @@ export default function ProductDetailModal({
             </details>
           )}
 
-          <button className={`product-detail-add${added ? " added" : ""}`} type="button" disabled={soldOut || stockReached} onClick={addProduct}>
-            {soldOut ? "Currently unavailable" : stockReached ? stockQuantity === 1 ? "Only one available · already in bag" : "All available stock is in your bag" : added ? "Added to bag ✓" : quantityInBag > 0 ? "Add another to bag" : "Add to bag"}
+          {availabilityStatus && <p className={`product-live-status${commerceReady ? ' ready' : ''}`} role="status">{availabilityStatus}</p>}
+          <button className={`product-detail-add${added ? " added" : ""}`} type="button" disabled={!commerceReady || soldOut || stockReached} onClick={addProduct}>
+            {!commerceReady ? "Checking live availability…" : soldOut ? "Currently unavailable" : stockReached ? stockQuantity === 1 ? "Only one available · already in bag" : "All available stock is in your bag" : added ? "Added to bag ✓" : quantityInBag > 0 ? "Add another to bag" : "Add to bag"}
           </button>
           {!soldOut && quantityInBag > 0 && <small className="product-detail-bag-stock" aria-live="polite">{quantityInBag} in your bag{remaining !== null ? ` · ${remaining} more available` : ''}</small>}
         </section>
@@ -223,6 +234,8 @@ export default function ProductDetailModal({
         .product-gallery-thumbs{overflow-x:auto!important;display:flex!important;justify-content:flex-start!important;scrollbar-width:thin}
         .product-gallery-thumbs button{flex:0 0 76px}
         .product-detail-bag-stock{display:block;margin-top:9px;color:#67584f;font-size:.75rem;text-align:center}
+        .product-live-status{margin:12px 0;padding:10px 12px;border-left:3px solid #a74d52;background:#f4e9e1;color:#6e5d54;font-size:.72rem;line-height:1.45}.product-live-status.ready{border-color:#64805b;background:#edf3e9;color:#445b3e}
+        .product-detail-standalone{position:relative!important;inset:auto!important;z-index:auto!important;display:block!important;padding:0 clamp(16px,4vw,56px) 64px!important;background:transparent!important}.product-detail-standalone .product-detail-modal{width:min(1320px,100%)!important;max-width:none!important;min-height:720px;margin:0 auto;box-shadow:0 22px 60px rgba(64,43,34,.12)}
         @media (min-width: 769px) {
           .product-detail-backdrop {
             display: grid !important;
@@ -288,6 +301,7 @@ export default function ProductDetailModal({
         }
 
         @media (max-width: 768px) {
+          .product-detail-standalone{display:block!important;padding:0 0 40px!important}.product-detail-standalone .product-detail-modal{height:auto!important;max-height:none!important;border-radius:0!important;box-shadow:none!important}
           .product-detail-backdrop {
             display: flex !important;
             align-items: flex-end !important;

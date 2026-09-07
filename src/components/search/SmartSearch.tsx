@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { getAllProducts } from '@/actions/products';
 import { Product } from '@/lib/api';
 import Link from 'next/link';
+import { productPath, storefrontCategoryLabel } from '@/lib/product-routing';
 
 interface SmartSearchProps {
   isOpen: boolean;
@@ -83,9 +84,9 @@ export default function SmartSearch({ isOpen, onClose }: SmartSearchProps) {
           <div className="product-grid" style={{ marginTop: '2rem' }}>
             {results.map(product => (
               <div key={product.id} className="search-result-card" onClick={onClose}>
-                <Link href={`/shop?product=${encodeURIComponent(String(product.id))}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+                <Link href={productPath(product)} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
                   <img src={product.images[0]} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', aspectRatio: '1', marginBottom: '1rem' }} />
-                  <h4 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-light)' }}>{product.category}</h4>
+                  <h4 style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-light)' }}>{storefrontCategoryLabel(product.category)}</h4>
                   <h3 style={{ margin: '0.2rem 0', fontSize: '1.1rem' }}>{product.name}</h3>
                   <p style={{ margin: 0, fontWeight: 'bold' }}>₹{product.price.toLocaleString('en-IN')}</p>
                 </Link>

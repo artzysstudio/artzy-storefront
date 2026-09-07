@@ -9,6 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { RichProductName } from '@/components/RichProductText';
 import { clampCartQuantity, normaliseStockLimit } from '@/lib/cart-stock';
+import { productPath, storefrontCategoryLabel } from '@/lib/product-routing';
 
 type CheckoutStep = 'address' | 'gifting' | 'shipping' | 'payment';
 type CartProduct = Product & {
@@ -17,6 +18,15 @@ type CartProduct = Product & {
   cartVariantId?: string;
   cartVariantLabel?: string;
 };
+
+const INDIAN_STATES = [
+  'Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar',
+  'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa',
+  'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka',
+  'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya',
+  'Mizoram', 'Nagaland', 'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim',
+  'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+] as const;
 
 function CartThumbnail({ product }: { product: Product }) {
   const [failed, setFailed] = useState(false);
@@ -352,24 +362,20 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
         {error && <div style={{ background: '#ffecec', color: '#cc0000', padding: '1rem', marginBottom: '1rem', borderRadius: '4px' }}>{error}</div>}
 
         {step === 'address' && (
-          <form onSubmit={handleAddressContinue} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h2>Delivery Address</h2>
+          <form className="checkout-address-form" onSubmit={handleAddressContinue} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div><h2>Delivery address</h2><p className="checkout-step-help">Use the address where this order should be delivered. Required fields are marked.</p></div>
             {!isAuthenticated && <div style={{ padding: '1rem', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}><strong>Guest checkout is available.</strong><p style={{ margin: '.35rem 0 0' }}>Enter your delivery details below. Prefer an account? <a href="/account">Sign in with Google or a secure email link</a>; your bag stays saved on this device.</p></div>}
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <input required type="text" autoComplete="name" placeholder="Full Name" value={address.name} onChange={e => setAddress({...address, name: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
-            </div>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <input required type="email" autoComplete="email" placeholder="Email" value={address.email} onChange={e => setAddress({...address, email: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
-              <input required type="tel" inputMode="numeric" autoComplete="tel-national" pattern="[0-9]{10}" maxLength={10} placeholder="10-digit Phone" value={address.phone} onChange={e => setAddress({...address, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})} style={{ flex: 1, padding: '0.8rem' }} />
-            </div>
-            <input required type="text" autoComplete="street-address" placeholder="Street Address" value={address.address} onChange={e => setAddress({...address, address: e.target.value})} style={{ padding: '0.8rem' }} />
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <input required type="text" autoComplete="address-level2" placeholder="City" value={address.city} onChange={e => setAddress({...address, city: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
-              <input required type="text" autoComplete="address-level1" placeholder="State" value={address.state} onChange={e => setAddress({...address, state: e.target.value})} style={{ flex: 1, padding: '0.8rem' }} />
-              <input required type="text" autoComplete="postal-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} placeholder="6-digit PIN code" value={address.pincode} onChange={e => setAddress({...address, pincode: e.target.value.replace(/\D/g, '').slice(0, 6)})} style={{ flex: 1, padding: '0.8rem' }} />
+            <div className="checkout-field-grid">
+              <label className="checkout-field checkout-field--wide"><span>Full name <b aria-hidden="true">*</b></span><input required type="text" autoComplete="name" value={address.name} onChange={e => setAddress({...address, name: e.target.value})} /></label>
+              <label className="checkout-field"><span>Email address <b aria-hidden="true">*</b></span><input required type="email" autoComplete="email" value={address.email} onChange={e => setAddress({...address, email: e.target.value})} /></label>
+              <label className="checkout-field"><span>Mobile number <b aria-hidden="true">*</b></span><input required type="tel" inputMode="numeric" autoComplete="tel-national" pattern="[0-9]{10}" maxLength={10} placeholder="10 digits" value={address.phone} onChange={e => setAddress({...address, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})} /></label>
+              <label className="checkout-field checkout-field--wide"><span>Street address <b aria-hidden="true">*</b></span><input required type="text" autoComplete="street-address" value={address.address} onChange={e => setAddress({...address, address: e.target.value})} /></label>
+              <label className="checkout-field"><span>City <b aria-hidden="true">*</b></span><input required type="text" autoComplete="address-level2" value={address.city} onChange={e => setAddress({...address, city: e.target.value})} /></label>
+              <label className="checkout-field"><span>State or union territory <b aria-hidden="true">*</b></span><select required autoComplete="address-level1" value={address.state} onChange={e => setAddress({...address, state: e.target.value})}><option value="">Select state</option>{INDIAN_STATES.map((state) => <option value={state} key={state}>{state}</option>)}</select></label>
+              <label className="checkout-field"><span>PIN code <b aria-hidden="true">*</b></span><input required type="text" autoComplete="postal-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6} placeholder="6 digits" value={address.pincode} onChange={e => setAddress({...address, pincode: e.target.value.replace(/\D/g, '').slice(0, 6)})} /></label>
             </div>
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-              <button type="submit" className="btn" style={{ flex: 1 }}>Continue</button>
+              <button type="submit" className="btn" style={{ flex: 1 }}>Continue to gifting</button>
             </div>
           </form>
         )}
@@ -396,16 +402,16 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
                   Hide price from packing slip
                 </label>
                 
-                <select value={occasion} onChange={e => setOccasion(e.target.value)} style={{ padding: '0.8rem' }}>
-                  <option value="">Select Occasion (Optional)</option>
+                <label className="checkout-field"><span>Occasion (optional)</span><select value={occasion} onChange={e => setOccasion(e.target.value)}>
+                  <option value="">Select occasion</option>
                   <option value="birthday">Birthday</option>
                   <option value="anniversary">Anniversary</option>
                   <option value="wedding">Wedding</option>
                   <option value="corporate">Corporate</option>
                   <option value="housewarming">Housewarming</option>
-                </select>
+                </select></label>
                 
-                <textarea placeholder="Gift Message (Handwritten on premium card)" value={giftMessage} onChange={e => setGiftMessage(e.target.value)} rows={3} style={{ padding: '0.8rem' }}></textarea>
+                <label className="checkout-field"><span>Gift message (optional)</span><textarea placeholder="Message for the handwritten card" value={giftMessage} onChange={e => setGiftMessage(e.target.value)} rows={3}></textarea></label>
               </div>
             )}
             
@@ -476,8 +482,8 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
 
         {step === 'payment' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h2>Secure Payment</h2>
-            <p>Your payment will be processed securely via Razorpay.</p>
+            <h2>Secure payment</h2>
+            <p>Razorpay securely displays the payment methods available for your device and account, which may include UPI, cards, netbanking or supported wallets. Artzy&apos;s Studio does not store your payment credentials.</p>
             <div style={{ padding: '2rem', border: '1px solid var(--border-color)', borderRadius: '4px', textAlign: 'center', background: '#f9f9f9' }}>
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" style={{ marginBottom: '1rem' }}>
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -509,16 +515,16 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
         <div className="checkout-items">
           {cartProducts.map(p => (
             <article key={`${p.id}-${p.cartVariantId || 'standard'}`} className="checkout-item">
-              <Link href={`/shop/?product=${encodeURIComponent(String(p.id))}`} className="checkout-item__preview" aria-label={`View ${p.name}`}>
+              <Link href={productPath(p)} className="checkout-item__preview" aria-label={`View ${p.name}`}>
                 <CartThumbnail product={p} />
                 <span className="checkout-item__quantity" aria-label={`Quantity ${p.cartQuantity}`}>{p.cartQuantity}</span>
               </Link>
               <div className="checkout-item__details">
-                <Link href={`/shop/?product=${encodeURIComponent(String(p.id))}`} className="checkout-item__name">
+                <Link href={productPath(p)} className="checkout-item__name">
                   <RichProductName name={p.name} />
                 </Link>
                 <div className="checkout-item__meta">
-                  <span>{p.category}</span>
+                  <span>{storefrontCategoryLabel(p.category)}</span>
                   {p.cartVariantLabel && <span>{p.cartVariantLabel}</span>}
                 </div>
                 <div className="checkout-item__controls" aria-label={`Quantity for ${p.name}`}>
@@ -561,7 +567,7 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', fontSize: '.82rem', color: 'var(--text-muted)' }}>
             <span>Tax</span>
-            <span>Availability confirmed before payment</span>
+            <span>Confirmed in the final payment and order record</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.2rem', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(0,0,0,0.1)' }}>
             <span>Total</span>
