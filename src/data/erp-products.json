@@ -296,6 +296,35 @@
     "route_slug": "green-round-mirror--891f9dc0-baf6-406e-aac4-66decaff493a"
   },
   {
+    "id": "2145f0ce-116d-48d3-b88c-6c3e97b4f51d",
+    "name": "Hand-painted Keepsake Box",
+    "sku": "ART-MTR35XU3",
+    "category_id": "6c480cbd-3468-41da-adb5-6b2f572a895b",
+    "category": "Customized Gifts",
+    "category_slug": "customized-gifts",
+    "description": null,
+    "price": 499,
+    "regular_price": 499,
+    "sale_price": null,
+    "salePrice": null,
+    "on_sale": false,
+    "quantity": 2,
+    "availability": "in_stock",
+    "cover_image": "products/52daa64c-74c8-4a0e-8daa-7eab97a82e15.png",
+    "images": [
+      "products/52daa64c-74c8-4a0e-8daa-7eab97a82e15.png",
+      "products/f04c2b85-c15b-46dc-b2e1-4877c4edbd72.png",
+      "products/fb56079c-2b38-4abe-a71e-80150f7cab34.png",
+      "products/90ec7803-ea86-4466-8d28-745583f38f3c.png",
+      "products/534cbbbf-43cb-49e0-9177-40313c3359a0.png",
+      "products/730eb6a6-e784-4f64-9755-a43173e03817.png"
+    ],
+    "variants": [],
+    "product_url": "https://www.artzysstudio.in/products/ART-MTR35XU3",
+    "updated_at": "2026-09-07T10:16:41.182668+00:00",
+    "route_slug": "hand-painted-keepsake-box--2145f0ce-116d-48d3-b88c-6c3e97b4f51d"
+  },
+  {
     "id": "1168e528-36ad-463b-818f-191e86f68166",
     "name": "Hand-painted Spoon Stand Set of 2",
     "sku": "BLK-661672",
@@ -318,6 +347,34 @@
     "product_url": "https://www.artzysstudio.in/products/BLK-661672",
     "updated_at": "2026-08-04T05:40:43.123+00:00",
     "route_slug": "hand-painted-spoon-stand-set-of-2--1168e528-36ad-463b-818f-191e86f68166"
+  },
+  {
+    "id": "1f790b3a-401f-44e4-a1d2-506b9b7c2b65",
+    "name": "Hand-painted Treasure Box",
+    "sku": "ART-MTR2QL3D",
+    "category_id": "6c480cbd-3468-41da-adb5-6b2f572a895b",
+    "category": "Customized Gifts",
+    "category_slug": "customized-gifts",
+    "description": null,
+    "price": 499,
+    "regular_price": 499,
+    "sale_price": null,
+    "salePrice": null,
+    "on_sale": false,
+    "quantity": 3,
+    "availability": "in_stock",
+    "cover_image": "products/5c998d9d-74f9-46c5-b526-fb03bed2512a.png",
+    "images": [
+      "products/5c998d9d-74f9-46c5-b526-fb03bed2512a.png",
+      "products/3b1a88c7-bcf3-4094-bb50-f05a7b56103c.png",
+      "products/be669750-b444-470c-ba75-17e205952cb0.png",
+      "products/2ffbc986-16fb-4070-b918-68ffd86054e6.png",
+      "products/a5bdd85f-d29b-44d5-ab14-6706e6dbb444.png"
+    ],
+    "variants": [],
+    "product_url": "https://www.artzysstudio.in/products/ART-MTR2QL3D",
+    "updated_at": "2026-09-07T10:04:45.325248+00:00",
+    "route_slug": "hand-painted-treasure-box--1f790b3a-401f-44e4-a1d2-506b9b7c2b65"
   },
   {
     "id": "a244f970-f640-4503-ba07-da24873a7f75",
@@ -1086,10 +1143,33 @@
         "price_source": "variant",
         "stock_qty": 2,
         "is_active": true
+      },
+      {
+        "id": "adc5d863-385b-4f5b-ac3b-f2561a364ddf",
+        "item_id": "01d6e373-a146-495e-836d-3977f323e3d0",
+        "sku": "ART-MTLBOYIH-PINK-COLOUR-SET-OF-5",
+        "variant_name": "Pink Colour Set Of 5",
+        "colour_name": "Pink Colour Set Of 5",
+        "theme_label": null,
+        "colour_hex": "#FF0569",
+        "color_hex": "#FF0569",
+        "photos": [
+          {
+            "alt": "Pink Colour Set Of 5",
+            "url": "products/variants/eb3666a1-4448-48e5-ad01-a80cf5c0bf5e.png"
+          }
+        ],
+        "image_url": "products/variants/eb3666a1-4448-48e5-ad01-a80cf5c0bf5e.png",
+        "price": 699,
+        "price_override": 699,
+        "selling_price": 699,
+        "price_source": "variant",
+        "stock_qty": 2,
+        "is_active": true
       }
     ],
     "product_url": "https://www.artzysstudio.in/products/ART-MTLBOYIH",
-    "updated_at": "2026-09-07T04:18:59.545+00:00",
+    "updated_at": "2026-09-07T09:16:25.212+00:00",
     "route_slug": "lotus-elegance-wall-hanger--01d6e373-a146-495e-836d-3977f323e3d0"
   },
   {
@@ -1381,31 +1461,6 @@
     "route_slug": "royal-jharokha-mirror-5--acab4d99-d77d-4711-9529-c09aff4be667"
   },
   {
-    "id": "435d28a0-ea04-4f2a-99f2-40489065f0e1",
-    "name": "Sacred Cow Artisanal Wooden Board",
-    "sku": "BLK-535880",
-    "category_id": "b825c6da-86cd-4954-90e1-be7fb1e9354b",
-    "category": "Wall Décor",
-    "category_slug": "wall-decor",
-    "description": "Add a touch of Indian culture to your kitchen with this beautifully hand-painted wooden board. The sacred cow design is a symbol of purity and spirituality, making it a unique addition to any home.",
-    "price": 1999,
-    "regular_price": 1999,
-    "sale_price": null,
-    "salePrice": null,
-    "on_sale": false,
-    "quantity": 1,
-    "availability": "in_stock",
-    "cover_image": "https://media.artzysstudio.in/bulk_1784376555140_3vsbxh.png",
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784376555140_3vsbxh.png",
-      "products/0abdf5de-4c4b-40e7-9242-fddfd67b024f.png"
-    ],
-    "variants": [],
-    "product_url": "https://www.artzysstudio.in/products/BLK-535880",
-    "updated_at": "2026-07-30T13:22:26.202+00:00",
-    "route_slug": "sacred-cow-artisanal-wooden-board--435d28a0-ea04-4f2a-99f2-40489065f0e1"
-  },
-  {
     "id": "1685d600-0d60-49db-ae9a-0b916b32ffa6",
     "name": "Small Royal Jharokha Mirror",
     "sku": "BLK-2E4A565C6968",
@@ -1454,28 +1509,28 @@
     "route_slug": "sun-desgin-round-art-plate-set-1--435f4118-dbea-4b03-90e6-aa1a940980bc"
   },
   {
-    "id": "fa526762-49d7-4a9d-bcb5-e717937a2d09",
-    "name": "Tea Coaster Set Of 6",
-    "sku": "BLK-766440",
+    "id": "5f6d7073-bda7-4703-b475-75bae09a2e3b",
+    "name": "Tea Coaster Set Of 2",
+    "sku": "BLK-2646",
     "category_id": "5f71bd8c-04e1-40e0-bba3-17a81c8e5129",
     "category": "Tea Coaster",
     "category_slug": "tea-coaster",
-    "description": "Add a touch of elegance to your tea time with this beautifully crafted set of 6 coasters. Made from high-quality materials, these coasters are both functional and stylish. Perfect for any home or office setting.",
-    "price": 699,
-    "regular_price": 699,
+    "description": "Handcrafted wooden coasters with intricate gold designs, perfect for adding a touch of elegance to your tea time. Set of 2 coasters with a unique design on each.",
+    "price": 399,
+    "regular_price": 399,
     "sale_price": null,
     "salePrice": null,
     "on_sale": false,
     "quantity": 1,
     "availability": "in_stock",
-    "cover_image": "https://media.artzysstudio.in/bulk_1784370392773_26ylu6.png",
+    "cover_image": "https://media.artzysstudio.in/bulk_1784370358326_h71qm.png",
     "images": [
-      "https://media.artzysstudio.in/bulk_1784370392773_26ylu6.png"
+      "https://media.artzysstudio.in/bulk_1784370358326_h71qm.png"
     ],
     "variants": [],
-    "product_url": "https://www.artzysstudio.in/products/BLK-766440",
+    "product_url": "https://www.artzysstudio.in/products/BLK-2646",
     "updated_at": "2026-07-30T13:22:26.202+00:00",
-    "route_slug": "tea-coaster-set-of-6--fa526762-49d7-4a9d-bcb5-e717937a2d09"
+    "route_slug": "tea-coaster-set-of-2--5f6d7073-bda7-4703-b475-75bae09a2e3b"
   },
   {
     "id": "44804132-68f8-4372-960f-21459e6f261c",
@@ -1500,30 +1555,6 @@
     "product_url": "https://www.artzysstudio.in/products/BLK-234329",
     "updated_at": "2026-07-30T13:22:26.202+00:00",
     "route_slug": "tea-coaster-set-of-6-3--44804132-68f8-4372-960f-21459e6f261c"
-  },
-  {
-    "id": "9a7b4e2e-a511-4fce-81d7-e0889f853a6d",
-    "name": "Tea Coaster Set Of 6 (4)",
-    "sku": "BLK-349823",
-    "category_id": "5f71bd8c-04e1-40e0-bba3-17a81c8e5129",
-    "category": "Tea Coaster",
-    "category_slug": "tea-coaster",
-    "description": "Auto-generated description based on image analysis.",
-    "price": 699,
-    "regular_price": 699,
-    "sale_price": null,
-    "salePrice": null,
-    "on_sale": false,
-    "quantity": 1,
-    "availability": "in_stock",
-    "cover_image": "https://media.artzysstudio.in/bulk_1784370377894_6qj8g.png",
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784370377894_6qj8g.png"
-    ],
-    "variants": [],
-    "product_url": "https://www.artzysstudio.in/products/BLK-349823",
-    "updated_at": "2026-07-30T13:22:26.202+00:00",
-    "route_slug": "tea-coaster-set-of-6-4--9a7b4e2e-a511-4fce-81d7-e0889f853a6d"
   },
   {
     "id": "a8374a9a-a15f-4a3c-b76f-9133300bea9a",

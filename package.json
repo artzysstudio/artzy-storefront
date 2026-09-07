@@ -16,7 +16,10 @@
     "test:creative": "tsx --test tests/name-plate-pricing.test.ts tests/caricature-pricing.test.ts",
     "test:erp": "tsx --test tests/storefront-erp-router.test.ts",
     "test:artzyai": "tsx --test tests/artzyai-proxy.test.ts",
-    "test:phase1": "tsx --test tests/product-routing.test.ts tests/product-route-identity.test.mjs tests/product-feed.test.ts tests/cart-stock.test.ts"
+    "test:phase1": "tsx --test tests/product-routing.test.ts tests/product-route-identity.test.mjs tests/product-feed.test.ts tests/cart-stock.test.ts",
+    "test:phase2a": "tsx --test tests/phase2a-product-seo.test.ts",
+    "audit:product-copy": "node scripts/audit-public-product-copy.mjs",
+    "verify:phase2a-export": "node scripts/verify-phase2a-export.mjs"
   },
   "dependencies": {
     "next": "16.3.2",

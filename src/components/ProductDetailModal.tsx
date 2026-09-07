@@ -144,7 +144,9 @@ export default function ProductDetailModal({
 
         <section className="product-detail-copy">
           <span className="product-detail-category">{storefrontCategoryLabel(product.category)}</span>
-          <h2 id="product-detail-title"><RichProductName name={product.name} /></h2>
+          {standalone
+            ? <h1 id="product-detail-title"><RichProductName name={product.name} /></h1>
+            : <h2 id="product-detail-title"><RichProductName name={product.name} /></h2>}
           {product.sku && <span className="product-detail-sku">SKU {product.sku}</span>}
           <div className="product-detail-price">₹{displayPrice.toLocaleString("en-IN")}</div>
 
@@ -283,7 +285,7 @@ export default function ProductDetailModal({
             scrollbar-width: thin;
             scrollbar-color: #cda9a2 transparent;
           }
-          .product-detail-copy h2 {
+          .product-detail-copy :is(h1, h2) {
             max-width: 13ch;
             margin-top: 12px;
             font-size: clamp(2.35rem, 3.2vw, 3.5rem) !important;
@@ -344,7 +346,7 @@ export default function ProductDetailModal({
             overflow: visible !important;
             padding: 26px 20px calc(30px + env(safe-area-inset-bottom)) !important;
           }
-          .product-detail-copy h2 {
+          .product-detail-copy :is(h1, h2) {
             max-width: 15ch;
             font-size: clamp(2rem, 10vw, 2.65rem) !important;
             line-height: 1 !important;

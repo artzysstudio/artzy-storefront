@@ -163,6 +163,7 @@ export function normalizeStorefrontProduct(product: Product): Product {
     delivery_estimate?: unknown; return_eligibility?: unknown;
     gift_wrapping_available?: unknown;
     route_slug?: unknown;
+    updated_at?: unknown;
   };
   const candidates = [
     ...(Array.isArray(product.images) ? product.images : []),
@@ -197,6 +198,7 @@ export function normalizeStorefrontProduct(product: Product): Product {
   return {
     ...product,
     routeSlug: product.routeSlug || cleanText(source.route_slug),
+    erpUpdatedAt: product.erpUpdatedAt || cleanText(source.updated_at),
     images: Array.from(new Set([
       ...images,
       ...(variants || []).map((variant) => variant.imageUrl).filter((image): image is string => Boolean(image)),

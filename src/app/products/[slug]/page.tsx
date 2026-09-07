@@ -6,6 +6,7 @@ import ProductPageClient from '@/components/ProductPageClient';
 import erpProducts from '@/data/erp-products.json';
 import { findProductBySlug, productPath, productSlug, storefrontCategoryLabel } from '@/lib/product-routing';
 import { isStorefrontInventoryProduct, normalizeStorefrontProduct, type Product } from '@/lib/api';
+import { buildProductOffers } from '@/lib/product-structured-data';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.artzysstudio.in';
 const products = (erpProducts as Product[]).map(normalizeStorefrontProduct).filter(isStorefrontInventoryProduct);
@@ -69,7 +70,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
   const { description } = productMetadata(product);
-  const price = product.salePrice && product.salePrice > 0 ? product.salePrice : product.price;
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -79,16 +79,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     image: product.images,
     sku: product.sku,
     brand: { '@type': 'Brand', name: "Artzy's Studio" },
-    offers: {
-      '@type': 'Offer',
-      url: canonical,
-      priceCurrency: 'INR',
-      price,
-      availability: product.availability === 'out_of_stock' || product.isSoldOut
-        ? 'https://schema.org/OutOfStock'
-        : 'https://schema.org/InStock',
-      itemCondition: 'https://schema.org/NewCondition',
-    },
+    offers: buildProductOffers(product, canonical),
   };
   const breadcrumbs = {
     '@context': 'https://schema.org',
