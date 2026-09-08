@@ -2747,3 +2747,30 @@ body.artzy-muse-open .muse-floater,body.artzy-muse-open .plate-mobile-bar,body.a
   .story-hero .story-hero__shade{display:none!important}
   .story-hero .story-hero__copy{width:auto!important;margin:0!important;padding:34px 20px 42px!important}
 }
+
+/* Caricature subject and studio-priced finish steps. */
+.subject-price-note{display:grid;gap:4px;margin-bottom:16px;padding:14px 16px;border-radius:12px;background:#f2e6dd;color:#513d35}
+.subject-price-note strong{font:600 1rem var(--font-serif),Georgia,serif}
+.subject-price-note span{color:#765f55;font-size:.68rem;line-height:1.45}
+.subject-choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0;padding:0;border:0}
+.subject-choice-grid>legend.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.subject-choice-grid button{min-width:0;min-height:70px;display:grid;align-content:center;gap:3px;padding:11px 13px;border:1px solid #d8c7bc;border-radius:12px;background:#fff;color:#493a33;text-align:left;cursor:pointer}
+.subject-choice-grid button b{font-size:.75rem}.subject-choice-grid button span{color:#76645b;font-size:.61rem;line-height:1.35}
+.subject-choice-grid button[aria-pressed=true]{border-color:#a7464c;background:#f7e5e0;box-shadow:inset 0 0 0 1px #a7464c}
+.subject-choice-grid button:focus-visible{outline:3px solid #cf7478;outline-offset:2px}
+.caricature-subject-step .number-fields{border:0;margin:20px 0 0;padding:0}
+.caricature-subject-step .number-fields legend{grid-column:1/-1;margin-bottom:1px;color:#513d35;font-size:.72rem;font-weight:800}
+.caricature-subject-step .number-fields label span{color:#5c4940}.caricature-subject-step .number-fields input{min-height:48px;font-size:1rem}
+.caricature-subject-step .number-fields>small{grid-column:1/-1;color:#78655c;font-size:.62rem;line-height:1.45}
+.subject-permission-note{margin:16px 0 0;padding:11px 13px;border-left:3px solid #b65056;background:#fbf1e9;color:#6f514c;font-size:.67rem;line-height:1.5}
+.caricature-subject-step .manual-note{display:grid;gap:3px;margin-top:10px}.caricature-subject-step .manual-note strong,.caricature-subject-step .manual-note span{display:block}
+.caricature-range-banner{display:grid;grid-template-columns:1fr auto;align-items:end;gap:3px 18px;margin-bottom:18px;padding:16px 18px;border-radius:13px;background:#71433e;color:#fff}
+.caricature-range-banner span{font-size:.62rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase}
+.caricature-range-banner strong{grid-row:1/3;grid-column:2;font:600 clamp(1.45rem,3vw,2rem) var(--font-serif),Georgia,serif}
+.caricature-range-banner small{color:#ead8d0;font-size:.61rem;line-height:1.45}.caricature-required-date>small{color:#79665d;font-size:.61rem;font-weight:500}
+@media(max-width:560px){
+  .subject-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .subject-choice-grid button{min-height:68px;padding:10px 11px}
+  .caricature-range-banner{grid-template-columns:1fr;align-items:start;padding:14px}
+  .caricature-range-banner strong{grid-row:auto;grid-column:auto}
+}
