@@ -21,6 +21,16 @@ export default function HomeDiscovery() {
         <div className="home-path__image"><Image src={path.image} alt="" fill sizes={path.featured ? '(max-width: 720px) 88vw, 44vw' : '(max-width: 720px) 72vw, 24vw'} /></div>
         <div className="home-path__copy"><small>{path.label}</small><h3>{path.title}</h3><p>{path.copy}</p><span>Explore <b aria-hidden="true">→</b></span></div>
       </Link>)}
+      <aside className="home-discovery__guide" aria-labelledby="home-discovery-guide-title">
+        <span className="home-discovery__guide-mark" aria-hidden="true">✿</span>
+        <small>Not sure where to begin?</small>
+        <h3 id="home-discovery-guide-title">Tell us the feeling.<br />We&apos;ll find the Artzy path.</h3>
+        <p>Share who it is for, what you would like to create and your budget. We&apos;ll guide you to the clearest place to begin.</p>
+        <div>
+          <Link href="/gifts/#gift-finder">Find a thoughtful gift <span aria-hidden="true">→</span></Link>
+          <Link href="/contact/">Ask the studio <span aria-hidden="true">→</span></Link>
+        </div>
+      </aside>
     </div>
     <p className="home-discovery__hint">Swipe to explore more studio paths on mobile.</p>
   </section>;

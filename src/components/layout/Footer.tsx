@@ -75,7 +75,12 @@ export default function Footer() {
           </nav>
         </section>
         <div className="footer-bottom">
-          <span>© 2026 Artzy’s Studio. All rights reserved. · Designed &amp; Developed by Jaisal Shah</span>
+          <span>
+            © 2026 Artzy’s Studio. All rights reserved. ·{' '}
+            <a href="https://cradlabs.in/" target="_blank" rel="noreferrer" aria-label="Designed and developed by Jaisal Shah — visit CRAD Labs">
+              Designed &amp; Developed by Jaisal Shah
+            </a>
+          </span>
         </div>
       </div>
     </footer>
