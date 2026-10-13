@@ -414,21 +414,22 @@ em, i { font-style: italic; color: var(--accent-terracotta); }
 .category-strip {
   display: flex;
   gap: 0.65rem;
-  overflow-x: auto;
   padding: 0.25rem 0 1rem;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
+  flex-wrap: wrap;
 }
 .category-strip::-webkit-scrollbar { display: none; }
 .category-strip button {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
   min-height: 44px;
   padding: 0.65rem 1rem;
   border: 1px solid rgba(74, 64, 54, 0.18);
   border-radius: 999px;
   background: #fff;
   color: var(--text-main);
-  font: 600 0.82rem/1 var(--font-sans), sans-serif;
+  font: 600 0.82rem/1.4 var(--font-sans), sans-serif;
   cursor: pointer;
 }
 .category-strip button.active {
@@ -2219,8 +2220,8 @@ body {
   .category-strip-heading strong { font-size: .96rem; }
   .category-strip-heading span { font-size: .62rem; }
   .shop-controls .category-strip {
-    margin-inline: -.75rem;
-    padding: 0 .75rem .45rem;
+    margin-inline: 0;
+    padding: 0 0 .45rem;
   }
   .shop-controls .category-strip button {
     min-height: 44px;

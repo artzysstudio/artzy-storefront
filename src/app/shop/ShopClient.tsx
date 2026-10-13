@@ -261,7 +261,7 @@ function ShopContent({
       <div className="shop-controls" id="shop-products">
         <div className="category-strip-heading">
           <strong>Browse categories</strong>
-          <span>Swipe or tap to explore</span>
+          <span>Choose a category</span>
         </div>
         <nav className="category-strip" aria-label="Shop categories">
           <button className={!selectedCategory ? 'active' : ''} onClick={() => chooseCategory('')}>All products</button>
