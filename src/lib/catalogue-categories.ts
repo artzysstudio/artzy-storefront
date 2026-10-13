@@ -18,11 +18,11 @@ export function resolveCategory(selection: string, categories: string[]): string
 export function matchesCategory(product: Product, selection: string): boolean {
   return !selection || categorySlug(product.category) === categorySlug(resolveCategory(selection, [product.category]));
 }
-export function erpCategoryNames(payload: unknown): string[] {
+export function erpCategoryNames(payload: unknown, products?: Product[]): string[] {
   const envelope = payload as { data?: unknown; categories?: unknown } | null;
   const rows = Array.isArray(payload) ? payload : Array.isArray(envelope?.data) ? envelope.data : envelope?.categories;
   if (!Array.isArray(rows)) throw new Error('Invalid ERP category response');
   return [...new Set(rows.filter(row => row && row.is_active !== false && typeof row.name === 'string' && row.name.trim())
     .sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0) || a.name.localeCompare(b.name))
-    .map(row => row.name.trim() as string))];
+    .map(row => row.name.trim() as string))].filter(name => !products || products.some(product => categorySlug(product.category) === categorySlug(name)));
 }

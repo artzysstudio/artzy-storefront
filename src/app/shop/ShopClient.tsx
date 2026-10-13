@@ -49,7 +49,7 @@ function ShopContent({
     [products],
   );
   const erpCategories = useERPCategories();
-  const categories = useMemo(() => categoryScope.length ? productCategories : Array.from(new Set([...erpCategories, ...productCategories])), [erpCategories, productCategories, categoryScope]);
+  const categories = useMemo(() => categoryScope.length ? productCategories : Array.from(new Set([...erpCategories.filter(name => productCategories.includes(name)), ...productCategories])), [erpCategories, productCategories, categoryScope]);
   const selectedCategoryLabel = resolveCategory(selectedCategory, categories);
   const occasions = useMemo(
     () => Array.from(new Set(products.flatMap((product) => product.occasion || []))).filter(Boolean),

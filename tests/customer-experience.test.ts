@@ -43,6 +43,14 @@ test('customer copy removes editorial notes while preserving verified product fa
   assert.equal(product.dimensions, '20 × 30 cm');
 });
 
+test('empty ERP categories stay hidden until published products confirm them', () => {
+  const payload = { data: [{ name: 'Art On Table', artwork_count: 0 }, { name: 'Prints', artwork_count: 10 }] };
+  assert.deepEqual(erpCategoryNames(payload, []), []);
+  assert.deepEqual(erpCategoryNames(payload, [tray]), ['Art On Table']);
+  assert.deepEqual(erpCategoryNames(payload, [tray, { ...tray, category: 'Prints' }]), ['Art On Table', 'Prints']);
+  assert.deepEqual(erpCategoryNames(payload, [{ ...tray, category: 'Prints' }]), ['Prints']);
+});
+
 test('ERP category names stay separate and never follow misleading ERP slugs', () => {
   const names = erpCategoryNames({ data: [
     { name: 'Art On Table', slug: 'home-decor', sort_order: 0 },
