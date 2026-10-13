@@ -28,8 +28,8 @@ test('keeps the first-published route stable when an ERP product name changes', 
   assert.equal(isProductSlugForId('duplicate-or-invalid', product.id), false);
 });
 
-test('simplifies category labels without changing the ERP category value', () => {
-  assert.equal(storefrontCategoryLabel(product.category), 'Mirrors & Wall Décor');
+test('preserves ERP category labels on product cards and detail pages', () => {
+  assert.equal(storefrontCategoryLabel(product.category), product.category);
   assert.equal(product.category, 'Mirrors & Decorative Hangings');
   assert.equal(storefrontCategoryLabel('A new ERP category'), 'A new ERP category');
 });

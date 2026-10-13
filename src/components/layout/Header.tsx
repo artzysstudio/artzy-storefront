@@ -6,6 +6,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useModalFocus } from '@/hooks/useModalFocus';
+import { useERPCategories } from '@/hooks/useERPCategories';
+import { categorySlug } from '@/lib/catalogue-categories';
 import SocialLinks from '@/components/SocialLinks';
 
 export const ARTZY_LOGO = '/images/artzy-studio-logo.png';
@@ -18,8 +20,6 @@ type NavGroup = { label: string; href: string; paths: string[]; note: string; it
 const NAV: NavGroup[] = [
   { label: 'Shop All', href: '/shop', paths: ['/shop'], note: 'Real photographed pieces currently available from the studio', items: [
     { label: 'Shop All', href: '/shop' },
-    { label: 'Home Décor', href: '/shop/?category=mirrors-and-decorative-hangings' },
-    { label: 'Table & Utility Art', href: '/shop/?category=table-and-utility-art' },
     { label: 'Ready to ship', href: '/shop/?availability=in-stock' },
   ]},
   { label: 'Gifts', href: '/gifts', paths: ['/gifts'], note: 'Find something meaningful by occasion, person and budget', items: [
@@ -58,6 +58,12 @@ function Icon({ name }: { name: 'search' | 'account' | 'cart' }) {
 
 export default function Header() {
   const pathname = usePathname();
+  const erpCategories = useERPCategories();
+  const navigation = NAV.map(group => group.label === 'Shop All' ? { ...group, items: [
+    { label: 'Shop All', href: '/shop/' },
+    ...erpCategories.map(label => ({ label, href: `/shop/?category=${categorySlug(label)}` })),
+    { label: 'Ready to ship', href: '/shop/?availability=in-stock' },
+  ] } : group);
   const { cartCount } = useCart();
   const [desktopGroup, setDesktopGroup] = useState<number | null>(null);
   const [mobileGroup, setMobileGroup] = useState<number | null>(null);
@@ -106,7 +112,7 @@ export default function Header() {
         </Link>
 
         <nav className="desktop-nav" aria-label="Primary navigation">
-          {NAV.map((group, index) => group.items.length === 0 ? <Link className={`desktop-nav__direct ${isActive(group) ? 'is-active' : ''}`} href={group.href} prefetch={false} key={group.label}>{group.label}</Link> : <div className="desktop-nav__group" key={group.label} onMouseEnter={() => setDesktopGroup(index)} onMouseLeave={() => setDesktopGroup(null)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setDesktopGroup(null); }}>
+          {navigation.map((group, index) => group.items.length === 0 ? <Link className={`desktop-nav__direct ${isActive(group) ? 'is-active' : ''}`} href={group.href} prefetch={false} key={group.label}>{group.label}</Link> : <div className="desktop-nav__group" key={group.label} onMouseEnter={() => setDesktopGroup(index)} onMouseLeave={() => setDesktopGroup(null)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setDesktopGroup(null); }}>
             <button className={isActive(group) ? 'is-active' : ''} aria-expanded={desktopGroup === index} aria-controls={`mega-${index}`} onClick={() => setDesktopGroup(index)}>
               {group.label}<span aria-hidden="true">⌄</span>
             </button>
@@ -132,7 +138,7 @@ export default function Header() {
       <button className="mobile-navigation__shade" aria-label="Close menu" onClick={() => setMobileOpen(false)} />
       <nav ref={menuRef} className="mobile-navigation__panel" aria-label="Mobile navigation" onClick={(event) => { if ((event.target as HTMLElement).closest("a")) setMobileOpen(false); }}>
         <div className="mobile-navigation__head"><span>Explore Artzy's Studio</span><button aria-label="Close menu" onClick={() => setMobileOpen(false)}>×</button></div>
-        {NAV.map((group, index) => <section className={`mobile-accordion ${group.items.length === 0 ? 'mobile-accordion--direct' : ''}`} key={group.label}>
+        {navigation.map((group, index) => <section className={`mobile-accordion ${group.items.length === 0 ? 'mobile-accordion--direct' : ''}`} key={group.label}>
           <div className={`mobile-accordion__row ${isActive(group) ? 'is-active' : ''}`}><Link href={group.href} prefetch={false}>{group.label}</Link>{group.items.length > 0 && <button aria-label={`${mobileGroup === index ? 'Hide' : 'Show'} ${group.label} choices`} aria-expanded={mobileGroup === index} aria-controls={`mobile-group-${index}`} onClick={() => setMobileGroup(mobileGroup === index ? null : index)}>{mobileGroup === index ? '−' : '+'}</button>}</div>
           {group.items.length > 0 && <div id={`mobile-group-${index}`} hidden={mobileGroup !== index}>{group.items.map((item) => item.hardNavigate ? <a href={item.href} key={item.href + item.label}>{item.label}</a> : <Link href={item.href} prefetch={false} key={item.href + item.label}>{item.label}</Link>)}</div>}
         </section>)}
@@ -146,6 +152,6 @@ export default function Header() {
       .mobile-accordion__row{min-height:58px;display:grid!important;grid-template-columns:1fr 48px;align-items:center;padding:0!important}.mobile-accordion--direct .mobile-accordion__row{grid-template-columns:1fr}.mobile-accordion__row>a{font:500 1.35rem var(--font-serif),Georgia,serif;color:#41332c}.mobile-accordion__row.is-active>a{color:#a3464c}.mobile-accordion__row>button{width:44px;height:44px;border:0;background:transparent;color:#a3464c;font-size:1.35rem;cursor:pointer}@media(min-width:901px){.mobile-navigation{display:none!important}}
       .mobile-navigation__quick{grid-template-columns:1fr 1fr}.mobile-navigation__quick a{padding-inline:8px;text-align:center}.mobile-navigation__quick a:last-child{background:#b25156;color:white}.mobile-navigation__social{display:grid;gap:10px;margin-top:22px;padding-top:18px;border-top:1px solid #e3d6cc}.mobile-navigation__social>span{color:#76564c;font-size:.66rem;font-weight:750;letter-spacing:.12em;text-transform:uppercase}@media(max-width:1240px){.store-header__inner{padding-inline:14px}.desktop-nav__group>button,.desktop-nav__direct{padding-inline:6px;font-size:.6rem}}
     `}</style>
-    <style jsx global>{`.mega-menu[hidden],.mobile-navigation[aria-hidden=true],.mobile-accordion>div[hidden]{display:none!important}@media(max-width:380px){.ask-studio{width:44px;padding:0!important;justify-content:center}.ask-studio__label{display:none}}`}</style>
+    <style jsx global>{`.mega-menu__links{max-height:60vh;overflow-y:auto;overscroll-behavior:contain}.mega-menu[hidden],.mobile-navigation[aria-hidden=true],.mobile-accordion>div[hidden]{display:none!important}@media(max-width:380px){.ask-studio{width:44px;padding:0!important;justify-content:center}.ask-studio__label{display:none}}`}</style>
   </>;
 }

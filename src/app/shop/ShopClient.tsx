@@ -2,8 +2,9 @@
 
 import React, { Suspense, useCallback, useRef, useEffect, useMemo, useState } from 'react';
 import type { Product } from '@/lib/api';
+import { useERPCategories } from '@/hooks/useERPCategories';
 import { useLiveCatalogue } from '@/hooks/useLiveCatalogue';
-import { catalogueCategory, categorySlug, matchesCategory } from '@/lib/catalogue-categories';
+import { catalogueCategory, categorySlug, matchesCategory, resolveCategory } from '@/lib/catalogue-categories';
 import { useSearchParams } from 'next/navigation';
 import { useModalFocus } from '@/hooks/useModalFocus';
 import ProductCard from '@/components/ProductCard';
@@ -47,7 +48,9 @@ function ShopContent({
     () => Array.from(new Set(products.map((product) => catalogueCategory(product.category)))).filter(Boolean),
     [products],
   );
-  const categories = productCategories;
+  const erpCategories = useERPCategories();
+  const categories = useMemo(() => categoryScope.length ? productCategories : Array.from(new Set([...erpCategories, ...productCategories])), [erpCategories, productCategories, categoryScope]);
+  const selectedCategoryLabel = resolveCategory(selectedCategory, categories);
   const occasions = useMemo(
     () => Array.from(new Set(products.flatMap((product) => product.occasion || []))).filter(Boolean),
     [products],
@@ -179,7 +182,7 @@ function ShopContent({
             <input
               type="radio"
               name="category"
-              checked={selectedCategory === category}
+              checked={slugify(selectedCategoryLabel) === slugify(category)}
               onChange={() => setSelectedCategory(category)}
             />
             <span>{storefrontCategoryLabel(category)}</span>
@@ -264,7 +267,7 @@ function ShopContent({
           <button className={!selectedCategory ? 'active' : ''} onClick={() => chooseCategory('')}>All products</button>
           {categories.map((category) => (
             <button
-              className={selectedCategory === category ? 'active' : ''}
+              className={slugify(selectedCategoryLabel) === slugify(category) ? 'active' : ''}
               key={category}
               onClick={() => chooseCategory(category)}
             >
@@ -274,7 +277,7 @@ function ShopContent({
         </nav>
 
         {activeFilterCount > 0 && <div className="active-filter-chips" aria-label="Active filters">
-          {selectedCategory && <button onClick={() => setSelectedCategory('')}>{storefrontCategoryLabel(selectedCategory)} <span aria-hidden="true">×</span></button>}
+          {selectedCategory && <button onClick={() => setSelectedCategory('')}>{storefrontCategoryLabel(selectedCategoryLabel)} <span aria-hidden="true">×</span></button>}
           {selectedOccasion && <button onClick={() => setSelectedOccasion('')}>{selectedOccasion} <span aria-hidden="true">×</span></button>}
           {selectedRoom && <button onClick={() => setSelectedRoom('')}>{selectedRoom} <span aria-hidden="true">×</span></button>}
           {readyToShipOnly && <button onClick={() => setReadyToShipOnly(false)}>Ready to ship <span aria-hidden="true">×</span></button>}

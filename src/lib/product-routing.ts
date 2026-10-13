@@ -28,13 +28,4 @@ export const productPath = (product: Pick<Product, 'id' | 'name' | 'routeSlug'>)
 export const findProductBySlug = (products: Product[], slug: string): Product | undefined =>
   products.find((product) => productSlug(product) === slug);
 
-export const storefrontCategoryLabel = (category: string): string => {
-  const labels: Record<string, string> = {
-    'Mirrors & Decorative Hangings': 'Mirrors & Wall Décor',
-    'Table & Utility Art': 'Tabletop & Utility',
-    'Spiritual & Festive Art': 'Spiritual & Festive',
-    'Wall Art & Frames': 'Wall Art',
-    'Hand-painted Décor': 'Hand-painted Décor',
-  };
-  return labels[category] || catalogueCategory(category);
-};
+export const storefrontCategoryLabel = catalogueCategory;

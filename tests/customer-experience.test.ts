@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { catalogueCategory, matchesCategory } from '../src/lib/catalogue-categories';
+import { catalogueCategory, matchesCategory, erpCategoryNames, resolveCategory } from '../src/lib/catalogue-categories';
 import { catalogueProducts } from '../src/hooks/useLiveCatalogue';
 import { normalizeStorefrontProduct, type Product } from '../src/lib/api';
 import { recommendGifts } from '../src/features/gifts/giftEngine';
@@ -13,8 +13,8 @@ test('legacy navigation categories select the correct live ERP products', () => 
   assert.equal(matchesCategory(tray, 'digital-prints'), false);
   assert.equal(matchesCategory(tray, 'caricatures'), false);
   assert.equal(matchesCategory(tray, 'does-not-exist'), false);
-  assert.equal(catalogueCategory('Wall Décor'), 'Home Décor');
-  assert.equal(catalogueCategory('Uncategorized'), 'Studio Finds');
+  assert.equal(catalogueCategory('Wall D\u00e9cor'), 'Wall D\u00e9cor');
+  assert.equal(catalogueCategory('Uncategorized'), 'Uncategorized');
 });
 test('gift finder accepts live payload and birthday quick start finds a budget-safe gift', () => {
   const products = catalogueProducts({ data: [tray] });
@@ -41,4 +41,20 @@ test('customer copy removes editorial notes while preserving verified product fa
   const product = normalizeStorefrontProduct({ ...tray, artworkStory: 'Hand-painted tray. Please review the product image and confirm the material, dimensions and care instructions before publishing.', dimensions: '20 × 30 cm' });
   assert.equal(product.artworkStory, 'Hand-painted tray.');
   assert.equal(product.dimensions, '20 × 30 cm');
+});
+
+test('ERP category names stay separate and never follow misleading ERP slugs', () => {
+  const names = erpCategoryNames({ data: [
+    { name: 'Art On Table', slug: 'home-decor', sort_order: 0 },
+    { name: 'Home Decor', slug: 'home_decor', sort_order: 1 },
+    { name: 'Wall Décor', sort_order: 2 },
+    { name: 'Wooden Spoon Stand', sort_order: 3 },
+    { name: 'Hidden', is_active: false },
+  ] });
+  assert.deepEqual(names, ['Art On Table', 'Home Decor', 'Wall Décor', 'Wooden Spoon Stand']);
+  assert.equal(resolveCategory('art-on-table', names), 'Art On Table');
+  assert.equal(resolveCategory('home-decor', names), 'Home Decor');
+  assert.equal(matchesCategory(tray, 'home-decor'), false);
+  assert.equal(matchesCategory({ ...tray, category: 'Wooden Spoon Stand' }, 'art-on-table'), false);
+  assert.equal(matchesCategory({ ...tray, category: 'Home Decor' }, 'wall-decor'), false);
 });
