@@ -16,3 +16,25 @@
  .checkout-layout{gap:20px!important}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Keep mobile choices visible without sideways hunting or clipped labels. */
+@media(max-width:700px){
+ .home-discovery__grid,.home-hamper__gallery,.plate-entrance-grid,.plate-direction-grid,.gift-quick-start__options{display:grid;grid-template-columns:minmax(0,1fr);overflow:visible;scroll-snap-type:none}
+ .home-discovery__grid{padding:0 18px;gap:16px}
+ .home-path,.home-path--featured,.home-discovery__guide,.home-gift-piece,.home-gift-piece--featured{width:100%;max-width:none;min-width:0;grid-column:auto}
+ .home-hamper__gallery{padding:18px;gap:18px}
+ .home-gift-piece,.home-gift-piece--featured{min-height:380px}
+ .home-discovery__hint{display:none}
+ .plate-entrance-grid article,.plate-direction-grid article{min-width:0;width:100%}
+ .gift-quick-start__options button{width:100%;min-width:0;min-height:144px;border-bottom:1px solid #ddcec2!important;border-right:0!important}
+ .gift-quick-start__options button b{margin-top:14px}
+ .gift-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible}
+ .gift-steps button{min-width:0;min-height:48px;white-space:normal;overflow-wrap:anywhere;padding:12px 10px}
+ .gift-step-actions{flex-wrap:wrap}
+ .gift-step-actions button{min-width:0;white-space:normal;line-height:1.4}
+ .active-filter-chips{flex-wrap:wrap;overflow:visible}
+ .active-filter-chips button{max-width:100%;white-space:normal;min-height:44px}
+ .product-gallery-thumbs{flex-wrap:wrap!important;overflow:visible!important}
+ .mobile-accordion a{min-height:44px;display:flex;align-items:center;overflow-wrap:anywhere}
+ .plate-inspiration-action{max-width:100%;white-space:normal;line-height:1.4}
+}

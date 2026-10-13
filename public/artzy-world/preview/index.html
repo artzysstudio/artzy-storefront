@@ -11,6 +11,8 @@
     <style>
       .room-choice-grid img { aspect-ratio: 3 / 2; object-fit: cover; object-position: center; }
       .room-source-note:not([hidden]) { display: flex; }
+      small.erp-dimension-note { display: block; margin-top: 12px; line-height: 1.6; }
+      .option-grid > button, .frame-options > button { min-width: 0; height: auto; white-space: normal; overflow-wrap: anywhere; }
       :where(button, a, select, input):focus-visible {
         outline: 3px solid #b65158;
         outline-offset: 3px;
@@ -49,9 +51,14 @@
         .room-choice-grid button { height: auto; min-height: 112px; aspect-ratio: 3 / 2; }
         .artwork-choice-grid { grid-template-columns: 1fr; }
         .artwork-choice-grid button { min-height: 112px; }
-        .preview-stepper { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        ol.preview-stepper { grid-template-columns: repeat(2, minmax(0, 1fr)); position: static; }
         .preview-stepper li { min-width: 0; padding: 8px 3px; justify-content: center; }
-        .preview-stepper small { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+        .preview-stepper li small { display: block; position: static; width: auto; height: auto; overflow: visible; clip: auto; font-size: .72rem; line-height: 1.4; }
+        .preview-stepper li > button { justify-content: flex-start; min-height: 52px; white-space: normal; }
+        .preview-stepper li span { flex-shrink: 0; }
+        .workflow-actions > *, .final-actions > *, .preview-source-actions > * { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+        .world-voice-guide { flex-wrap: wrap; }
+        .world-voice-guide__copy { flex-basis: 100%; }
         :where(.workflow-panel, .preview-intent-entry) button,
         :where(.workflow-panel, .preview-intent-entry) .button { min-height: 44px; }
         .world-voice-guide { margin: 12px 14px 0; align-items: stretch; gap: 9px; }
