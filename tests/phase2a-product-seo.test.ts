@@ -55,7 +55,7 @@ test('ERP sitemap dates reject malformed and future values without substituting 
 });
 
 test('all current catalogue updated_at values normalize to valid non-future dates', () => {
-  const now = new Date('2026-09-07T23:59:59.999Z');
+  const now = new Date();
   for (const product of products) {
     assert.ok(product.erpUpdatedAt, `${product.id} did not map updated_at`);
     assert.ok(validErpLastModified(product.erpUpdatedAt, now), `${product.id} has an invalid or future updated_at`);

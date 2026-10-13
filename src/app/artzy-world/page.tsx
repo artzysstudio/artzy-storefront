@@ -56,7 +56,7 @@ export default function ArtzyWorldPage() {
         <header>
           <span className="world-eyebrow">One focused experience</span>
           <h2>From a wall photograph<br/><em>to a clearer decision.</em></h2>
-          <p>Artzy World is the studio&apos;s visualisation layer—not another catalogue or builder. It helps you understand a piece in context, then returns you to its existing product or custom-art journey.</p>
+          <p>See how art could look in your room. Choose an available studio piece or explore a custom concept, then view the product or share your idea with the studio.</p>
         </header>
         <ol className="world-five-steps">
           <li><b>01</b><div><h3>Select an art direction</h3><p>Choose available Artzy artwork from the studio catalogue, or begin a custom wall-art direction.</p></div></li>
@@ -84,7 +84,7 @@ export default function ArtzyWorldPage() {
 
       <section className="world-scope" aria-labelledby="world-scope-title">
         <span className="world-eyebrow">A clear boundary</span>
-        <h2 id="world-scope-title">Preview here.<br/><em>Create and shop in their proper places.</em></h2>
+        <h2 id="world-scope-title">Preview here.<br/><em>Find the art that feels at home.</em></h2>
         <p>Caricatures, Digital Art &amp; Prints, Name Plates, Gifts and other personalised services keep their own dedicated pages. Artzy World will take you there only when it helps you continue—never show you a second version of the same builder.</p>
         <a href="/artzy-world/preview/">Start my room preview <span aria-hidden="true">→</span></a>
       </section>

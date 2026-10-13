@@ -44,7 +44,7 @@ export default function ContactPage() {
           </div>
         </section>
 
-        <CreativeConceptBuilder kind="contact"/>
+
 
         <section className="contact-main" id="visit">
           <div className="contact-details">
@@ -85,6 +85,7 @@ export default function ContactPage() {
             </form>
           </div>
         </section>
+        <CreativeConceptBuilder kind="contact"/>
       </main>
       <Footer />
     </>

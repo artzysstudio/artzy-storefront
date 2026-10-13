@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./customer-experience.css";
 import LaunchGate from "@/components/LaunchGate";
 import ArtzyMuseFloater from "@/components/ArtzyMuseFloater";
 import MediaProtection from "@/components/MediaProtection";

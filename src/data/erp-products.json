@@ -29,6 +29,34 @@
     "route_slug": "bamboo-pen-stand--45b09a9c-e8e5-403a-895f-855ce3fe934f"
   },
   {
+    "id": "2b3b2899-cf8f-483c-8533-67946cfa2c46",
+    "name": "Beautifully Handcrafted Jewellary Box",
+    "sku": "ART-MUI4CZZ2",
+    "category_id": "e3e99b43-bdd0-4d16-891b-ab86b399cd17",
+    "category": "Art On Table",
+    "category_slug": "home-decor",
+    "description": "Inspired by the intricate patterns of Indian art, our beautifully handcrafted jewelry box is a testament to the skill and craftsmanship of our artisans. Each piece is carefully crafted with precision and attention to detail, ensuring a unique and exquisite addition to your home. Whether you're looking to store your treasured jewelry or display it proudly, our beautifully handcrafted jewelry box is the perfect choice.",
+    "price": 899,
+    "regular_price": 899,
+    "sale_price": null,
+    "salePrice": null,
+    "on_sale": false,
+    "quantity": 1,
+    "availability": "in_stock",
+    "cover_image": "products/f209803b-3061-49a0-afa0-8dc1a7a94589.png",
+    "images": [
+      "products/f209803b-3061-49a0-afa0-8dc1a7a94589.png",
+      "products/eefccc8f-6ab7-4c3a-acf6-01941988e35a.png",
+      "products/024ae557-a989-4085-8994-a031a6a16d1c.png",
+      "products/4236295d-43d3-4fe2-9f83-dff066ae0bfd.png",
+      "products/b1e15a90-f874-4610-9892-25e632e24304.png"
+    ],
+    "variants": [],
+    "product_url": "https://www.artzysstudio.in/products/ART-MUI4CZZ2",
+    "updated_at": "2026-09-26T08:19:56.998106+00:00",
+    "route_slug": "beautifully-handcrafted-jewellary-box--2b3b2899-cf8f-483c-8533-67946cfa2c46"
+  },
+  {
     "id": "7e0de461-3b50-48d5-921f-ef76ca296e5c",
     "name": "Blossom Treasure Jewelry Box",
     "sku": "ART-MSOFRE5R",
@@ -41,7 +69,7 @@
     "sale_price": null,
     "salePrice": null,
     "on_sale": false,
-    "quantity": 1,
+    "quantity": 3,
     "availability": "in_stock",
     "cover_image": "products/03884132-9ba9-4e3e-afa3-2948573e14f8.png",
     "images": [
@@ -248,6 +276,36 @@
     "route_slug": "decorative-wooden-key-holder-cabinet--2d7c837a-57c5-4877-b8a3-9ec57fcba29f"
   },
   {
+    "id": "043efb69-0fb5-462a-a8dd-9705b0034a3c",
+    "name": "Elephant Wall Hanger",
+    "sku": "ART-MU121PW8",
+    "category_id": "b825c6da-86cd-4954-90e1-be7fb1e9354b",
+    "category": "Wall Décor",
+    "category_slug": "wall-decor",
+    "description": "Inspired by the rich heritage of Indian art, this stunning wall hanger is a masterpiece of craftsmanship and beauty. The intricate details and vibrant colors will transport you to a world of elegance and sophistication. Perfect for adding a touch of warmth and personality to your home decor.",
+    "price": 799,
+    "regular_price": 799,
+    "sale_price": null,
+    "salePrice": null,
+    "on_sale": false,
+    "quantity": 10,
+    "availability": "in_stock",
+    "cover_image": "products/1770c9b3-383d-4480-a306-6a9aecc8db2f.png",
+    "images": [
+      "products/1770c9b3-383d-4480-a306-6a9aecc8db2f.png",
+      "products/7a620437-92d2-4cc3-8ef8-84e8a0b650fa.png",
+      "products/8faecdac-886e-4a97-a5fb-90e405f28cf5.png",
+      "products/1499eccf-e1c3-497e-8e09-29bd39abe3ab.png",
+      "products/f65c04da-9303-469d-a0c4-20acad77a394.png",
+      "products/fe7ec9f7-ecba-4df1-a5e0-839999bc1db3.png",
+      "products/54b8bf42-b588-4abe-be42-2ffbda1e9bf5.png"
+    ],
+    "variants": [],
+    "product_url": "https://www.artzysstudio.in/products/ART-MU121PW8",
+    "updated_at": "2026-09-14T09:43:06.923272+00:00",
+    "route_slug": "elephant-wall-hanger--043efb69-0fb5-462a-a8dd-9705b0034a3c"
+  },
+  {
     "id": "edfce5f5-c35b-4599-bfa6-744b866e4c5f",
     "name": "Green and Orange Wooden Hand-painted Mirror Frame",
     "sku": "BLK-B2D76276519E",
@@ -302,7 +360,7 @@
     "category_id": "6c480cbd-3468-41da-adb5-6b2f572a895b",
     "category": "Customized Gifts",
     "category_slug": "customized-gifts",
-    "description": null,
+    "description": "",
     "price": 499,
     "regular_price": 499,
     "sale_price": null,
@@ -383,13 +441,13 @@
     "category_id": "6c480cbd-3468-41da-adb5-6b2f572a895b",
     "category": "Customized Gifts",
     "category_slug": "customized-gifts",
-    "description": null,
+    "description": "",
     "price": 499,
     "regular_price": 499,
     "sale_price": null,
     "salePrice": null,
     "on_sale": false,
-    "quantity": 1,
+    "quantity": 3,
     "availability": "in_stock",
     "cover_image": "products/cee69b63-6cde-48bc-8534-e1c382a291f8.png",
     "images": [
@@ -421,7 +479,11 @@
     "availability": "in_stock",
     "cover_image": "https://media.artzysstudio.in/products/originals/2ef6a4f8-342f-41c0-86e0-40e9ee72ff3c.png",
     "images": [
-      "https://media.artzysstudio.in/products/originals/2ef6a4f8-342f-41c0-86e0-40e9ee72ff3c.png"
+      "https://media.artzysstudio.in/products/originals/2ef6a4f8-342f-41c0-86e0-40e9ee72ff3c.png",
+      "products/b6b083d9-8714-454c-bb60-a7e01f27a007.png",
+      "products/0a824754-b67f-4737-871c-21a5da45d406.png",
+      "products/925febd2-c234-49d5-bee4-6ecae8882282.png",
+      "products/c2226971-d2f9-46c4-bc00-56baac1b54a7.png"
     ],
     "variants": [],
     "product_url": "https://www.artzysstudio.in/products/BLK-AC8A224D8921",
@@ -1007,7 +1069,7 @@
     "category_id": "1095e06b-e641-43bc-9f11-cc0578817b1a",
     "category": "Handpainted Wooden Mirror Frame",
     "category_slug": "handpainted-wooden-mirror-frame",
-    "description": null,
+    "description": "",
     "price": 1999,
     "regular_price": 1999,
     "sale_price": null,
@@ -1017,7 +1079,11 @@
     "availability": "in_stock",
     "cover_image": "https://cdn.artzysstudio.in/bulk_1784617276391_6fhsvy.png",
     "images": [
-      "https://cdn.artzysstudio.in/bulk_1784617276391_6fhsvy.png"
+      "https://cdn.artzysstudio.in/bulk_1784617276391_6fhsvy.png",
+      "products/f73107f2-71fb-40b8-9856-550c3bca706e.png",
+      "products/48c8b4ba-7403-40f7-94bc-c3a2eaeec6f1.png",
+      "products/ef29c486-c452-40e1-b730-15d5f1a8d58c.png",
+      "products/e8e9c103-72bc-4665-adde-97a939f943df.png"
     ],
     "variants": [],
     "product_url": "https://www.artzysstudio.in/products/BLK-D49952080715",
@@ -1085,7 +1151,7 @@
     "sale_price": null,
     "salePrice": null,
     "on_sale": false,
-    "quantity": 4,
+    "quantity": 9,
     "availability": "in_stock",
     "cover_image": "products/e0e4b59f-fdfa-41dd-8efb-850b39961b15.png",
     "images": [
@@ -1141,7 +1207,7 @@
         "price_override": 599,
         "selling_price": 599,
         "price_source": "variant",
-        "stock_qty": 2,
+        "stock_qty": 3,
         "is_active": true
       },
       {
@@ -1164,12 +1230,12 @@
         "price_override": 699,
         "selling_price": 699,
         "price_source": "variant",
-        "stock_qty": 2,
+        "stock_qty": 4,
         "is_active": true
       }
     ],
     "product_url": "https://www.artzysstudio.in/products/ART-MTLBOYIH",
-    "updated_at": "2026-09-07T09:16:25.212+00:00",
+    "updated_at": "2026-10-01T12:22:11.927+00:00",
     "route_slug": "lotus-elegance-wall-hanger--01d6e373-a146-495e-836d-3977f323e3d0"
   },
   {
@@ -1219,6 +1285,35 @@
     "product_url": "https://www.artzysstudio.in/products/BLK-CDC7B999F822",
     "updated_at": "2026-08-08T13:38:02.782+00:00",
     "route_slug": "moroccan-inspired-wooden-mirror-frame--a754b220-66e0-467a-99d2-cdf9dd2765ec"
+  },
+  {
+    "id": "7da35594-06f5-44bc-b93a-026f46f34988",
+    "name": "Multi - Purpose Hand-painted Box",
+    "sku": "ART-MUI43KDP",
+    "category_id": "e3e99b43-bdd0-4d16-891b-ab86b399cd17",
+    "category": "Art On Table",
+    "category_slug": "home-decor",
+    "description": "Handcrafted by skilled artisans at Artzy's Studio, this multi-purpose box is a stunning piece of Indian art that adds a pop of color and texture to any room. Inspired by traditional Indian designs, this beautiful box is not only a decorative piece but also a functional storage container.",
+    "price": 999,
+    "regular_price": 999,
+    "sale_price": null,
+    "salePrice": null,
+    "on_sale": false,
+    "quantity": 1,
+    "availability": "in_stock",
+    "cover_image": "products/f77c7217-a071-4ef1-8859-c74cb37f9dd1.png",
+    "images": [
+      "products/f77c7217-a071-4ef1-8859-c74cb37f9dd1.png",
+      "products/7d1134f5-af5a-4e18-923d-4158db0ea359.png",
+      "products/7ac502df-ccea-447a-86e9-f3ac4a542389.png",
+      "products/375a1af0-cbb5-4e49-8035-a6bb0fe3318c.png",
+      "products/2840ddc3-e0dc-40af-8020-fb6f8628d846.png",
+      "products/8e8c6c67-47a2-4e33-a0d7-ee69d0d5c700.png"
+    ],
+    "variants": [],
+    "product_url": "https://www.artzysstudio.in/products/ART-MUI43KDP",
+    "updated_at": "2026-09-26T08:12:36.949469+00:00",
+    "route_slug": "multi-purpose-hand-painted-box--7da35594-06f5-44bc-b93a-026f46f34988"
   },
   {
     "id": "e512bfd1-2462-4b96-b5fd-2d985e6eba1f",
@@ -1485,100 +1580,33 @@
     "route_slug": "small-royal-jharokha-mirror--1685d600-0d60-49db-ae9a-0b916b32ffa6"
   },
   {
-    "id": "435f4118-dbea-4b03-90e6-aa1a940980bc",
-    "name": "Sun Desgin Round Art Plate Set 1",
-    "sku": "BLK-872718",
-    "category_id": "b825c6da-86cd-4954-90e1-be7fb1e9354b",
-    "category": "Wall Décor",
-    "category_slug": "wall-decor",
-    "description": "Add a touch of warmth and creativity to your home decor with this stunning Sun Design Round Art Plate Set. The set features four plates, each with a unique sun design, perfect for displaying in your living room or dining area. Made from high-quality ceramic material, these plates are both durable and beautiful. The sun designs are intricately painted, adding a pop of color and personality to your space. Whether you're looking to add a touch of bohemian flair or simply want to bring some joy into your home, this Sun Design Round Art Plate Set is the perfect choice.",
-    "price": 999,
-    "regular_price": 999,
+    "id": "f785143a-b533-41f5-bb9a-fd8870e093ff",
+    "name": "Traditional Charm Storage Jars",
+    "sku": "ART-MUL6Y4M2",
+    "category_id": null,
+    "category": "Uncategorized",
+    "category_slug": "uncategorized",
+    "description": "Inspired by the intricate designs of traditional Indian art, our storage jars are a testament to the country's rich cultural heritage. Each jar is handcrafted with precision and care, ensuring a unique piece that adds a touch of warmth and character to any room. Perfect for storing small items, these jars are a beautiful way to keep your home organized and add a touch of Indian charm.",
+    "price": 1199,
+    "regular_price": 1199,
     "sale_price": null,
     "salePrice": null,
     "on_sale": false,
-    "quantity": 1,
+    "quantity": 2,
     "availability": "in_stock",
-    "cover_image": "https://media.artzysstudio.in/bulk_1784376551766_xmpwd.png",
+    "cover_image": "products/09f06a7b-5626-4918-9cdc-80d830cd7172.png",
     "images": [
-      "https://media.artzysstudio.in/bulk_1784376551766_xmpwd.png"
+      "products/09f06a7b-5626-4918-9cdc-80d830cd7172.png",
+      "products/74729d89-b337-4ff1-9704-7bb2c968bc06.png",
+      "products/ddce068d-a353-4d90-b4bf-392452a9a224.png",
+      "products/dbe324a5-8903-425d-a363-94901eef9961.png",
+      "products/19eec2b6-9110-49e9-ab8f-7536ad193eb4.png",
+      "products/956ad949-c100-4f03-a001-1adf65f36a69.png"
     ],
     "variants": [],
-    "product_url": "https://www.artzysstudio.in/products/BLK-872718",
-    "updated_at": "2026-07-30T13:22:26.202+00:00",
-    "route_slug": "sun-desgin-round-art-plate-set-1--435f4118-dbea-4b03-90e6-aa1a940980bc"
-  },
-  {
-    "id": "5f6d7073-bda7-4703-b475-75bae09a2e3b",
-    "name": "Tea Coaster Set Of 2",
-    "sku": "BLK-2646",
-    "category_id": "5f71bd8c-04e1-40e0-bba3-17a81c8e5129",
-    "category": "Tea Coaster",
-    "category_slug": "tea-coaster",
-    "description": "Handcrafted wooden coasters with intricate gold designs, perfect for adding a touch of elegance to your tea time. Set of 2 coasters with a unique design on each.",
-    "price": 399,
-    "regular_price": 399,
-    "sale_price": null,
-    "salePrice": null,
-    "on_sale": false,
-    "quantity": 1,
-    "availability": "in_stock",
-    "cover_image": "https://media.artzysstudio.in/bulk_1784370358326_h71qm.png",
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784370358326_h71qm.png"
-    ],
-    "variants": [],
-    "product_url": "https://www.artzysstudio.in/products/BLK-2646",
-    "updated_at": "2026-07-30T13:22:26.202+00:00",
-    "route_slug": "tea-coaster-set-of-2--5f6d7073-bda7-4703-b475-75bae09a2e3b"
-  },
-  {
-    "id": "44804132-68f8-4372-960f-21459e6f261c",
-    "name": "Tea Coaster Set Of 6 (3)",
-    "sku": "BLK-234329",
-    "category_id": "5f71bd8c-04e1-40e0-bba3-17a81c8e5129",
-    "category": "Tea Coaster",
-    "category_slug": "tea-coaster",
-    "description": "Auto-generated description based on image analysis.",
-    "price": 699,
-    "regular_price": 699,
-    "sale_price": null,
-    "salePrice": null,
-    "on_sale": false,
-    "quantity": 1,
-    "availability": "in_stock",
-    "cover_image": "https://media.artzysstudio.in/bulk_1784370375563_kra4i.png",
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784370375563_kra4i.png"
-    ],
-    "variants": [],
-    "product_url": "https://www.artzysstudio.in/products/BLK-234329",
-    "updated_at": "2026-07-30T13:22:26.202+00:00",
-    "route_slug": "tea-coaster-set-of-6-3--44804132-68f8-4372-960f-21459e6f261c"
-  },
-  {
-    "id": "a8374a9a-a15f-4a3c-b76f-9133300bea9a",
-    "name": "Wooden Dhup Stand Small Size (1)",
-    "sku": "BLK-928030",
-    "category_id": "51e53348-a6b2-4254-bd1b-6d6cf45df4c2",
-    "category": "Agarbatti & Dhup Stand",
-    "category_slug": "agarbatti-stand",
-    "description": "Auto-generated description based on image analysis.",
-    "price": 299,
-    "regular_price": 299,
-    "sale_price": null,
-    "salePrice": null,
-    "on_sale": false,
-    "quantity": 1,
-    "availability": "in_stock",
-    "cover_image": "https://media.artzysstudio.in/bulk_1784362102395_1g11ae.png",
-    "images": [
-      "https://media.artzysstudio.in/bulk_1784362102395_1g11ae.png"
-    ],
-    "variants": [],
-    "product_url": "https://www.artzysstudio.in/products/BLK-928030",
-    "updated_at": "2026-07-30T13:22:27.389+00:00",
-    "route_slug": "wooden-dhup-stand-small-size-1--a8374a9a-a15f-4a3c-b76f-9133300bea9a"
+    "product_url": "https://www.artzysstudio.in/products/ART-MUL6Y4M2",
+    "updated_at": "2026-09-28T11:55:41.051863+00:00",
+    "route_slug": "traditional-charm-storage-jars--f785143a-b533-41f5-bb9a-fd8870e093ff"
   },
   {
     "id": "2cf57544-8142-4369-afe4-07bbe60dfb35",
@@ -1629,6 +1657,34 @@
     "route_slug": "wooden-hand-painted-warli-design-round-wall-hager--135501b1-bf22-4177-9366-705465eb91b8"
   },
   {
+    "id": "ef77bb46-3d69-48fb-a314-dabba5cd673f",
+    "name": "Wooden Spoon Stand Set Of 2",
+    "sku": "ART-MTYDFLB1",
+    "category_id": "d862af34-0fb3-4dd7-b6cf-73a8712648a5",
+    "category": "Wooden Spoon Stand",
+    "category_slug": "-wooden-spoon-stand",
+    "description": "Inspired by traditional Indian craftsmanship, our Wooden Spoon Stand Set Of 2 is a beautiful addition to any kitchen. Made from durable wood, these stands are designed to keep your spoons organized and within reach. Perfect for home cooks and foodies, they add a warm and inviting touch to your cooking space.",
+    "price": 699,
+    "regular_price": 699,
+    "sale_price": null,
+    "salePrice": null,
+    "on_sale": false,
+    "quantity": 1,
+    "availability": "in_stock",
+    "cover_image": "products/90e29f9a-0656-4044-9daa-6a4c63bfaafb.png",
+    "images": [
+      "products/90e29f9a-0656-4044-9daa-6a4c63bfaafb.png",
+      "products/9708dc47-b39c-47f6-ba4e-796efc6c425c.png",
+      "products/591eef6f-4a45-43c0-8451-a25cb7821441.png",
+      "products/6c668c31-6213-451d-8e93-6d588fd0df14.png",
+      "products/d41a8a84-2c90-4da5-a7d5-745466af3224.png"
+    ],
+    "variants": [],
+    "product_url": "https://www.artzysstudio.in/products/ART-MTYDFLB1",
+    "updated_at": "2026-09-12T12:38:30.961107+00:00",
+    "route_slug": "wooden-spoon-stand-set-of-2--ef77bb46-3d69-48fb-a314-dabba5cd673f"
+  },
+  {
     "id": "124c2205-da27-449a-8a33-3f95ff1058f2",
     "name": "Wooden Sunglass Stand (2)",
     "sku": "BLK-327814",
@@ -1651,29 +1707,5 @@
     "product_url": "https://www.artzysstudio.in/products/BLK-327814",
     "updated_at": "2026-07-30T13:22:28.074+00:00",
     "route_slug": "wooden-sunglass-stand-2--124c2205-da27-449a-8a33-3f95ff1058f2"
-  },
-  {
-    "id": "7865a1bf-a340-4a98-9feb-df11941f186d",
-    "name": "Yashoda Krishna madhubani painting",
-    "sku": "ART-MRJ0F5X5",
-    "category_id": "e648058a-8ed3-41fc-8149-7e26adfacf28",
-    "category": "Art Frames",
-    "category_slug": "art-frames",
-    "description": "Handcrafted with love and precision, this stunning madhubani painting is a testament to the skill and artistry of our artisans. Inspired by the rich cultural heritage of India, this painting features Yashoda Krishna, a revered figure in Hindu mythology, in a beautiful and intricate design. The madhubani style, with its bold lines and vibrant colors, is a unique and eye-catching way to add a touch of Indian flair to your home decor. This painting is not just a beautiful piece of art, but also a thoughtful gift for anyone who appreciates the beauty of Indian culture.",
-    "price": 4999,
-    "regular_price": 4999,
-    "sale_price": null,
-    "salePrice": null,
-    "on_sale": false,
-    "quantity": 1,
-    "availability": "in_stock",
-    "cover_image": "products/9c5c8a42-da86-417f-85c6-13a0e3fed54b.png",
-    "images": [
-      "products/9c5c8a42-da86-417f-85c6-13a0e3fed54b.png"
-    ],
-    "variants": [],
-    "product_url": "https://www.artzysstudio.in/products/ART-MRJ0F5X5",
-    "updated_at": "2026-07-30T13:22:27.389+00:00",
-    "route_slug": "yashoda-krishna-madhubani-painting--7865a1bf-a340-4a98-9feb-df11941f186d"
   }
 ]

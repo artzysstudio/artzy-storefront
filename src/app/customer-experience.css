@@ -1,0 +1,18 @@
+/* Customer navigation and mobile purchase controls share a clear, reachable space. */
+.gift-product-links,.muse-product-links{display:grid;gap:8px;margin:12px 0}
+.gift-product-links a,.muse-product-links a{display:grid;gap:5px;padding:12px;border:1px solid #d6bfb2;border-radius:10px;color:#873f44;background:#fffaf5;min-height:44px;text-decoration:none}
+.muse-product-links a span{font-size:.8rem}
+:where(a,button,input,select,textarea):focus-visible{outline:3px solid #8a4148;outline-offset:3px}
+@media(max-width:700px){
+ body:has(.gift-concierge-page) .muse-floater{bottom:calc(152px + env(safe-area-inset-bottom))!important;width:54px!important;padding:5px!important}
+ body:has(.gift-concierge-page) .muse-floater-copy{display:none!important}
+ .gift-step-actions{bottom:env(safe-area-inset-bottom);scroll-margin-bottom:80px}
+ .gift-step-actions button{min-height:46px;padding:12px 14px;font-size:.85rem}
+ .gift-builder input,.gift-builder select,.gift-builder textarea,.muse-chat-form textarea{font-size:16px}
+ .gift-concierge-hero--illustrated{min-height:0}
+ .gift-quick-start__options button{min-width:78vw}
+ body.artzy-muse-open .gift-step-actions{visibility:hidden;pointer-events:none}
+ .checkout-items{max-height:260px;overflow-y:auto;overscroll-behavior:contain;padding:7px 2px}
+ .checkout-layout{gap:20px!important}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}

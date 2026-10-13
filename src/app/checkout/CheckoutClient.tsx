@@ -354,7 +354,7 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
       {/* Left Column: Flow */}
       <div className="checkout-flow" style={{ flex: '1 1 600px' }}>
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-          <span style={{ fontWeight: step === 'address' || step === 'gifting' ? 'bold' : 'normal', color: step === 'address' || step === 'gifting' ? 'var(--text-primary)' : '' }}>Delivery details</span> &gt;
+          <span style={{ fontWeight: step === 'address' || step === 'gifting' ? 'bold' : 'normal', color: step === 'address' || step === 'gifting' ? 'var(--text-primary)' : '' }}>Address &amp; gifting</span> &gt;
           <span style={{ fontWeight: step === 'shipping' ? 'bold' : 'normal', color: step === 'shipping' ? 'var(--text-primary)' : '' }}>Shipping method</span> &gt;
           <span style={{ fontWeight: step === 'payment' ? 'bold' : 'normal', color: step === 'payment' ? 'var(--text-primary)' : '' }}>Payment</span>
         </div>
@@ -489,7 +489,7 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
-              <h3>Total to Pay: ₹{finalTotal.toLocaleString('en-IN')}</h3>
+              <h3>Estimated total: ₹{finalTotal.toLocaleString('en-IN')}</h3>
             </div>
             
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
@@ -570,7 +570,7 @@ export default function CheckoutClient({ initialProducts }: { initialProducts: P
             <span>Confirmed in the final payment and order record</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '1.2rem', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(0,0,0,0.1)' }}>
-            <span>Total</span>
+            <span>Estimated total</span>
             <span>₹{finalTotal.toLocaleString('en-IN')}</span>
           </div>
         </div>

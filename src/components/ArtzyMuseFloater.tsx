@@ -4,7 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FormEvent, KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
 
-type MuseMessage = { id: number; role: "assistant" | "customer"; text: string; action?: { href: string; label: string } };
+type MuseProduct = { name: string; price: number; href: string };
+const safeStudioLink = (href: string) => href.startsWith("/") && !href.startsWith("//") && !/[\\\u0000-\u0020]/.test(href);
+type MuseMessage = { id: number; role: "assistant" | "customer"; text: string; products?: MuseProduct[]; action?: { href: string; label: string } };
 type MuseLanguage = "en" | "hi" | "mr";
 type QuickAction = { icon: string; label: string; question: string };
 type PageGuide = { description: string; prompt: string; actions: QuickAction[] };
@@ -256,15 +258,15 @@ export default function ArtzyMuseFloater() {
         headers: { "content-type": "application/json", ...(customerToken ? { "x-artzy-customer-token": customerToken } : {}) },
         body: JSON.stringify({ message: clean, page: pathname, language, history }),
       });
-      const result = await response.json() as { reply?: string; action?: { href?: string; label?: string } };
+      const result = await response.json() as { reply?: string; products?: MuseProduct[]; action?: { href?: string; label?: string } };
       if (!response.ok || !result.reply?.trim()) throw new Error("Muse unavailable");
       const reply = result.reply.trim();
-      const action = result.action?.href && result.action?.label ? { href: result.action.href, label: result.action.label } : undefined;
-      setMessages((current) => [...current, { id: nextId.current++, role: "assistant", text: reply, action }]);
+      const action = result.action?.href && safeStudioLink(result.action.href) && result.action?.label ? { href: result.action.href, label: result.action.label } : undefined;
+      setMessages((current) => [...current, { id: nextId.current++, role: "assistant", text: reply, action, products: Array.isArray(result.products) ? result.products.filter(item => typeof item.name === "string" && typeof item.href === "string" && safeStudioLink(item.href) && Number.isFinite(item.price)).slice(0, 4) : [] }]);
       if (voiceEnabled) speak(reply);
     } catch {
       const fallback = answerQuestion(clean, pathname);
-      setMessages((current) => [...current, { id: nextId.current++, role: "assistant", text: fallback.answer, action: fallback.action }]);
+      setMessages((current) => [...current, { id: nextId.current++, role: "assistant", text: "Live Muse is unavailable right now. " + fallback.answer, action: fallback.action }]);
       if (voiceEnabled) speak(fallback.answer);
     } finally { window.clearTimeout(timeout); setIsThinking(false); }
   };
@@ -282,7 +284,7 @@ export default function ArtzyMuseFloater() {
         <header className="muse-guide-top"><div className="muse-guide-brand"><span className="muse-panel-mark" aria-hidden="true"><MuseMark /></span><div><strong>Artzy Muse</strong><small>Artzy’s Studio assistant</small></div></div><div className="muse-guide-controls"><button className="muse-voice-toggle" type="button" disabled={!voiceAvailable} aria-pressed={voiceEnabled} aria-label={voiceEnabled ? "Turn voice guidance off" : "Turn voice guidance on"} onClick={toggleVoice}>{voiceEnabled ? "Voice on" : "Voice off"}</button><button className="muse-close" type="button" aria-label="Close Artzy Muse" onClick={closeMuse}>×</button></div></header>
         <div className="muse-chat-intro"><span>ASK · DISCOVER · CREATE</span><h2 id="muse-guide-title">How may I help?</h2><p>{guide.description}</p></div>
         {!hasStarted && <div className="muse-quick-questions" aria-label="Quick ways Artzy Muse can help on this page">{guide.actions.map((item) => <button type="button" key={item.label} disabled={isThinking} onClick={() => void ask(item.question)}><span aria-hidden="true">{item.icon}</span>{item.label}</button>)}</div>}
-        <div ref={conversationRef} className="muse-conversation" aria-live="polite" aria-busy={isThinking} aria-relevant="additions text">{messages.map((message) => <div className={`muse-message ${message.role}`} key={message.id}>{message.role === "assistant" && <span aria-hidden="true"><MuseMark /></span>}<div><p>{message.text}</p>{message.action && <Link className="muse-message-action" href={message.action.href} onClick={closeMuse}>{message.action.label} <span aria-hidden="true">→</span></Link>}</div></div>)}{isThinking && <div className="muse-message assistant muse-thinking"><span aria-hidden="true"><MuseMark /></span><div><p>Finding the clearest next step…</p></div></div>}</div>
+        <div ref={conversationRef} className="muse-conversation" aria-live="polite" aria-busy={isThinking} aria-relevant="additions text">{messages.map((message) => <div className={`muse-message ${message.role}`} key={message.id}>{message.role === "assistant" && <span aria-hidden="true"><MuseMark /></span>}<div><p>{message.text}</p>{message.products?.length ? <div className="muse-product-links">{message.products.map(product => <Link key={product.href} href={product.href} onClick={closeMuse}><strong>{product.name}</strong><span>₹{product.price.toLocaleString("en-IN")} · View piece →</span></Link>)}</div> : null}{message.action && <Link className="muse-message-action" href={message.action.href} onClick={closeMuse}>{message.action.label} <span aria-hidden="true">→</span></Link>}</div></div>)}{isThinking && <div className="muse-message assistant muse-thinking"><span aria-hidden="true"><MuseMark /></span><div><p>Finding the clearest next step…</p></div></div>}</div>
         <footer className="muse-chat-footer">
           <form className="muse-chat-form" onSubmit={submit}><label htmlFor="muse-question">Ask Artzy Muse</label><div><textarea ref={textareaRef} id="muse-question" rows={1} value={question} disabled={isThinking} onFocus={() => setIsExpanded(true)} onChange={(event) => resizeComposer(event.target.value)} onKeyDown={onComposerKeyDown} placeholder={isThinking ? "Artzy Muse is thinking…" : "Type your question…"} autoComplete="off" /><button type="submit" aria-label="Send question" disabled={isThinking || !question.trim()}>→</button></div></form>
           <details className="muse-more-help"><summary>Language &amp; more help</summary><div className="muse-language-row"><label htmlFor="muse-language">Language</label><select id="muse-language" value={language} onChange={(event) => changeLanguage(event.target.value as MuseLanguage)}><option value="en">English</option><option value="hi">हिन्दी</option><option value="mr">मराठी</option></select><button type="button" disabled={!voiceAvailable} onClick={() => speak(`${greetings[language]} ${guide.prompt}`)} aria-label="Hear the current page guidance">Hear guidance <span aria-hidden="true">♪</span></button></div><div className="muse-imagine-links"><span>CREATE AN AI CONCEPT</span><p>Complete a custom brief, then create a clearly labelled imaginative preview.</p><div><Link href="/name-plates/#name-plate-builder" onClick={closeMuse}>Name plate</Link><Link href="/digital-prints/#digital-planner" onClick={closeMuse}>Digital art</Link><Link href="/caricatures/" onClick={closeMuse}>Caricature</Link></div></div><p className="muse-chat-note">Stock, final price, feasibility and delivery are confirmed by Artzy Studio.</p></details>

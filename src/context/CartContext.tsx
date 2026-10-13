@@ -94,11 +94,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
   const addGiftBundle = (bundle: GiftCartBundle) => {
     setItems((previous) => {
-      const next = [...previous];
+      const next = previous.map(item => ({ ...item }));
       bundle.items.forEach((bundleItem) => {
-        const existing = next.find((item) => sameLine(item, bundleItem.productId));
+        const existing = next.find((item) => sameLine(item, bundleItem.productId, bundleItem.variantId));
         if (existing) existing.quantity += bundleItem.quantity;
-        else next.push({ productId: bundleItem.productId, quantity: bundleItem.quantity });
+        else next.push({ productId: bundleItem.productId, quantity: bundleItem.quantity, variantId: bundleItem.variantId, variantLabel: bundleItem.variantLabel, availableStock: bundleItem.availableStock });
       });
       return next;
     });
@@ -109,7 +109,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setGiftBundles((previous) => previous.filter((candidate) => candidate.id !== bundleId));
     if (!bundle) return;
     setItems((previous) => previous.flatMap((item) => {
-      const bundleItem = bundle.items.find((candidate) => candidate.productId === item.productId);
+      const bundleItem = bundle.items.find((candidate) => sameLine(item, candidate.productId, candidate.variantId));
       if (!bundleItem) return [item];
       const quantity = item.quantity - bundleItem.quantity;
       return quantity > 0 ? [{ ...item, quantity }] : [];

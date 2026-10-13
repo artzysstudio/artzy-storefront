@@ -1,3 +1,5 @@
+import { productPath } from '../../src/lib/product-routing';
+
 type MuseRole = "assistant" | "customer";
 
 type MuseMessage = { role: MuseRole; text: string };
@@ -75,7 +77,8 @@ function compactItem(item: Record<string, unknown>): Record<string, string | num
   const name = cleanText(item.name || item.title || item.product_name, 100);
   if (!name) return null;
   const id = cleanText(String(item.id ?? item.product_id ?? item.productId ?? ""), 90);
-  const price = Number(item.sale_price ?? item.salePrice ?? item.price ?? item.unit_price ?? 0);
+  const sale = Number(item.sale_price ?? item.salePrice);
+  const price = sale > 0 ? sale : Number(item.price ?? item.unit_price ?? 0);
   const quantity = Number(item.stock_quantity ?? item.stockQuantity ?? item.quantity ?? 0);
   return {
     name,
@@ -84,6 +87,7 @@ function compactItem(item: Record<string, unknown>): Record<string, string | num
     available: item.in_stock === true || item.available === true || quantity > 0,
     ...(id ? { id } : {}),
     slug: cleanText(String(item.slug ?? item.id ?? ""), 90),
+    href: id ? productPath({ id, name, routeSlug: cleanText(item.routeSlug || item.route_slug, 240) }) : '',
   };
 }
 
@@ -102,7 +106,11 @@ async function catalogue(env: Env): Promise<Array<Record<string, string | number
       return response.ok ? await response.json() as unknown : null;
     } catch { return null; }
   }));
-  return responses.flatMap(findItems).map(compactItem).filter((item): item is NonNullable<typeof item> => Boolean(item)).slice(0, 24);
+  return responses.flatMap((response, index) => findItems(response).map(item => {
+    const compact = compactItem(item);
+    if (compact && index > 0) compact.href = '/gifts/#gift-finder';
+    return compact;
+  })).filter((item): item is NonNullable<typeof item> => Boolean(item && item.available && Number(item.price) > 0)).slice(0, 60);
 }
 
 export const onRequestPost = async ({ request, env }: Context): Promise<Response> => {
@@ -139,13 +147,18 @@ export const onRequestPost = async ({ request, env }: Context): Promise<Response
       if (identityResponse.ok && customerId) headers.set("X-Artzy-User-ID", customerId);
     } catch { /* Continue with the server-issued guest identity. */ }
   }
-  const payload = JSON.stringify({ message, history, page, language, catalogue: await catalogue(env) });
+  const currentCatalogue = await catalogue(env);
+  const payload = JSON.stringify({ message, history, page, language, catalogue: currentCatalogue });
   const target = `${(env.ARTZYAI_API_ORIGIN || "https://artzyai.artzysstudio.in").replace(/\/$/, "")}/v1/creative/muse`;
 
   try {
     const upstreamRequest = new Request(target, { method: "POST", headers, body: payload });
     const upstream = env.ARTZYAI_BACKEND ? await env.ARTZYAI_BACKEND.fetch(upstreamRequest) : await fetch(upstreamRequest);
     const result = await upstream.json().catch(() => ({ error: "Artzy Muse could not answer just now." })) as Record<string, unknown>;
+    if (upstream.ok && typeof result.reply === 'string') {
+      const reply = result.reply.toLowerCase();
+      result.products = currentCatalogue.filter(item => String(item.name).length >= 5 && reply.includes(String(item.name).toLowerCase())).slice(0, 4).map(item => ({ name: item.name, price: item.price, href: item.href }));
+    }
     return json(result, upstream.ok ? 200 : upstream.status, identity.cookie);
   } catch {
     return json({ error: "Artzy Muse could not answer just now." }, 503, identity.cookie);

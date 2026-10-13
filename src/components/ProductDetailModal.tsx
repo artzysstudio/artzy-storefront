@@ -1,4 +1,5 @@
 "use client";
+import Link from 'next/link';
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
@@ -199,7 +200,7 @@ export default function ProductDetailModal({
           <dl className="product-facts">
             {product.medium && <div><dt>Medium</dt><dd>{product.medium}</dd></div>}
             {product.material && <div><dt>Material</dt><dd>{product.material}</dd></div>}
-            {product.dimensions && <div><dt>Dimensions</dt><dd>{product.dimensions}</dd></div>}
+            <div><dt>Dimensions</dt><dd>{product.dimensions || "Please confirm the size with the studio before ordering."}</dd></div>
             {product.weight && <div><dt>Weight</dt><dd>{product.weight}</dd></div>}
             {product.contents && <div><dt>Contents</dt><dd>{product.contents}</dd></div>}
             {product.artist && <div><dt>Artist</dt><dd>{product.artist}</dd></div>}
@@ -220,6 +221,7 @@ export default function ProductDetailModal({
             </details>
           )}
 
+          {!product.careInstructions && <p>Need material or care details? <Link href="/contact/#visit">Ask the studio before choosing →</Link></p>}
           {availabilityStatus && <p className={`product-live-status${commerceReady ? ' ready' : ''}`} role="status">{availabilityStatus}</p>}
           <button className={`product-detail-add${added ? " added" : ""}`} type="button" disabled={!commerceReady || soldOut || stockReached} onClick={addProduct}>
             {!commerceReady ? "Checking live availability…" : soldOut ? "Currently unavailable" : stockReached ? stockQuantity === 1 ? "Only one available · already in bag" : "All available stock is in your bag" : added ? "Added to bag ✓" : quantityInBag > 0 ? "Add another to bag" : "Add to bag"}

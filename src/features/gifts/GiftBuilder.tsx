@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useLiveCatalogue } from '@/hooks/useLiveCatalogue';
+import { productPath } from '@/lib/product-routing';
 import type { Product } from '@/lib/api';
 import { useCart } from '@/context/CartContext';
 import { useAnalytics } from '@/hooks/useAnalytics';
@@ -36,12 +38,14 @@ const deliveryOptions: Array<[GiftIntent['deliveryWindow'], string, string]> = [
 const money = (value: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value);
 const slug = (value: string) => value.toLowerCase().replace(/\s+/g, '-');
 
-export default function GiftBuilder({ products }: { products: Product[] }) {
+export default function GiftBuilder({ products: initialProducts }: { products: Product[] }) {
+  const { products, status, retry } = useLiveCatalogue(initialProducts);
   const [intent, setIntent] = useState(defaultGiftIntent);
   const [step, setStep] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [addedId, setAddedId] = useState('');
-  const { addGiftBundle } = useCart();
+  const { addGiftBundle, items: bagItems } = useCart();
+  const [bagMessage, setBagMessage] = useState('');
   const { trackEvent } = useAnalytics();
   const result = useMemo(() => recommendGifts(products, intent), [products, intent]);
   const set = <K extends keyof GiftIntent>(key: K, value: GiftIntent[K]) => setIntent((old) => ({ ...old, [key]: value }));
@@ -91,6 +95,11 @@ export default function GiftBuilder({ products }: { products: Product[] }) {
   const addPlan = (recommendation: GiftRecommendation, withAddition = false) => {
     const addition = withAddition ? recommendation.additions[0] : undefined;
     const selectedItems = addition ? [...recommendation.items, addition] : recommendation.items;
+    if (selectedItems.some(item => (bagItems.find(line => line.productId === item.product.id && (line.variantId || '') === (item.variantId || ''))?.quantity || 0) + intent.quantity > Number(item.product.quantity))) {
+      setBagMessage('Your bag already contains some of this stock. Review your bag before adding another plan.');
+      return;
+    }
+    setBagMessage('Gift plan added. You can review quantities and delivery in your bag.');
     const additionTotal = addition ? (addition.product.salePrice || addition.product.price) * intent.quantity : 0;
     const pricing = { ...recommendation.pricing, products: recommendation.pricing.products + additionTotal, total: recommendation.pricing.total + additionTotal, remaining: recommendation.pricing.remaining - additionTotal };
     const bundle: GiftCartBundle = {
@@ -103,7 +112,7 @@ export default function GiftBuilder({ products }: { products: Product[] }) {
       budgetMode: intent.budgetMode,
       quantity: intent.quantity,
       requiredDate: intent.requiredDate || undefined,
-      items: selectedItems.map(({ product }) => ({ productId: product.id, name: product.name, quantity: intent.quantity, unitPrice: product.salePrice || product.price })),
+      items: selectedItems.map(({ product, variantId, variantLabel }) => ({ productId: product.id, name: product.name, quantity: intent.quantity, unitPrice: product.salePrice || product.price, variantId, variantLabel, availableStock: product.quantity })),
       packaging: { id: recommendation.packaging.id, name: recommendation.packaging.name, unitPrice: recommendation.packaging.unitPrice, total: recommendation.pricing.packaging },
       personalisation: { type: intent.personalisation, request: intent.personalisationText || undefined, unitPrice: 0, total: 0 },
       pricing,
@@ -122,7 +131,7 @@ export default function GiftBuilder({ products }: { products: Product[] }) {
   };
 
   const applyQuickStart = (preset: (typeof quickStarts)[number]) => {
-    setIntent((current) => ({ ...current, ...preset.intent }));
+    setIntent({ ...defaultGiftIntent, ...preset.intent });
     setStep(1);
     setShowResults(false);
     trackEvent({ eventName: 'gift_quick_start_selected', properties: { preset: preset.label } });
@@ -159,7 +168,8 @@ export default function GiftBuilder({ products }: { products: Product[] }) {
       <aside className="gift-live-summary"><span>Your gift brief</span><dl><div><dt>For</dt><dd>{intent.recipient || 'Choose recipient'}</dd></div><div><dt>Moment</dt><dd>{intent.occasion || 'Choose occasion'}</dd></div><div><dt>Quantity</dt><dd>{intent.quantity}</dd></div><div><dt>Budget</dt><dd>{money(intent.budget)} {intent.budgetMode === 'per-gift' ? 'each' : 'total'}</dd></div></dl><p>Recommendations only use photographed products with verified current stock.</p></aside>
     </div>
 
-    {showResults && <div className="gift-results" aria-live="polite"><header><span className="gift-kicker">Validated against current catalogue</span><h2>Your Artzy gift plans</h2><p>{result.message}</p></header>{result.recommendations.length ? <div className="gift-result-grid">{result.recommendations.map((recommendation) => <article className="gift-result-card" key={recommendation.id}><span className="gift-result-label">{recommendation.label}</span><div className="gift-result-images">{recommendation.items.slice(0,3).map(({product}) => <Image key={product.id} src={product.images[0]} alt={product.name} width={240} height={240} unoptimized/>)}</div><h3>{recommendation.items.map(({product}) => product.name).join(' + ')}</h3><p>{recommendation.reason}</p><ul><li>{recommendation.stockMessage}</li><li>{recommendation.packaging.name}</li><li>{recommendation.dispatchMessage}</li></ul><div className="gift-price"><b>{money(recommendation.pricing.total)}</b><span>{money(recommendation.pricing.products)} products + {recommendation.pricing.packaging ? money(recommendation.pricing.packaging) : 'included'} wrap</span><small>{money(recommendation.pricing.remaining)} left in budget</small></div>{recommendation.additions[0] && <button className="use-budget" onClick={() => addPlan(recommendation, true)}>Use more of my budget: add {recommendation.additions[0].product.name}</button>}<button className="add-plan" onClick={() => addPlan(recommendation)}>{addedId === recommendation.id ? 'Added to bag ✓' : `Add full plan to bag`}</button></article>)}</div> : <div className="gift-empty"><h3>No false promises.</h3><p>{result.message}</p><div>{result.relaxations.map((item) => <button key={item} onClick={() => { if(item === 'delivery') set('deliveryWindow','no-rush'); if(item === 'personalisation') set('personalisation','none'); if(item === 'quantity') set('quantity',1); if(item === 'style') set('styles',[]); if(item === 'budget') set('budget',Math.ceil(intent.budget * 1.2)); setShowResults(true); }}>Relax {item}</button>)}</div><Link href="/for-business">Ask the studio for a custom plan →</Link></div>}</div>}
+    {bagMessage && <p role="status">{bagMessage} <Link href="/checkout/">Review bag →</Link></p>}
+    {showResults && <div className="gift-results" aria-live="polite"><header><span className="gift-kicker">Validated against current catalogue</span><h2>Your Artzy gift plans</h2><p>{status === 'ready' ? result.message : 'We’ll match your brief with the current studio collection.'}</p></header>{status === 'loading' ? <p role="status">Checking current gift availability…</p> : status === 'error' ? <div className="gift-empty"><h3>We couldn’t check current stock.</h3><p>Your gift brief is saved here. Please try again.</p><button onClick={retry}>Check availability again</button></div> : result.recommendations.length ? <div className="gift-result-grid">{result.recommendations.map((recommendation) => <article className="gift-result-card" key={recommendation.id}><span className="gift-result-label">{recommendation.label}</span><div className="gift-result-images">{recommendation.items.slice(0,3).map(({product}) => <Image key={product.id} src={product.images[0]} alt={product.name} width={240} height={240} unoptimized/>)}</div><h3>{recommendation.items.map(({product}) => product.name).join(' + ')}</h3><div className="gift-product-links">{recommendation.items.map(({ product }) => <Link key={product.id} href={productPath(product)}>View {product.name} →</Link>)}</div><p>{recommendation.items.map(item => item.variantLabel).filter(Boolean).join(" · ")}</p><p>{recommendation.reason}</p><ul><li>{recommendation.stockMessage}</li><li>{recommendation.packaging.name}</li><li>{recommendation.dispatchMessage}</li></ul><div className="gift-price"><b>{money(recommendation.pricing.total)}</b><span>{money(recommendation.pricing.products)} products + {recommendation.pricing.packaging ? money(recommendation.pricing.packaging) : 'included'} wrap</span><small>{money(recommendation.pricing.remaining)} left before delivery and any applicable taxes</small></div>{recommendation.additions[0] && <button className="use-budget" onClick={() => addPlan(recommendation, true)}>Use more of my budget: add {recommendation.additions[0].product.name}</button>}<button className="add-plan" disabled={addedId === recommendation.id || status !== 'ready'} onClick={() => addPlan(recommendation)}>{addedId === recommendation.id ? 'Added to bag ✓' : `Add full plan to bag`}</button></article>)}</div> : <div className="gift-empty"><h3>Let’s adjust your gift brief</h3><p>{result.message}</p><div>{result.relaxations.map((item) => <button key={item} onClick={() => { if(item === 'delivery') set('deliveryWindow','no-rush'); if(item === 'personalisation') set('personalisation','none'); if(item === 'quantity') set('quantity',1); if(item === 'style') set('styles',[]); if(item === 'budget') set('budget',Math.ceil(intent.budget * 1.2)); setShowResults(true); }}>{item === 'budget' ? 'Increase budget to ' + money(Math.ceil(intent.budget * 1.2)) : item === 'quantity' ? 'Try one gift' : item === 'delivery' ? 'I can wait longer' : 'Remove personalisation'}</button>)}</div><Link href="/for-business">Ask the studio for a custom plan →</Link></div>}</div>}
   </section>;
 }
 

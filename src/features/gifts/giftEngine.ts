@@ -76,11 +76,18 @@ function derivedTags(product: Product): Pick<GiftCandidateProduct, 'occasionTags
   return { occasionTags: unique(occasionTags), recipientTags: unique(recipientTags), styleTags: unique(styleTags) };
 }
 
-export function toGiftCandidate(product: Product): GiftCandidateProduct | null {
+export function toGiftCandidate(product: Product, requiredQuantity = 1): GiftCandidateProduct | null {
   if (!isStorefrontInventoryProduct(product)) return null;
+  const variants = (product.variants || []).map((variant, index) => ({ ...variant, key: String(variant.id || variant.sku || index) }));
+  const selected = variants.filter(variant => variant.isAvailable !== false && Number(variant.quantity ?? product.quantity) >= requiredQuantity)
+    .sort((a, b) => Number(a.price ?? product.salePrice ?? product.price) - Number(b.price ?? product.salePrice ?? product.price))[0];
+  if (variants.length && !selected) return null;
+  if (selected) product = { ...product, price: selected.price ?? product.salePrice ?? product.price, salePrice: null, quantity: selected.quantity ?? product.quantity, images: selected.imageUrl ? [selected.imageUrl, ...product.images] : product.images };
   const explicitLead = Number.parseInt(product.leadTime || '', 10);
   return {
     product,
+    variantId: selected?.key,
+    variantLabel: selected?.name || selected?.title,
     ...derivedTags(product),
     personalisationOptions: product.personalizationOptions || [],
     productionDays: Number.isFinite(explicitLead) ? explicitLead : null,
@@ -151,7 +158,7 @@ function buildRecommendation(
 
 export function recommendGifts(products: Product[], intent: GiftIntent, packagingOptions = GIFT_PACKAGING): GiftRecommendationResult {
   const packaging = packagingOptions.find((item) => item.id === intent.packagingId && item.availability === 'available') || packagingOptions[0];
-  const candidates = products.map(toGiftCandidate).filter((item): item is GiftCandidateProduct => Boolean(item));
+  const candidates = products.map(product => toGiftCandidate(product, intent.quantity)).filter((item): item is GiftCandidateProduct => Boolean(item));
   const excluded = { stock: products.length - candidates.length, budget: 0, personalisation: 0, delivery: 0, quantity: 0 };
   const budgetEach = perGiftBudget(intent);
   const needsPersonalisation = intent.personalisation !== 'none';
@@ -205,11 +212,13 @@ export function recommendGifts(products: Product[], intent: GiftIntent, packagin
     if (excluded.personalisation) relaxations.push('personalisation');
     if (excluded.quantity) relaxations.push('quantity');
     if (excluded.budget) relaxations.push('budget');
-    if (intent.styles.length) relaxations.push('style');
+
   }
   const message = recommendations.length
     ? `${recommendations.length} validated gift plan${recommendations.length === 1 ? '' : 's'} found within ${intent.budgetMode === 'per-gift' ? 'the per-gift' : 'your total'} budget.`
-    : needsPersonalisation && excluded.personalisation
+    : !candidates.length
+      ? 'No ready-stock gifts are currently available. Browse custom gifting or check back for new studio pieces.'
+      : needsPersonalisation && excluded.personalisation
       ? 'No current studio product confirms the requested personalisation. Remove personalisation to see ready-stock gifts, or send the studio a custom brief.'
       : intent.quantity > 1 && excluded.quantity
         ? 'Current verified stock cannot fulfil that quantity as one repeated gift. Reduce the quantity or ask the studio to confirm made-to-order capacity.'

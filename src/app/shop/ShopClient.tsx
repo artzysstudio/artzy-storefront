@@ -1,20 +1,22 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { isStorefrontInventoryProduct, normalizeStorefrontProduct, Product } from '@/lib/api';
+import React, { Suspense, useCallback, useRef, useEffect, useMemo, useState } from 'react';
+import type { Product } from '@/lib/api';
+import { useLiveCatalogue } from '@/hooks/useLiveCatalogue';
+import { catalogueCategory, categorySlug, matchesCategory } from '@/lib/catalogue-categories';
+import { useSearchParams } from 'next/navigation';
+import { useModalFocus } from '@/hooks/useModalFocus';
 import ProductCard from '@/components/ProductCard';
 import Link from 'next/link';
 import { productPath, storefrontCategoryLabel } from '@/lib/product-routing';
 
-const ERP_PRODUCT_FEED = '/api/storefront/products';
 const PRODUCT_BATCH_SIZE = 12;
 const EMPTY_CATEGORY_SCOPE: string[] = [];
 const EMPTY_LEGACY_ROUTES: Array<{ id: string; path: string }> = [];
 
-const slugify = (value: string) =>
-  value.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+const slugify = categorySlug;
 
-export default function ShopClient({
+function ShopContent({
   initialProducts,
   categoryScope = EMPTY_CATEGORY_SCOPE,
   emptyExperience,
@@ -25,23 +27,24 @@ export default function ShopClient({
   emptyExperience?: 'original-art';
   legacyProductRoutes?: Array<{ id: string; path: string }>;
 }) {
-  const inScope = useCallback(
-    (product: Product) => isStorefrontInventoryProduct(product)
-      && (categoryScope.length === 0 || categoryScope.some((scope) => slugify(product.category).includes(slugify(scope)))),
-    [categoryScope],
-  );
-  const [products, setProducts] = useState<Product[]>(() => initialProducts.map(normalizeStorefrontProduct).filter(inScope));
+  const { products: catalogue, status, retry } = useLiveCatalogue(initialProducts);
+  const products = useMemo(() => catalogue.filter(product => categoryScope.length === 0 || categoryScope.some(scope => slugify(product.category).includes(slugify(scope)))), [catalogue, categoryScope]);
+  const [filtersReady, setFiltersReady] = useState(false);
+  const query = useSearchParams().toString();
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedOccasion, setSelectedOccasion] = useState('');
   const [selectedRoom, setSelectedRoom] = useState('');
   const [readyToShipOnly, setReadyToShipOnly] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const drawerRef = useRef<HTMLElement>(null);
+  const closeFilters = useCallback(() => setMobileFiltersOpen(false), []);
+  useModalFocus(mobileFiltersOpen, drawerRef, closeFilters);
   const [sortBy, setSortBy] = useState('featured');
   const [visibleCount, setVisibleCount] = useState(PRODUCT_BATCH_SIZE);
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   const productCategories = useMemo(
-    () => Array.from(new Set(products.map((product) => product.category))).filter(Boolean),
+    () => Array.from(new Set(products.map((product) => catalogueCategory(product.category)))).filter(Boolean),
     [products],
   );
   const categories = productCategories;
@@ -57,79 +60,31 @@ export default function ShopClient({
     () => Math.max(0, ...products.map((product) => product.price)),
     [products],
   );
-  const [maxPrice, setMaxPrice] = useState(highestPrice);
-
+  const [priceLimit, setMaxPrice] = useState<number | null>(null);
+  const maxPrice = priceLimit ?? highestPrice;
   useEffect(() => {
-    let isCurrent = true;
-    let controller: AbortController | null = null;
-
-    const refreshProducts = async () => {
-      controller?.abort();
-      controller = new AbortController();
-
-      try {
-        const statusResponse = await fetch('/api/storefront/status', {
-          cache: 'no-store',
-          headers: { Accept: 'application/json' },
-          signal: controller.signal,
-        });
-        const status = statusResponse.ok
-          ? await statusResponse.json() as { configured?: boolean }
-          : { configured: false };
-        // Without the authenticated ERP proxy, do not attempt a public fetch.
-        if (!status.configured) return;
-
-        const response = await fetch(`${ERP_PRODUCT_FEED}?ts=${Date.now()}`, {
-          cache: 'no-store',
-          headers: { Accept: 'application/json' },
-          signal: controller.signal,
-        });
-        if (!response.ok) throw new Error(`Product sync failed with ${response.status}`);
-
-        const payload = await response.json();
-        const records = Array.isArray(payload) ? payload : Array.isArray(payload?.data) ? payload.data : Array.isArray(payload?.products) ? payload.products : [];
-        // Replace the catalogue even when the live feed is empty. Retaining old
-        // products here could leave a newly drafted item visible indefinitely.
-        if (isCurrent) setProducts(records.map(normalizeStorefrontProduct).filter(inScope));
-      } catch (error) {
-        if (isCurrent && !(error instanceof DOMException && error.name === 'AbortError')) {
-          console.warn('Live ERP refresh is unavailable.', error);
-        }
-      }
+    const read = () => {
+      const params = new URLSearchParams(window.location.search);
+      setSelectedCategory(params.get('category') ? catalogueCategory(params.get('category')!) : '');
+      setSelectedRoom(params.get('room') || '');
+      setSelectedOccasion(params.get('occasion') || '');
+      setReadyToShipOnly(params.get('availability') === 'in-stock');
+      const price = Number(params.get('maxPrice'));
+      setMaxPrice(params.has('maxPrice') && Number.isFinite(price) && price >= 0 ? price : null);
+      setSortBy(params.get('sort') || 'featured');
+      setFiltersReady(true);
     };
-
-    void refreshProducts();
-    const refreshTimer = window.setInterval(refreshProducts, 60_000);
-
-    return () => {
-      isCurrent = false;
-      controller?.abort();
-      window.clearInterval(refreshTimer);
-    };
-  }, [inScope]);
-
+    read();
+    window.addEventListener('popstate', read);
+    return () => window.removeEventListener('popstate', read);
+  }, [query]);
   useEffect(() => {
-    setMaxPrice(highestPrice);
-    const params = new URLSearchParams(window.location.search);
-    const requestedCategory = params.get('category');
-    const requestedRoom = params.get('room');
-    const requestedOccasion = params.get('occasion');
-    setReadyToShipOnly(params.get('availability') === 'in-stock');
-    if (requestedCategory) {
-      const matchingCategory = categories.find(
-        (category) => slugify(category) === requestedCategory || slugify(category).includes(requestedCategory),
-      );
-      if (matchingCategory) setSelectedCategory(matchingCategory);
-    }
-    if (requestedRoom) {
-      const matchingRoom = rooms.find((room) => slugify(room) === requestedRoom || slugify(room).includes(requestedRoom));
-      if (matchingRoom) setSelectedRoom(matchingRoom);
-    }
-    if (requestedOccasion) {
-      const matchingOccasion = occasions.find((occasion) => slugify(occasion) === requestedOccasion || slugify(occasion).includes(requestedOccasion));
-      if (matchingOccasion) setSelectedOccasion(matchingOccasion);
-    }
-  }, [categories, highestPrice, occasions, rooms]);
+    if (!filtersReady) return;
+    const url = new URL(window.location.href);
+    const values: Record<string, string> = { category: slugify(selectedCategory), room: slugify(selectedRoom), occasion: slugify(selectedOccasion), availability: readyToShipOnly ? 'in-stock' : '', maxPrice: priceLimit === null ? '' : String(priceLimit), sort: sortBy === 'featured' ? '' : sortBy };
+    for (const [key, value] of Object.entries(values)) { if (value) url.searchParams.set(key, value); else url.searchParams.delete(key); }
+    window.history.replaceState(null, '', url);
+  }, [filtersReady, selectedCategory, selectedRoom, selectedOccasion, readyToShipOnly, priceLimit, sortBy]);
 
   useEffect(() => {
     const requestedProduct = new URLSearchParams(window.location.search).get('product');
@@ -150,9 +105,9 @@ export default function ShopClient({
 
   const filteredProducts = useMemo(() => {
     const filtered = products.filter((product) => {
-      if (selectedCategory && product.category !== selectedCategory) return false;
-      if (selectedOccasion && (!product.occasion || !product.occasion.includes(selectedOccasion))) return false;
-      if (selectedRoom && (!product.roomType || !product.roomType.includes(selectedRoom))) return false;
+      if (selectedCategory && !matchesCategory(product, selectedCategory)) return false;
+      if (selectedOccasion && (!product.occasion || !product.occasion.some(value => slugify(value) === slugify(selectedOccasion)))) return false;
+      if (selectedRoom && (!product.roomType || !product.roomType.some(value => slugify(value) === slugify(selectedRoom)))) return false;
       if (readyToShipOnly && product.availability !== 'in_stock') return false;
       return product.price <= maxPrice;
     });
@@ -187,7 +142,7 @@ export default function ShopClient({
     setSelectedCategory('');
     setSelectedOccasion('');
     setSelectedRoom('');
-    setMaxPrice(highestPrice);
+    setMaxPrice(null);
     setReadyToShipOnly(false);
   };
 
@@ -240,7 +195,7 @@ export default function ShopClient({
           type="range"
           min="0"
           max={highestPrice || 1}
-          step="100"
+          step="1"
           value={maxPrice}
           onChange={(event) => setMaxPrice(Number(event.target.value))}
           aria-label="Maximum price"
@@ -290,7 +245,7 @@ export default function ShopClient({
 
   return (
     <div className={`shop-shell container${products.length === 0 ? ' shop-shell--empty' : ''}`}>
-      {products.length === 0 && emptyExperience === 'original-art' ? <section className="original-art-empty" aria-labelledby="original-art-empty-title">
+      {status === 'ready' && products.length === 0 && emptyExperience === 'original-art' ? <section className="original-art-empty" aria-labelledby="original-art-empty-title">
         <span>Original work is released thoughtfully</span>
         <h2 id="original-art-empty-title">No original pieces are listed for sale today.</h2>
         <p>Deepti&apos;s available originals will appear here only after the studio publishes their verified details. You can still begin a commission or explore her recent work.</p>
@@ -323,11 +278,11 @@ export default function ShopClient({
           {selectedOccasion && <button onClick={() => setSelectedOccasion('')}>{selectedOccasion} <span aria-hidden="true">×</span></button>}
           {selectedRoom && <button onClick={() => setSelectedRoom('')}>{selectedRoom} <span aria-hidden="true">×</span></button>}
           {readyToShipOnly && <button onClick={() => setReadyToShipOnly(false)}>Ready to ship <span aria-hidden="true">×</span></button>}
-          {maxPrice < highestPrice && <button onClick={() => setMaxPrice(highestPrice)}>Up to ₹{maxPrice.toLocaleString('en-IN')} <span aria-hidden="true">×</span></button>}
+          {maxPrice < highestPrice && <button onClick={() => setMaxPrice(null)}>Up to ₹{maxPrice.toLocaleString('en-IN')} <span aria-hidden="true">×</span></button>}
         </div>}
 
         <div className="shop-toolbar">
-          <div className="results-count">Explore the studio collection</div>
+          <div className="results-count">{status === 'loading' ? 'Checking current stock…' : filteredProducts.length + ' pieces found'}</div>
           <div className="shop-toolbar-actions">
             <button
               className="mobile-filter-button"
@@ -358,7 +313,7 @@ export default function ShopClient({
       <div className="shop-layout">
         <aside className="shop-filters desktop-filters">{filterPanel}</aside>
         <section className="shop-results" aria-live="polite">
-          {filteredProducts.length > 0 ? (
+          {status === 'loading' && !products.length ? <p role="status">Loading the studio collection…</p> : status === 'error' && !products.length ? <div className="empty-results"><h2>We couldn’t load the collection</h2><p>Please try again to check current availability.</p><button className="btn" onClick={retry}>Try again</button></div> : filteredProducts.length > 0 ? (
             <>
               <div className="product-grid">
                 {visibleProducts.map((product) => <ProductCard key={product.id} product={product} />)}
@@ -375,7 +330,7 @@ export default function ShopClient({
           ) : (
             <div className="empty-results">
               <h2>No pieces match these filters</h2>
-              <p>Clear one or more filters to see more of Deepti’s collection.</p>
+              <p>No current stock is listed for this selection. Try another category or explore a custom design.</p>{selectedCategory === 'Digital Prints' && <Link className="btn" href="/digital-prints/">Plan digital art</Link>}{selectedCategory === 'Caricatures' && <Link className="btn" href="/caricatures/">Create a caricature brief</Link>}
               <button className="btn btn-solid" onClick={clearFilters}>Show all products</button>
             </div>
           )}
@@ -389,6 +344,7 @@ export default function ShopClient({
           onClick={() => setMobileFiltersOpen(false)}
         >
           <aside
+            ref={drawerRef}
             className="filter-drawer"
             role="dialog"
             aria-modal="true"
@@ -421,4 +377,8 @@ export default function ShopClient({
       </button>
     </div>
   );
+}
+
+export default function ShopClient(props: React.ComponentProps<typeof ShopContent>) {
+  return <Suspense fallback={<p role="status">Loading the studio collection…</p>}><ShopContent {...props} /></Suspense>;
 }

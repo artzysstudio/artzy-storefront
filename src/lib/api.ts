@@ -1,4 +1,5 @@
 import { legalPolicyPages } from '@/data/legalPolicies';
+import { customerProductCopy } from './customer-product-copy';
 
 const getEnv = (key: string) => {
   try { return typeof process !== 'undefined' && process.env ? process.env[key] : undefined; } catch (e) { return undefined; }
@@ -204,7 +205,9 @@ export function normalizeStorefrontProduct(product: Product): Product {
       ...(variants || []).map((variant) => variant.imageUrl).filter((image): image is string => Boolean(image)),
     ])),
     variants,
-    artworkStory: product.artworkStory || cleanText(source.description),
+    artworkStory: customerProductCopy(product.artworkStory || cleanText(source.description)),
+    artistNotes: customerProductCopy(product.artistNotes),
+    seo: product.seo ? { ...product.seo, description: customerProductCopy(product.seo.description) || '' } : undefined,
     careInstructions: product.careInstructions || cleanText(source.care_instructions),
     leadTime: product.leadTime || cleanText(source.lead_time),
     contents: product.contents || cleanText(source.contents),

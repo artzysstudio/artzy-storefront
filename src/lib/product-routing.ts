@@ -1,4 +1,5 @@
 import type { Product } from '@/lib/api';
+import { catalogueCategory } from './catalogue-categories';
 
 const cleanProductId = (id: string): string =>
   String(id).toLowerCase().replace(/[^a-z0-9-]/g, '');
@@ -35,5 +36,5 @@ export const storefrontCategoryLabel = (category: string): string => {
     'Wall Art & Frames': 'Wall Art',
     'Hand-painted Décor': 'Hand-painted Décor',
   };
-  return labels[category] || category;
+  return labels[category] || catalogueCategory(category);
 };

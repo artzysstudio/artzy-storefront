@@ -32,6 +32,8 @@ export interface GiftPackagingOption {
 
 export interface GiftCandidateProduct {
   product: Product;
+  variantId?: string;
+  variantLabel?: string;
   occasionTags: string[];
   recipientTags: string[];
   styleTags: string[];
@@ -92,7 +94,7 @@ export interface GiftCartBundle {
   budgetMode: GiftBudgetMode;
   quantity: number;
   requiredDate?: string;
-  items: Array<{ productId: string; name: string; quantity: number; unitPrice: number }>;
+  items: Array<{ productId: string; name: string; quantity: number; unitPrice: number; variantId?: string; variantLabel?: string; availableStock?: number }>;
   packaging: { id: string; name: string; unitPrice: number; total: number };
   personalisation: { type: string; request?: string; unitPrice: number; total: number };
   pricing: GiftPriceBreakdown;
